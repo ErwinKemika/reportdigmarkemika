@@ -3,7 +3,19 @@ import { getAdsBudgetData, formatCurrency, formatNumber } from "@/data/mockData"
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
 import { DollarSign } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell } from "recharts";
+
+const CHANNEL_COLORS: Record<string, string> = {
+  "Google Ads": "hsl(217,71%,53%)",
+  "Meta Ads": "hsl(245,58%,51%)",
+  "Shopee Ads": "hsl(25,95%,53%)",
+};
+
+const CHANNEL_BORDER: Record<string, string> = {
+  "Google Ads": "border-l-[3px] border-l-channel-google",
+  "Meta Ads": "border-l-[3px] border-l-channel-meta",
+  "Shopee Ads": "border-l-[3px] border-l-channel-shopee",
+};
 
 export default function AdsBudgetPage() {
   const { selectedMonth } = useMonth();
@@ -30,7 +42,7 @@ export default function AdsBudgetPage() {
       {/* Channel Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {channels.map((c) => (
-          <div key={c.name} className="bg-card rounded-lg border border-border/50 p-5 shadow-card">
+          <div key={c.name} className={`bg-card rounded-lg border border-border/50 p-5 shadow-card hover:shadow-card-hover transition-shadow ${CHANNEL_BORDER[c.name] || ""}`}>
             <h3 className="font-semibold text-sm text-card-foreground mb-4">{c.name}</h3>
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
@@ -47,11 +59,11 @@ export default function AdsBudgetPage() {
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Revenue</span>
-                <span className="font-semibold text-card-foreground">{formatCurrency(c.revenue)}</span>
+                <span className="font-semibold text-success">{formatCurrency(c.revenue)}</span>
               </div>
               <div className="flex justify-between pt-2 border-t border-border">
-                <span className="text-primary font-medium">ROAS</span>
-                <span className="font-bold text-primary">{c.roas.toFixed(2)}x</span>
+                <span className="font-medium" style={{ color: CHANNEL_COLORS[c.name] }}>ROAS</span>
+                <span className="font-bold" style={{ color: CHANNEL_COLORS[c.name] }}>{c.roas.toFixed(2)}x</span>
               </div>
             </div>
           </div>
@@ -65,11 +77,11 @@ export default function AdsBudgetPage() {
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <span className="text-sm text-muted-foreground">Total Budget</span>
-              <span className="text-lg font-bold text-card-foreground">{formatCurrency(totalBudget)}</span>
+              <span className="text-lg font-bold text-channel-shopee">{formatCurrency(totalBudget)}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-muted-foreground">Total Revenue</span>
-              <span className="text-lg font-bold text-card-foreground">{formatCurrency(totalRevenue)}</span>
+              <span className="text-lg font-bold text-success">{formatCurrency(totalRevenue)}</span>
             </div>
             <div className="flex justify-between items-center pt-3 border-t border-border">
               <span className="text-sm font-medium text-primary">Total ROI</span>
@@ -88,7 +100,11 @@ export default function AdsBudgetPage() {
               <XAxis dataKey="name" tick={{ fontSize: 12, fill: "hsl(220,10%,50%)" }} />
               <YAxis tick={{ fontSize: 12, fill: "hsl(220,10%,50%)" }} />
               <Tooltip contentStyle={{ backgroundColor: "hsl(0,0%,100%)", border: "1px solid hsl(216,20%,90%)", borderRadius: 8, fontSize: 12 }} />
-              <Bar dataKey="ROAS" fill="hsl(220,70%,45%)" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="ROAS" radius={[4, 4, 0, 0]}>
+                {roasChartData.map((entry) => (
+                  <Cell key={entry.name} fill={CHANNEL_COLORS[entry.name] || "hsl(220,70%,45%)"} />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>

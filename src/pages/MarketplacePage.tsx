@@ -18,9 +18,9 @@ export default function MarketplacePage() {
     <div className="space-y-8 animate-fade-in">
       {/* Top Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-card rounded-lg border border-border/50 p-5 shadow-card">
+        <div className="bg-card rounded-lg border border-border/50 p-5 shadow-card border-l-[3px] border-l-success">
           <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Total Combined Revenue</p>
-          <p className="text-2xl font-bold text-card-foreground">{formatCurrency(data.totalCombinedRevenue)}</p>
+          <p className="text-2xl font-extrabold text-card-foreground">{formatCurrency(data.totalCombinedRevenue)}</p>
           <div className="flex items-center gap-1 mt-1">
             {revenueGrowth >= 0 ? <TrendingUp className="w-3.5 h-3.5 text-success" /> : <TrendingDown className="w-3.5 h-3.5 text-destructive" />}
             <span className={`text-xs font-semibold ${revenueGrowth >= 0 ? "text-success" : "text-destructive"}`}>{revenueGrowth >= 0 ? "+" : ""}{revenueGrowth.toFixed(1)}%</span>
@@ -28,7 +28,7 @@ export default function MarketplacePage() {
         </div>
         <div className="bg-card rounded-lg border border-border/50 p-5 shadow-card">
           <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Total Units Sold</p>
-          <p className="text-2xl font-bold text-card-foreground">{formatNumber(data.totalUnitsSold)}</p>
+          <p className="text-2xl font-extrabold text-card-foreground">{formatNumber(data.totalUnitsSold)}</p>
           <div className="flex items-center gap-1 mt-1">
             {unitsGrowth >= 0 ? <TrendingUp className="w-3.5 h-3.5 text-success" /> : <TrendingDown className="w-3.5 h-3.5 text-destructive" />}
             <span className={`text-xs font-semibold ${unitsGrowth >= 0 ? "text-success" : "text-destructive"}`}>{unitsGrowth >= 0 ? "+" : ""}{unitsGrowth.toFixed(1)}%</span>
@@ -36,14 +36,14 @@ export default function MarketplacePage() {
         </div>
         <div className="bg-card rounded-lg border border-border/50 p-5 shadow-card">
           <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Growth vs Prev Month</p>
-          <p className={`text-2xl font-bold ${revenueGrowth >= 0 ? "text-success" : "text-destructive"}`}>{revenueGrowth >= 0 ? "+" : ""}{revenueGrowth.toFixed(1)}%</p>
+          <p className={`text-2xl font-extrabold ${revenueGrowth >= 0 ? "text-success" : "text-destructive"}`}>{revenueGrowth >= 0 ? "+" : ""}{revenueGrowth.toFixed(1)}%</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Tokopedia */}
-        <section className="bg-card rounded-lg border border-border/50 p-5 shadow-card">
-          <SectionHeader title="Tokopedia" icon={<Store className="w-4 h-4" />} />
+        {/* Tokopedia — green accent */}
+        <section className="bg-card rounded-lg border border-border/50 p-5 shadow-card border-t-[3px] border-t-channel-tokopedia">
+          <SectionHeader title="Tokopedia" icon={<Store className="w-4 h-4 text-channel-tokopedia" />} />
           <div className="grid grid-cols-3 gap-2 mb-4">
             <MetricCard title="Revenue" value={data.tokopedia.revenue} format="currency" />
             <MetricCard title="GMV" value={data.tokopedia.gmv} format="currency" />
@@ -58,7 +58,7 @@ export default function MarketplacePage() {
             {data.tokopedia.topProducts.map((p, i) => (
               <div key={i} className="flex justify-between items-center py-1.5 border-b border-border/30 last:border-0">
                 <div className="flex items-center gap-2">
-                  <span className="w-5 h-5 rounded-full gradient-primary text-primary-foreground flex items-center justify-center text-xs font-bold">{i + 1}</span>
+                  <span className="w-5 h-5 rounded-full bg-channel-tokopedia text-white flex items-center justify-center text-xs font-bold">{i + 1}</span>
                   <span className="text-sm">{p.name}</span>
                 </div>
                 <span className="text-sm font-semibold">{formatCurrency(p.revenue)}</span>
@@ -67,9 +67,9 @@ export default function MarketplacePage() {
           </div>
         </section>
 
-        {/* Shopee */}
-        <section className="bg-card rounded-lg border border-border/50 p-5 shadow-card">
-          <SectionHeader title="Shopee" icon={<ShoppingBag className="w-4 h-4" />} />
+        {/* Shopee — orange accent */}
+        <section className="bg-card rounded-lg border border-border/50 p-5 shadow-card border-t-[3px] border-t-channel-shopee">
+          <SectionHeader title="Shopee" icon={<ShoppingBag className="w-4 h-4 text-channel-shopee" />} />
           <div className="grid grid-cols-3 gap-2 mb-4">
             <MetricCard title="Revenue" value={data.shopee.revenue} format="currency" />
             <MetricCard title="Orders" value={data.shopee.orders} />
@@ -84,7 +84,7 @@ export default function MarketplacePage() {
             {data.shopee.topProducts.map((p, i) => (
               <div key={i} className="flex justify-between items-center py-1.5 border-b border-border/30 last:border-0">
                 <div className="flex items-center gap-2">
-                  <span className="w-5 h-5 rounded-full gradient-primary text-primary-foreground flex items-center justify-center text-xs font-bold">{i + 1}</span>
+                  <span className="w-5 h-5 rounded-full bg-channel-shopee text-white flex items-center justify-center text-xs font-bold">{i + 1}</span>
                   <span className="text-sm">{p.name}</span>
                 </div>
                 <span className="text-sm font-semibold">{formatCurrency(p.revenue)}</span>

@@ -5,6 +5,14 @@ import { KPICard } from "@/components/dashboard/KPICard";
 import { NoData } from "@/components/dashboard/NoData";
 import { Users, Briefcase, Landmark, DollarSign, TrendingUp, PieChart, Lightbulb } from "lucide-react";
 
+const STAGE_STYLES: Record<string, string> = {
+  Won: "bg-status-won/15 text-status-won",
+  Qualified: "bg-status-qualified/15 text-status-qualified",
+  Processing: "bg-status-processing/15 text-status-processing",
+  Cancelled: "bg-status-cancelled/15 text-status-cancelled",
+  Drop: "bg-status-cancelled/15 text-status-cancelled",
+};
+
 export default function ROIRevenuePage() {
   const { selectedMonth } = useMonth();
   const data = getROIRevenueData(selectedMonth);
@@ -22,13 +30,9 @@ export default function ROIRevenuePage() {
   const roas = data.actualMarketplaceRevenue / totalInvestment;
 
   const stageBadge = (stage: string) => {
-    const styles: Record<string, string> = {
-      Won: "bg-success/15 text-success",
-      Qualified: "bg-primary/15 text-primary",
-      Processing: "bg-warning/15 text-warning",
-    };
+    const style = STAGE_STYLES[stage] || "bg-muted text-muted-foreground";
     return (
-      <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${styles[stage] || "bg-muted text-muted-foreground"}`}>
+      <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${style}`}>
         {stage}
       </span>
     );
@@ -37,13 +41,13 @@ export default function ROIRevenuePage() {
   return (
     <div className="space-y-8 animate-fade-in">
       {/* SECTION 1 — Lead Performance */}
-      <section>
+      <section className="bg-tint-purple/40 rounded-xl p-6">
         <SectionHeader title="Lead Performance" subtitle="B2B & B2G lead tracking" icon={<Users className="w-4 h-4" />} />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <KPICard title="B2B Leads" data={data.b2bLeads} icon={<Briefcase className="w-4 h-4" />} />
-          <KPICard title="B2G Leads" data={data.b2gLeads} icon={<Landmark className="w-4 h-4" />} />
-          <KPICard title="Total Leads" data={data.totalLeads} icon={<Users className="w-4 h-4" />} />
-          <KPICard title="Est. Revenue" data={data.estimatedRevenue} format="currency" icon={<DollarSign className="w-4 h-4" />} />
+          <KPICard title="B2B Leads" data={data.b2bLeads} icon={<Briefcase className="w-4 h-4" />} accentColor="blue" />
+          <KPICard title="B2G Leads" data={data.b2gLeads} icon={<Landmark className="w-4 h-4" />} accentColor="purple" />
+          <KPICard title="Total Leads" data={data.totalLeads} icon={<Users className="w-4 h-4" />} accentColor="navy" />
+          <KPICard title="Est. Revenue" data={data.estimatedRevenue} format="currency" icon={<DollarSign className="w-4 h-4" />} accentColor="green" />
         </div>
       </section>
 
@@ -54,7 +58,7 @@ export default function ROIRevenuePage() {
           {/* Left — 3 cards */}
           <div className="lg:col-span-2 space-y-5">
             {/* Total Digital Investment */}
-            <div className="bg-card rounded-xl p-6 shadow-card border border-border/50">
+            <div className="bg-card rounded-xl p-6 shadow-card border border-border/50 border-l-[3px] border-l-channel-shopee">
               <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-1">Total Digital Investment</p>
               <p className="text-3xl font-extrabold text-card-foreground">{formatCurrency(totalInvestment)}</p>
               <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-muted-foreground">
@@ -66,14 +70,14 @@ export default function ROIRevenuePage() {
             </div>
 
             {/* Actual Marketplace Revenue */}
-            <div className="bg-card rounded-xl p-6 shadow-card border border-border/50">
+            <div className="bg-card rounded-xl p-6 shadow-card border border-border/50 border-l-[3px] border-l-success">
               <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-1">Actual Marketplace Revenue</p>
-              <p className="text-3xl font-extrabold text-card-foreground">{formatCurrency(data.actualMarketplaceRevenue)}</p>
+              <p className="text-3xl font-extrabold text-success">{formatCurrency(data.actualMarketplaceRevenue)}</p>
               <p className="mt-2 text-xs font-semibold text-primary">ROAS {roas.toFixed(2)}x</p>
             </div>
 
             {/* Projected Digital ROI */}
-            <div className="gradient-primary rounded-xl p-6 shadow-card text-primary-foreground">
+            <div className={`rounded-xl p-6 shadow-card text-white ${projectedROI >= 0 ? "gradient-success" : "gradient-danger"}`}>
               <p className="text-xs font-medium uppercase tracking-wider opacity-80 mb-1">Projected Digital ROI</p>
               <p className="text-4xl font-extrabold">{projectedROI.toFixed(1)}%</p>
               <p className="mt-2 text-xs opacity-70">(Revenue − Investment) ÷ Investment × 100</p>
@@ -113,9 +117,9 @@ export default function ROIRevenuePage() {
 
       {/* Insight Summary */}
       <section>
-        <div className="bg-card rounded-xl p-6 shadow-card border-l-4 border-l-primary border border-border/50">
+        <div className="bg-tint-blue rounded-xl p-6 shadow-card border-l-4 border-l-channel-google border border-channel-google/20">
           <div className="flex items-center gap-2 mb-2">
-            <Lightbulb className="w-4 h-4 text-primary" />
+            <Lightbulb className="w-4 h-4 text-channel-google" />
             <h3 className="text-sm font-semibold text-card-foreground">Insight Summary</h3>
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed">{data.insightSummary}</p>

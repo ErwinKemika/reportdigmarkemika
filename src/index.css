@@ -56,6 +56,26 @@
     --chart-3: 152 60% 42%;
     --chart-4: 38 92% 50%;
     --chart-5: 280 60% 55%;
+
+    /* Channel identity */
+    --channel-website: 220 65% 38%;
+    --channel-google: 217 71% 53%;
+    --channel-meta: 245 58% 51%;
+    --channel-shopee: 25 95% 53%;
+    --channel-tokopedia: 142 64% 40%;
+
+    /* Status */
+    --status-won: 142 71% 45%;
+    --status-processing: 217 71% 53%;
+    --status-qualified: 262 52% 56%;
+    --status-cancelled: 0 72% 51%;
+
+    /* Section tints */
+    --tint-blue: 214 95% 96%;
+    --tint-green: 143 85% 95%;
+    --tint-red: 0 86% 96%;
+    --tint-orange: 33 100% 95%;
+    --tint-purple: 262 80% 96%;
   }
 
   .dark {

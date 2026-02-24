@@ -16,10 +16,10 @@ export default function WebstoreSalesPage() {
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Total Revenue */}
-      <div className="bg-card rounded-lg border border-border/50 p-6 shadow-card">
+      <div className="bg-card rounded-lg border border-border/50 p-6 shadow-card border-l-[3px] border-l-success">
         <SectionHeader title="Webstore Sales" subtitle={selectedMonth} icon={<ShoppingCart className="w-4 h-4" />} />
         <div className="flex items-end gap-4">
-          <span className="text-3xl font-bold text-card-foreground">{formatCurrency(data.totalRevenue)}</span>
+          <span className="text-3xl font-extrabold text-card-foreground">{formatCurrency(data.totalRevenue)}</span>
           <div className="flex items-center gap-1 mb-1">
             {revenueGrowth >= 0 ? (
               <TrendingUp className="w-4 h-4 text-success" />
@@ -41,7 +41,7 @@ export default function WebstoreSalesPage() {
             {data.topProductsViewed.map((product, i) => (
               <div key={i} className="flex items-center justify-between py-2 border-b border-border/30 last:border-0">
                 <div className="flex items-center gap-3">
-                  <span className="w-6 h-6 rounded-full gradient-primary flex items-center justify-center text-xs font-bold text-primary-foreground">{i + 1}</span>
+                  <span className="w-6 h-6 rounded-full bg-channel-website flex items-center justify-center text-xs font-bold text-white">{i + 1}</span>
                   <span className="text-sm text-card-foreground">{product.name}</span>
                 </div>
                 <span className="text-sm font-semibold text-card-foreground">{formatNumber(product.sessions)} sessions</span>
@@ -71,7 +71,7 @@ export default function WebstoreSalesPage() {
                     <td className="py-2.5 text-card-foreground">{p.name}</td>
                     <td className="py-2.5 text-right font-medium text-card-foreground">{formatNumber(p.units)}</td>
                     <td className="py-2.5 text-right text-muted-foreground">{formatCurrency(p.price)}</td>
-                    <td className="py-2.5 text-right font-semibold text-card-foreground">{formatCurrency(p.revenue)}</td>
+                    <td className="py-2.5 text-right font-semibold text-success">{formatCurrency(p.revenue)}</td>
                   </tr>
                 ))}
               </tbody>
