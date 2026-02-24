@@ -17,12 +17,12 @@ export default function ClosingPage() {
   ];
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-10 animate-fade-in">
       <SectionHeader title="Closing & Summary" subtitle={selectedMonth} icon={<Flag className="w-4 h-4" />} />
 
       {/* Monthly Summary */}
-      <div className="bg-tint-blue rounded-lg border border-channel-google/20 p-6 shadow-card">
-        <div className="flex items-center gap-2 mb-3">
+      <div className="bg-tint-blue rounded-xl border border-channel-google/15 p-8 shadow-card">
+        <div className="flex items-center gap-2.5 mb-4">
           <FileText className="w-4 h-4 text-channel-google" />
           <h3 className="font-semibold text-sm text-card-foreground">Monthly Performance Summary</h3>
         </div>
@@ -31,14 +31,14 @@ export default function ClosingPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Highlights */}
-        <div className="bg-tint-green rounded-lg border border-success/20 p-5 shadow-card">
-          <div className="flex items-center gap-2 mb-4">
+        <div className="bg-tint-green rounded-xl border border-success/15 p-6 shadow-card">
+          <div className="flex items-center gap-2.5 mb-5">
             <Star className="w-4 h-4 text-warning" />
             <h3 className="font-semibold text-sm text-card-foreground">Highlights</h3>
           </div>
-          <ul className="space-y-2.5">
+          <ul className="space-y-3">
             {data.highlights.map((item, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-card-foreground">
+              <li key={i} className="flex items-start gap-2.5 text-sm text-card-foreground leading-relaxed">
                 <span className="w-1.5 h-1.5 rounded-full bg-success mt-2 shrink-0" />
                 {item}
               </li>
@@ -47,8 +47,8 @@ export default function ClosingPage() {
         </div>
 
         {/* Focus Area */}
-        <div className="bg-tint-purple rounded-lg border border-channel-meta/20 p-5 shadow-card">
-          <div className="flex items-center gap-2 mb-3">
+        <div className="bg-tint-purple rounded-xl border border-channel-meta/15 p-6 shadow-card">
+          <div className="flex items-center gap-2.5 mb-4">
             <Crosshair className="w-4 h-4 text-channel-meta" />
             <h3 className="font-semibold text-sm text-card-foreground">Focus Area Next Month</h3>
           </div>
@@ -58,15 +58,15 @@ export default function ClosingPage() {
 
       {/* Target KPIs */}
       <div>
-        <h3 className="font-semibold text-card-foreground mb-4">Target Next Month KPI</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <h3 className="text-section-title text-foreground mb-5">Target Next Month KPI</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {targetKPIs.map((kpi, i) => (
-            <div key={i} className="bg-card rounded-lg border border-border/50 p-6 shadow-card hover:shadow-card-hover transition-shadow text-center">
-              <div className={`w-12 h-12 ${kpi.color} rounded-xl flex items-center justify-center mx-auto mb-3 text-white`}>
+            <div key={i} className="bg-card rounded-xl border border-border/40 p-8 shadow-card hover:shadow-card-hover transition-all duration-300 text-center">
+              <div className={`w-14 h-14 ${kpi.color} rounded-2xl flex items-center justify-center mx-auto mb-4 text-primary-foreground shadow-card`}>
                 {kpi.icon}
               </div>
-              <p className="text-2xl font-extrabold text-card-foreground mb-1">{kpi.value}</p>
-              <p className="text-xs text-muted-foreground uppercase tracking-wider">{kpi.label}</p>
+              <p className="text-kpi font-extrabold text-card-foreground mb-1.5 tracking-tight">{kpi.value}</p>
+              <p className="text-label text-muted-foreground uppercase tracking-wider">{kpi.label}</p>
             </div>
           ))}
         </div>

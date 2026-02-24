@@ -13,6 +13,14 @@ export default {
       },
     },
     extend: {
+      fontSize: {
+        "hero": ["2.25rem", { lineHeight: "2.5rem", fontWeight: "800" }],
+        "page-title": ["1.5rem", { lineHeight: "2rem", fontWeight: "700" }],
+        "section-title": ["1.125rem", { lineHeight: "1.75rem", fontWeight: "600" }],
+        "kpi": ["1.875rem", { lineHeight: "2.25rem", fontWeight: "800" }],
+        "kpi-lg": ["2.5rem", { lineHeight: "3rem", fontWeight: "800" }],
+        "label": ["0.6875rem", { lineHeight: "1rem", fontWeight: "500", letterSpacing: "0.05em" }],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -77,6 +85,7 @@ export default {
           processing: "hsl(var(--status-processing))",
           qualified: "hsl(var(--status-qualified))",
           cancelled: "hsl(var(--status-cancelled))",
+          warning: "hsl(var(--status-warning))",
         },
         tint: {
           blue: "hsl(var(--tint-blue))",
@@ -87,26 +96,19 @@ export default {
         },
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        xl: "var(--radius)",
+        lg: "calc(var(--radius) - 2px)",
+        md: "calc(var(--radius) - 4px)",
+        sm: "calc(var(--radius) - 6px)",
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
       },
       animation: {

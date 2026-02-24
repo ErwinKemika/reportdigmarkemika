@@ -37,26 +37,26 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
     <div className="flex min-h-screen w-full bg-background">
       {/* Sidebar */}
       <aside
-        className={`${collapsed ? "w-16" : "w-60"} bg-sidebar text-sidebar-foreground flex flex-col transition-all duration-200 shrink-0 border-r border-sidebar-border`}
+        className={`${collapsed ? "w-[68px]" : "w-[240px]"} bg-sidebar text-sidebar-foreground flex flex-col transition-all duration-300 ease-in-out shrink-0`}
       >
-        <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
+        <div className="flex items-center justify-between px-4 py-5 border-b border-sidebar-border">
           {!collapsed && (
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center shadow-card">
                 <Megaphone className="w-4 h-4 text-primary-foreground" />
               </div>
-              <span className="font-bold text-sm text-sidebar-primary-foreground">DigiDash</span>
+              <span className="font-bold text-[13px] text-sidebar-accent-foreground tracking-tight">DigiDash</span>
             </div>
           )}
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="p-1.5 rounded-md hover:bg-sidebar-accent transition-colors text-sidebar-foreground"
+            className="p-1.5 rounded-lg hover:bg-sidebar-accent transition-colors text-sidebar-foreground"
           >
             {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
           </button>
         </div>
 
-        <nav className="flex-1 py-3 px-2 space-y-0.5 overflow-y-auto">
+        <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
@@ -64,13 +64,13 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
                 key={item.path}
                 to={item.path}
                 title={item.label}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors ${
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] transition-all duration-150 ${
                   isActive
-                    ? "bg-sidebar-primary text-sidebar-primary-foreground font-medium"
-                    : "hover:bg-sidebar-accent text-sidebar-foreground"
+                    ? "bg-sidebar-primary text-sidebar-primary-foreground font-semibold shadow-card"
+                    : "hover:bg-sidebar-accent text-sidebar-foreground hover:text-sidebar-accent-foreground"
                 }`}
               >
-                <item.icon className="w-4 h-4 shrink-0" />
+                <item.icon className="w-[18px] h-[18px] shrink-0" />
                 {!collapsed && <span className="truncate">{item.label}</span>}
               </Link>
             );
@@ -78,8 +78,10 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
         </nav>
 
         {!collapsed && (
-          <div className="p-4 border-t border-sidebar-border text-xs text-sidebar-foreground/50">
-            Digital Marketing Dashboard v1.0
+          <div className="px-4 py-4 border-t border-sidebar-border">
+            <p className="text-[10px] text-sidebar-foreground/40 font-medium tracking-wider uppercase">
+              Digital Marketing v1.0
+            </p>
           </div>
         )}
       </aside>
@@ -87,14 +89,14 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top bar */}
-        <header className="bg-card border-b border-border px-6 py-3 flex items-center justify-between shrink-0">
-          <h1 className="text-base font-semibold text-foreground">
+        <header className="bg-card/80 backdrop-blur-sm border-b border-border/60 px-8 py-4 flex items-center justify-between shrink-0 sticky top-0 z-10">
+          <h1 className="text-page-title text-foreground tracking-tight">
             {navItems.find((n) => n.path === location.pathname)?.label || "Dashboard"}
           </h1>
           <div className="flex items-center gap-3">
             <Calendar className="w-4 h-4 text-muted-foreground" />
             <Select value={selectedMonth} onValueChange={(v) => setSelectedMonth(v as any)}>
-              <SelectTrigger className="w-40 h-9 text-sm">
+              <SelectTrigger className="w-40 h-9 text-sm rounded-lg border-border/60 bg-background">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -107,7 +109,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 p-6 overflow-y-auto">
+        <main className="flex-1 px-8 py-8 overflow-y-auto">
           {children}
         </main>
       </div>
