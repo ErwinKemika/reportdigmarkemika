@@ -5,7 +5,7 @@ import { MONTHS } from "@/data/mockData";
 import {
   LayoutDashboard, Globe, ShoppingCart, Store, ShoppingBag,
   Megaphone, DollarSign, Lightbulb, ClipboardList, Flag,
-  ChevronLeft, ChevronRight, Calendar,
+  ChevronLeft, ChevronRight, Calendar, TrendingUp,
 } from "lucide-react";
 import {
   Select,
@@ -22,6 +22,7 @@ const navItems = [
   { label: "Marketplace", path: "/marketplace", icon: Store },
   { label: "Shopee Ads", path: "/shopee-ads", icon: ShoppingBag },
   { label: "Ads Budget", path: "/ads-budget", icon: DollarSign },
+  { label: "ROI & Revenue", path: "/roi-revenue", icon: TrendingUp },
   { label: "Insights", path: "/insights", icon: Lightbulb },
   { label: "Recommendations", path: "/recommendations", icon: ClipboardList },
   { label: "Closing & Summary", path: "/closing", icon: Flag },
