@@ -6,7 +6,7 @@ import { NoData } from "@/components/dashboard/NoData";
 import { Globe, Search, Share2 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
 
-const CHART_COLORS = ["hsl(220,70%,45%)", "hsl(210,90%,55%)", "hsl(152,60%,42%)", "hsl(38,92%,50%)"];
+const CHART_COLORS = ["hsl(220,65%,38%)", "hsl(217,71%,53%)", "hsl(142,64%,40%)", "hsl(25,95%,53%)"];
 
 export default function WebsitePerformancePage() {
   const { selectedMonth } = useMonth();
@@ -17,14 +17,14 @@ export default function WebsitePerformancePage() {
   return (
     <div className="space-y-8 animate-fade-in">
       {/* KPI Cards */}
-      <section>
+      <section className="bg-tint-blue/40 rounded-xl p-6">
         <SectionHeader title="Website KPIs" subtitle={selectedMonth + " performance"} icon={<Globe className="w-4 h-4" />} />
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          <KPICard title="Total Sessions" data={data.totalSessions} />
-          <KPICard title="Total Users" data={data.totalUsers} />
-          <KPICard title="Engaged Sessions" data={data.engagedSessions} />
-          <KPICard title="Event Click WA" data={data.eventClickWA} />
-          <KPICard title="Avg Duration" data={data.avgDuration} format="duration" />
+          <KPICard title="Total Sessions" data={data.totalSessions} accentColor="navy" />
+          <KPICard title="Total Users" data={data.totalUsers} accentColor="navy" />
+          <KPICard title="Engaged Sessions" data={data.engagedSessions} accentColor="blue" />
+          <KPICard title="Event Click WA" data={data.eventClickWA} accentColor="green" />
+          <KPICard title="Avg Duration" data={data.avgDuration} format="duration" accentColor="navy" />
         </div>
       </section>
 
@@ -37,10 +37,8 @@ export default function WebsitePerformancePage() {
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(216,20%,90%)" />
               <XAxis type="number" tick={{ fontSize: 12, fill: "hsl(220,10%,50%)" }} />
               <YAxis dataKey="keyword" type="category" tick={{ fontSize: 11, fill: "hsl(220,10%,50%)" }} width={140} />
-              <Tooltip
-                contentStyle={{ backgroundColor: "hsl(0,0%,100%)", border: "1px solid hsl(216,20%,90%)", borderRadius: 8, fontSize: 12 }}
-              />
-              <Bar dataKey="sessions" fill="hsl(220,70%,45%)" radius={[0, 4, 4, 0]} />
+              <Tooltip contentStyle={{ backgroundColor: "hsl(0,0%,100%)", border: "1px solid hsl(216,20%,90%)", borderRadius: 8, fontSize: 12 }} />
+              <Bar dataKey="sessions" fill="hsl(220,65%,38%)" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </section>
@@ -66,9 +64,7 @@ export default function WebsitePerformancePage() {
                   <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip
-                contentStyle={{ backgroundColor: "hsl(0,0%,100%)", border: "1px solid hsl(216,20%,90%)", borderRadius: 8, fontSize: 12 }}
-              />
+              <Tooltip contentStyle={{ backgroundColor: "hsl(0,0%,100%)", border: "1px solid hsl(216,20%,90%)", borderRadius: 8, fontSize: 12 }} />
               <Legend wrapperStyle={{ fontSize: 12 }} />
             </PieChart>
           </ResponsiveContainer>

@@ -57,6 +57,34 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
+        channel: {
+          website: "hsl(var(--channel-website))",
+          google: "hsl(var(--channel-google))",
+          meta: "hsl(var(--channel-meta))",
+          shopee: "hsl(var(--channel-shopee))",
+          tokopedia: "hsl(var(--channel-tokopedia))",
+        },
+        status: {
+          won: "hsl(var(--status-won))",
+          processing: "hsl(var(--status-processing))",
+          qualified: "hsl(var(--status-qualified))",
+          cancelled: "hsl(var(--status-cancelled))",
+        },
+        tint: {
+          blue: "hsl(var(--tint-blue))",
+          green: "hsl(var(--tint-green))",
+          red: "hsl(var(--tint-red))",
+          orange: "hsl(var(--tint-orange))",
+          purple: "hsl(var(--tint-purple))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
