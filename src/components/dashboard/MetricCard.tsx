@@ -23,7 +23,7 @@ export function MetricCard({ title, value, previousValue, format = "number", cla
   return (
     <div className={`text-center p-5 ${className}`}>
       <p className="text-label text-muted-foreground uppercase tracking-wider mb-2">{title}</p>
-      <p className="text-kpi font-extrabold text-card-foreground tracking-tight">{displayValue()}</p>
+      <p className="text-lg font-bold text-card-foreground tracking-tight">{displayValue()}</p>
       {growth !== null && (
         <div className="flex items-center justify-center gap-1.5 mt-2">
           {growth >= 0 ? (
