@@ -155,6 +155,28 @@ export interface RecommendationsData {
   actionPlan90: { action: string; tag: string }[];
 }
 
+// ==================== PAGE 10 — ROI & REVENUE IMPACT ====================
+export interface ROIRevenueData {
+  b2bLeads: KPIValue;
+  b2gLeads: KPIValue;
+  totalLeads: KPIValue;
+  estimatedRevenue: KPIValue;
+  investment: {
+    socialAds: number;
+    websiteSEO: number;
+    webstoreOps: number;
+    marketplaceAds: number;
+  };
+  actualMarketplaceRevenue: number;
+  leadPipeline: {
+    projectName: string;
+    leadSource: string;
+    stage: "Processing" | "Qualified" | "Won";
+    estimatedRevenue: number;
+  }[];
+  insightSummary: string;
+}
+
 // ==================== PAGE 9 — CLOSING ====================
 export interface ClosingData {
   monthlySummary: string;
@@ -526,6 +548,41 @@ const closingFeb: ClosingData = {
   targetROAS: 6.0,
 };
 
+const roiRevenueJan: ROIRevenueData = {
+  b2bLeads: kpi(24, 18),
+  b2gLeads: kpi(8, 5),
+  totalLeads: kpi(32, 23),
+  estimatedRevenue: kpi(1850000000, 1200000000),
+  investment: { socialAds: 25000000, websiteSEO: 12000000, webstoreOps: 8000000, marketplaceAds: 28000000 },
+  actualMarketplaceRevenue: 425000000,
+  leadPipeline: [
+    { projectName: "PT Mandiri Konstruksi", leadSource: "Google Ads", stage: "Won", estimatedRevenue: 450000000 },
+    { projectName: "Dinas Kesehatan Jabar", leadSource: "Website", stage: "Qualified", estimatedRevenue: 320000000 },
+    { projectName: "RS Premier Bintaro", leadSource: "Referral", stage: "Processing", estimatedRevenue: 280000000 },
+    { projectName: "PT Astra Infra", leadSource: "Meta Ads", stage: "Qualified", estimatedRevenue: 520000000 },
+    { projectName: "Kemenkes RI", leadSource: "Website", stage: "Processing", estimatedRevenue: 180000000 },
+  ],
+  insightSummary: "January generated 32 total leads with Rp 1.85B estimated pipeline value. B2B leads dominate the funnel with Google Ads and Website as top-performing lead sources. Two deals are in qualified stage worth Rp 840M combined.",
+};
+
+const roiRevenueFeb: ROIRevenueData = {
+  b2bLeads: kpi(31, 24),
+  b2gLeads: kpi(11, 8),
+  totalLeads: kpi(42, 32),
+  estimatedRevenue: kpi(2350000000, 1850000000),
+  investment: { socialAds: 28000000, websiteSEO: 14000000, webstoreOps: 9000000, marketplaceAds: 32000000 },
+  actualMarketplaceRevenue: 480000000,
+  leadPipeline: [
+    { projectName: "PT Mandiri Konstruksi", leadSource: "Google Ads", stage: "Won", estimatedRevenue: 450000000 },
+    { projectName: "Dinas Kesehatan Jabar", leadSource: "Website", stage: "Won", estimatedRevenue: 320000000 },
+    { projectName: "RS Premier Bintaro", leadSource: "Referral", stage: "Qualified", estimatedRevenue: 280000000 },
+    { projectName: "PT Astra Infra", leadSource: "Meta Ads", stage: "Won", estimatedRevenue: 520000000 },
+    { projectName: "Kemenkes RI", leadSource: "Website", stage: "Qualified", estimatedRevenue: 180000000 },
+    { projectName: "PT Pelindo III", leadSource: "Google Ads", stage: "Processing", estimatedRevenue: 600000000 },
+  ],
+  insightSummary: "February saw a 31% increase in total leads (42 vs 32). Three deals closed worth Rp 1.29B. The Valentine campaign indirectly boosted B2B inquiries through increased brand visibility. Projected digital ROI stands at a healthy level with marketplace ROAS at 5.78x.",
+};
+
 // ==================== DATA ACCESS ====================
 type MonthlyDataMap<T> = Partial<Record<Month, T>>;
 
@@ -538,6 +595,7 @@ const adsBudgetMap: MonthlyDataMap<AdsBudgetData> = { January: adsBudgetJan, Feb
 const insightsMap: MonthlyDataMap<InsightsData> = { January: insightsJan, February: insightsFeb };
 const recommendationsMap: MonthlyDataMap<RecommendationsData> = { January: recommendationsJan, February: recommendationsFeb };
 const closingMap: MonthlyDataMap<ClosingData> = { January: closingJan, February: closingFeb };
+const roiRevenueMap: MonthlyDataMap<ROIRevenueData> = { January: roiRevenueJan, February: roiRevenueFeb };
 
 export function getOverviewData(month: Month): OverviewData | undefined { return overviewMap[month]; }
 export function getWebsitePerformanceData(month: Month): WebsitePerformanceData | undefined { return websitePerfMap[month]; }
@@ -548,3 +606,4 @@ export function getAdsBudgetData(month: Month): AdsBudgetData | undefined { retu
 export function getInsightsData(month: Month): InsightsData | undefined { return insightsMap[month]; }
 export function getRecommendationsData(month: Month): RecommendationsData | undefined { return recommendationsMap[month]; }
 export function getClosingData(month: Month): ClosingData | undefined { return closingMap[month]; }
+export function getROIRevenueData(month: Month): ROIRevenueData | undefined { return roiRevenueMap[month]; }
