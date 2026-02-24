@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MonthProvider } from "@/contexts/MonthContext";
-import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import OverviewPage from "./pages/OverviewPage";
 import WebsitePerformancePage from "./pages/WebsitePerformancePage";
@@ -23,18 +23,6 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 function AppRoutes() {
-  const { user, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-pulse text-muted-foreground">Loading...</div>
-      </div>
-    );
-  }
-
-  if (!user) return <AuthPage />;
-
   return (
     <DashboardLayout>
       <Routes>
@@ -49,6 +37,7 @@ function AppRoutes() {
         <Route path="/insights" element={<InsightsPage />} />
         <Route path="/recommendations" element={<RecommendationsPage />} />
         <Route path="/closing" element={<ClosingPage />} />
+        <Route path="/admin-login" element={<AuthPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </DashboardLayout>

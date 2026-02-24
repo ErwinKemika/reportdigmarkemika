@@ -82,19 +82,30 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
 
         {!collapsed && (
           <div className="px-4 py-4 border-t border-sidebar-border space-y-3">
-            <div className="flex items-center gap-2">
-              {isAdmin && <Shield className="w-3.5 h-3.5 text-sidebar-primary" />}
-              <span className="text-[11px] text-sidebar-foreground/60 truncate">{user?.email}</span>
-              <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-sidebar-border text-sidebar-foreground/50">
-                {role}
-              </Badge>
-            </div>
-            <button
-              onClick={signOut}
-              className="flex items-center gap-2 text-[11px] text-sidebar-foreground/40 hover:text-sidebar-foreground transition-colors"
-            >
-              <LogOut className="w-3.5 h-3.5" /> Sign Out
-            </button>
+            {user ? (
+              <>
+                <div className="flex items-center gap-2">
+                  {isAdmin && <Shield className="w-3.5 h-3.5 text-sidebar-primary" />}
+                  <span className="text-[11px] text-sidebar-foreground/60 truncate">{user.email}</span>
+                  <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-sidebar-border text-sidebar-foreground/50">
+                    {role}
+                  </Badge>
+                </div>
+                <button
+                  onClick={signOut}
+                  className="flex items-center gap-2 text-[11px] text-sidebar-foreground/40 hover:text-sidebar-foreground transition-colors"
+                >
+                  <LogOut className="w-3.5 h-3.5" /> Sign Out
+                </button>
+              </>
+            ) : (
+              <Link
+                to="/admin-login"
+                className="flex items-center gap-2 text-[11px] text-sidebar-foreground/40 hover:text-sidebar-foreground transition-colors"
+              >
+                <Shield className="w-3.5 h-3.5" /> Admin Login
+              </Link>
+            )}
           </div>
         )}
       </aside>
