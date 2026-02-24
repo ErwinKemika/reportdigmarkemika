@@ -1,19 +1,20 @@
 import { ReactNode, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useMonth } from "@/contexts/MonthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { MONTHS } from "@/data/mockData";
+import { EditDataDialog } from "@/components/dashboard/EditDataDialog";
 import {
   LayoutDashboard, Globe, ShoppingCart, Store, ShoppingBag,
   Megaphone, DollarSign, Lightbulb, ClipboardList, Flag,
   ChevronLeft, ChevronRight, Calendar, TrendingUp, BarChart3,
+  LogOut, Shield,
 } from "lucide-react";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 const navItems = [
   { label: "Overview", path: "/", icon: LayoutDashboard },
@@ -33,6 +34,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const { selectedMonth, setSelectedMonth } = useMonth();
+  const { user, role, isAdmin, signOut } = useAuth();
 
   return (
     <div className="flex min-h-screen w-full bg-background">
@@ -79,10 +81,20 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
         </nav>
 
         {!collapsed && (
-          <div className="px-4 py-4 border-t border-sidebar-border">
-            <p className="text-[10px] text-sidebar-foreground/40 font-medium tracking-wider uppercase">
-              Digital Marketing v1.0
-            </p>
+          <div className="px-4 py-4 border-t border-sidebar-border space-y-3">
+            <div className="flex items-center gap-2">
+              {isAdmin && <Shield className="w-3.5 h-3.5 text-sidebar-primary" />}
+              <span className="text-[11px] text-sidebar-foreground/60 truncate">{user?.email}</span>
+              <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-sidebar-border text-sidebar-foreground/50">
+                {role}
+              </Badge>
+            </div>
+            <button
+              onClick={signOut}
+              className="flex items-center gap-2 text-[11px] text-sidebar-foreground/40 hover:text-sidebar-foreground transition-colors"
+            >
+              <LogOut className="w-3.5 h-3.5" /> Sign Out
+            </button>
           </div>
         )}
       </aside>
@@ -95,6 +107,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
             {navItems.find((n) => n.path === location.pathname)?.label || "Dashboard"}
           </h1>
           <div className="flex items-center gap-3">
+            <EditDataDialog />
             <Calendar className="w-4 h-4 text-muted-foreground" />
             <Select value={selectedMonth} onValueChange={(v) => setSelectedMonth(v as any)}>
               <SelectTrigger className="w-40 h-9 text-sm rounded-lg border-border/60 bg-background">
