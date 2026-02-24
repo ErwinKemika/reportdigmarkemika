@@ -77,15 +77,15 @@ export default function AdsBudgetPage() {
           <div className="space-y-5">
             <div className="flex justify-between items-center">
               <span className="text-sm text-muted-foreground">Total Budget</span>
-              <span className="text-kpi font-extrabold text-channel-shopee tracking-tight">{formatCurrency(totalBudget)}</span>
+              <span className="text-base font-bold text-card-foreground">{formatCurrency(totalBudget)}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-muted-foreground">Total Revenue</span>
-              <span className="text-kpi font-extrabold text-success tracking-tight">{formatCurrency(totalRevenue)}</span>
+              <span className="text-base font-bold text-card-foreground">{formatCurrency(totalRevenue)}</span>
             </div>
             <div className="flex justify-between items-center pt-4 border-t border-border/40">
               <span className="text-sm font-semibold text-foreground">Total ROI</span>
-              <span className={`text-kpi font-extrabold tracking-tight ${totalROI >= 0 ? "text-success" : "text-destructive"}`}>
+              <span className={`text-base font-bold ${totalROI >= 0 ? "text-card-foreground" : "text-destructive"}`}>
                 {totalROI.toFixed(1)}%
               </span>
             </div>
