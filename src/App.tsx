@@ -15,6 +15,7 @@ import InsightsPage from "./pages/InsightsPage";
 import RecommendationsPage from "./pages/RecommendationsPage";
 import ClosingPage from "./pages/ClosingPage";
 import ROIRevenuePage from "./pages/ROIRevenuePage";
+import BenchmarkPage from "./pages/BenchmarkPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
               <Route path="/website" element={<WebsitePerformancePage />} />
               <Route path="/webstore" element={<WebstoreSalesPage />} />
               <Route path="/marketplace" element={<MarketplacePage />} />
+              <Route path="/benchmark" element={<BenchmarkPage />} />
               <Route path="/shopee-ads" element={<ShopeeAdsPage />} />
               <Route path="/ads-budget" element={<AdsBudgetPage />} />
               <Route path="/roi-revenue" element={<ROIRevenuePage />} />

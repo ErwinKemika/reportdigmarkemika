@@ -586,6 +586,38 @@ const roiRevenueFeb: ROIRevenueData = {
   insightSummary: "February saw a 31% increase in total leads (42 vs 32). Three deals closed worth Rp 1.29B. The Valentine campaign indirectly boosted B2B inquiries through increased brand visibility. Projected digital ROI stands at a healthy level with marketplace ROAS at 5.78x.",
 };
 
+// ==================== BENCHMARK E-COMMERCE & WEBSTORE ====================
+export interface BenchmarkChannelData {
+  channel: string;
+  traffic: number;
+  targetTraffic: number;
+  conversionRate: number;
+  targetCR: number;
+  achievement: number;
+}
+
+export interface BenchmarkData {
+  channels: BenchmarkChannelData[];
+}
+
+const benchmarkJan: BenchmarkData = {
+  channels: [
+    { channel: "Tokopedia", traffic: 28500, targetTraffic: 30000, conversionRate: 4.4, targetCR: 4.0, achievement: 95.0 },
+    { channel: "Shopee", traffic: 35200, targetTraffic: 33000, conversionRate: 4.1, targetCR: 4.5, achievement: 106.7 },
+    { channel: "Webstore", traffic: 45200, targetTraffic: 50000, conversionRate: 3.2, targetCR: 3.5, achievement: 90.4 },
+  ],
+};
+
+const benchmarkFeb: BenchmarkData = {
+  channels: [
+    { channel: "Tokopedia", traffic: 31200, targetTraffic: 32000, conversionRate: 4.8, targetCR: 4.2, achievement: 97.5 },
+    { channel: "Shopee", traffic: 38600, targetTraffic: 36000, conversionRate: 4.5, targetCR: 4.5, achievement: 107.2 },
+    { channel: "Webstore", traffic: 48900, targetTraffic: 52000, conversionRate: 3.5, targetCR: 3.8, achievement: 94.0 },
+  ],
+};
+
+const benchmarkMap: MonthlyDataMap<BenchmarkData> = { January: benchmarkJan, February: benchmarkFeb };
+
 // ==================== DATA ACCESS ====================
 type MonthlyDataMap<T> = Partial<Record<Month, T>>;
 
@@ -610,3 +642,4 @@ export function getInsightsData(month: Month): InsightsData | undefined { return
 export function getRecommendationsData(month: Month): RecommendationsData | undefined { return recommendationsMap[month]; }
 export function getClosingData(month: Month): ClosingData | undefined { return closingMap[month]; }
 export function getROIRevenueData(month: Month): ROIRevenueData | undefined { return roiRevenueMap[month]; }
+export function getBenchmarkData(month: Month): BenchmarkData | undefined { return benchmarkMap[month]; }
