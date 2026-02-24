@@ -36,12 +36,12 @@ export function KPICard({ title, data, format = "number", icon, accentColor, her
   const accent = accentColor ? accentBorders[accentColor] : "";
 
   return (
-    <div className={`bg-card rounded-xl p-6 shadow-card hover:shadow-card-hover transition-all duration-300 border border-border/40 animate-fade-in ${accent} ${hero ? "py-8" : ""}`}>
-      <div className="flex items-center justify-between mb-3">
+    <div className={`bg-card rounded-xl p-5 shadow-card hover:shadow-card-hover transition-all duration-300 border border-border/40 animate-fade-in overflow-hidden ${accent} ${hero ? "py-7" : ""}`}>
+      <div className="flex items-center justify-between mb-2">
         <span className="text-label uppercase tracking-wider text-muted-foreground">{title}</span>
         {icon && <div className="text-muted-foreground/50">{icon}</div>}
       </div>
-      <div className={`font-extrabold text-card-foreground mb-3 tracking-tight ${hero ? "text-kpi-lg" : "text-kpi"}`}>
+      <div className={`font-extrabold text-card-foreground mb-2 tracking-tight leading-tight ${hero ? "text-2xl" : "text-xl"}`}>
         {displayValue()}
       </div>
       <div className="flex items-center gap-1.5">
