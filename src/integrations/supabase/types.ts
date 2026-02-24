@@ -14,16 +14,120 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      dashboard_data: {
+        Row: {
+          achievement_pct: number | null
+          ad_spend: number | null
+          budget: number | null
+          channel: string
+          clicks: number | null
+          conversion_rate: number | null
+          created_at: string
+          id: string
+          impressions: number | null
+          orders: number | null
+          period: string
+          revenue: number | null
+          roas: number | null
+          roi_pct: number | null
+          sessions: number | null
+          target_cr: number | null
+          target_revenue: number | null
+          target_traffic: number | null
+          traffic: number | null
+          traffic_achievement_pct: number | null
+          units_sold: number | null
+          updated_at: string
+          users_count: number | null
+        }
+        Insert: {
+          achievement_pct?: number | null
+          ad_spend?: number | null
+          budget?: number | null
+          channel: string
+          clicks?: number | null
+          conversion_rate?: number | null
+          created_at?: string
+          id?: string
+          impressions?: number | null
+          orders?: number | null
+          period: string
+          revenue?: number | null
+          roas?: number | null
+          roi_pct?: number | null
+          sessions?: number | null
+          target_cr?: number | null
+          target_revenue?: number | null
+          target_traffic?: number | null
+          traffic?: number | null
+          traffic_achievement_pct?: number | null
+          units_sold?: number | null
+          updated_at?: string
+          users_count?: number | null
+        }
+        Update: {
+          achievement_pct?: number | null
+          ad_spend?: number | null
+          budget?: number | null
+          channel?: string
+          clicks?: number | null
+          conversion_rate?: number | null
+          created_at?: string
+          id?: string
+          impressions?: number | null
+          orders?: number | null
+          period?: string
+          revenue?: number | null
+          roas?: number | null
+          roi_pct?: number | null
+          sessions?: number | null
+          target_cr?: number | null
+          target_revenue?: number | null
+          target_traffic?: number | null
+          traffic?: number | null
+          traffic_achievement_pct?: number | null
+          units_sold?: number | null
+          updated_at?: string
+          users_count?: number | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "viewer"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +254,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "viewer"],
+    },
   },
 } as const
