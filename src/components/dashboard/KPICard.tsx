@@ -8,6 +8,7 @@ interface KPICardProps {
   format?: "number" | "currency" | "percent" | "duration";
   icon?: React.ReactNode;
   accentColor?: "blue" | "green" | "orange" | "purple" | "navy";
+  hero?: boolean;
 }
 
 const accentBorders: Record<string, string> = {
@@ -18,7 +19,7 @@ const accentBorders: Record<string, string> = {
   navy: "border-l-[3px] border-l-channel-website",
 };
 
-export function KPICard({ title, data, format = "number", icon, accentColor }: KPICardProps) {
+export function KPICard({ title, data, format = "number", icon, accentColor, hero }: KPICardProps) {
   const growth = growthPercent(data.value, data.previousValue);
   const isPositive = growth > 0;
   const isNeutral = growth === 0;
@@ -35,12 +36,14 @@ export function KPICard({ title, data, format = "number", icon, accentColor }: K
   const accent = accentColor ? accentBorders[accentColor] : "";
 
   return (
-    <div className={`bg-card rounded-lg p-5 shadow-card hover:shadow-card-hover transition-shadow duration-200 border border-border/50 animate-fade-in ${accent}`}>
+    <div className={`bg-card rounded-xl p-6 shadow-card hover:shadow-card-hover transition-all duration-300 border border-border/40 animate-fade-in ${accent} ${hero ? "py-8" : ""}`}>
       <div className="flex items-center justify-between mb-3">
-        <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{title}</span>
-        {icon && <div className="text-primary/60">{icon}</div>}
+        <span className="text-label uppercase tracking-wider text-muted-foreground">{title}</span>
+        {icon && <div className="text-muted-foreground/50">{icon}</div>}
       </div>
-      <div className="text-2xl font-extrabold text-card-foreground mb-2">{displayValue()}</div>
+      <div className={`font-extrabold text-card-foreground mb-3 tracking-tight ${hero ? "text-kpi-lg" : "text-kpi"}`}>
+        {displayValue()}
+      </div>
       <div className="flex items-center gap-1.5">
         {isNeutral ? (
           <Minus className="w-3.5 h-3.5 text-muted-foreground" />
@@ -52,7 +55,7 @@ export function KPICard({ title, data, format = "number", icon, accentColor }: K
         <span className={`text-xs font-semibold ${isNeutral ? "text-muted-foreground" : isPositive ? "text-success" : "text-destructive"}`}>
           {isPositive ? "+" : ""}{growth.toFixed(1)}%
         </span>
-        <span className="text-xs text-muted-foreground">vs prev month</span>
+        <span className="text-xs text-muted-foreground/70">vs prev</span>
       </div>
     </div>
   );

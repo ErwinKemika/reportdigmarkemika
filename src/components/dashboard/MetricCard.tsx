@@ -21,15 +21,15 @@ export function MetricCard({ title, value, previousValue, format = "number", cla
   };
 
   return (
-    <div className={`text-center p-4 ${className}`}>
-      <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{title}</p>
-      <p className="text-xl font-bold text-card-foreground">{displayValue()}</p>
+    <div className={`text-center p-5 ${className}`}>
+      <p className="text-label text-muted-foreground uppercase tracking-wider mb-2">{title}</p>
+      <p className="text-kpi font-extrabold text-card-foreground tracking-tight">{displayValue()}</p>
       {growth !== null && (
-        <div className="flex items-center justify-center gap-1 mt-1">
+        <div className="flex items-center justify-center gap-1.5 mt-2">
           {growth >= 0 ? (
-            <TrendingUp className="w-3 h-3 text-success" />
+            <TrendingUp className="w-3.5 h-3.5 text-success" />
           ) : (
-            <TrendingDown className="w-3 h-3 text-destructive" />
+            <TrendingDown className="w-3.5 h-3.5 text-destructive" />
           )}
           <span className={`text-xs font-semibold ${growth >= 0 ? "text-success" : "text-destructive"}`}>
             {growth >= 0 ? "+" : ""}{growth.toFixed(1)}%
