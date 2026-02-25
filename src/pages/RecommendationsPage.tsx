@@ -23,12 +23,12 @@ export default function RecommendationsPage() {
   const ActionPlanSection = ({ subtitle, items }: { subtitle: string; items: { action: string; tag: string }[] }) => (
     <div className={`bg-card rounded-xl border border-border/40 p-6 shadow-card hover:shadow-card-hover transition-all duration-300 ${planColors[subtitle] || ""}`}>
       <h3 className="text-section-title text-card-foreground mb-5">{subtitle}</h3>
-      <div className="space-y-3">
+      <div className="space-y-1">
         {items.map((item, i) => (
-          <div key={i} className="flex items-start gap-3 py-2.5 border-b border-border/20 last:border-0">
+          <div key={i} className="flex items-start gap-3 py-2 border-b border-border/20 last:border-0">
             <span className="w-6 h-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">{i + 1}</span>
             <div className="flex-1">
-              <p className="text-sm text-card-foreground mb-2 leading-relaxed">{item.action}</p>
+              <p className="text-sm text-card-foreground mb-1 leading-relaxed">{item.action}</p>
               <ActionTag tag={item.tag} />
             </div>
           </div>
