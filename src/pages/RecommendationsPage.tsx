@@ -14,10 +14,15 @@ export default function RecommendationsPage() {
   if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
   if (!data) return <NoData month={selectedMonth} />;
 
-  const ActionPlanSection = ({ title, subtitle, items }: { title: string; subtitle: string; items: { action: string; tag: string }[] }) => (
-    <div className="bg-card rounded-xl border border-border/40 p-6 shadow-card hover:shadow-card-hover transition-all duration-300">
-      <h3 className="text-section-title text-card-foreground mb-1">{title}</h3>
-      <p className="text-xs text-muted-foreground mb-5">{subtitle}</p>
+  const planColors: Record<string, string> = {
+    Immediate: "border-l-4 border-l-success bg-success/5",
+    Tactical: "border-l-4 border-l-primary bg-primary/5",
+    Strategic: "border-l-4 border-l-warning bg-warning/5",
+  };
+
+  const ActionPlanSection = ({ subtitle, items }: { subtitle: string; items: { action: string; tag: string }[] }) => (
+    <div className={`bg-card rounded-xl border border-border/40 p-6 shadow-card hover:shadow-card-hover transition-all duration-300 ${planColors[subtitle] || ""}`}>
+      <h3 className="text-section-title text-card-foreground mb-5">{subtitle}</h3>
       <div className="space-y-3">
         {items.map((item, i) => (
           <div key={i} className="flex items-start gap-3 py-2.5 border-b border-border/20 last:border-0">
@@ -73,9 +78,9 @@ export default function RecommendationsPage() {
         <h3 className="text-section-title text-foreground">Next Action Plan</h3>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <ActionPlanSection title="30 Days" subtitle="Immediate" items={data.actionPlan30} />
-        <ActionPlanSection title="60 Days" subtitle="Tactical" items={data.actionPlan60} />
-        <ActionPlanSection title="90 Days" subtitle="Strategic" items={data.actionPlan90} />
+        <ActionPlanSection subtitle="Immediate" items={data.actionPlan30} />
+        <ActionPlanSection subtitle="Tactical" items={data.actionPlan60} />
+        <ActionPlanSection subtitle="Strategic" items={data.actionPlan90} />
       </div>
     </div>
   );
