@@ -25,7 +25,7 @@ const navItems = [
   { label: "Ads Budget", path: "/ads-budget", icon: DollarSign },
   { label: "ROI & Revenue", path: "/roi-revenue", icon: TrendingUp },
   { label: "Insights", path: "/insights", icon: Lightbulb },
-  { label: "Recommendations", path: "/recommendations", icon: ClipboardList },
+  { label: "Action Plan", path: "/recommendations", icon: ClipboardList },
   { label: "Closing & Summary", path: "/closing", icon: Flag },
 ];
 
