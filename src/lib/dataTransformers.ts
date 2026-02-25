@@ -75,26 +75,55 @@ export function transformWebstoreSales(d: Record<string, any>): WebstoreSalesDat
 }
 
 export function transformMarketplace(d: Record<string, any>): MarketplaceData {
+  // Auto-calc top products revenue
+  const tokProducts = (d.tokopediaTopProducts || []).map((p: any) => {
+    const units = p.units || 0;
+    const pricePerUnit = p.pricePerUnit || 0;
+    const revenue = p.revenue || (units * pricePerUnit);
+    return { name: p.name || "", units, revenue };
+  });
+  const shopProducts = (d.shopeeTopProducts || []).map((p: any) => {
+    const units = p.units || 0;
+    const pricePerUnit = p.pricePerUnit || 0;
+    const revenue = p.revenue || (units * pricePerUnit);
+    return { name: p.name || "", units, revenue };
+  });
+
+  const tokRevenue = d.tokopediaRevenue || 0;
+  const shopRevenue = d.shopeeRevenue || 0;
+  const prevTokRevenue = d.previousTokopediaRevenue || 0;
+  const prevShopRevenue = d.previousShopeeRevenue || 0;
+
   return {
-    totalCombinedRevenue: d.totalCombinedRevenue || 0,
-    previousCombinedRevenue: d.previousCombinedRevenue || 0,
+    totalCombinedRevenue: tokRevenue + shopRevenue,
+    previousCombinedRevenue: prevTokRevenue + prevShopRevenue,
     totalUnitsSold: d.totalUnitsSold || 0,
     previousUnitsSold: d.previousUnitsSold || 0,
     tokopedia: {
-      revenue: d.tokopediaRevenue || 0,
+      revenue: tokRevenue,
+      previousRevenue: prevTokRevenue,
       gmv: d.tokopediaGmv || 0,
+      previousGmv: d.previousTokopediaGmv || 0,
       unitsSold: d.tokopediaUnitsSold || 0,
+      previousUnitsSold: d.previousTokopediaUnitsSold || 0,
       visitors: d.tokopediaVisitors || 0,
+      previousVisitors: d.previousTokopediaVisitors || 0,
       pageViews: d.tokopediaPageViews || 0,
-      topProducts: (d.tokopediaTopProducts || []).map((p: any) => ({ name: p.name || "", units: p.units || 0, revenue: p.revenue || 0 })),
+      previousPageViews: d.previousTokopediaPageViews || 0,
+      topProducts: tokProducts,
     },
     shopee: {
-      revenue: d.shopeeRevenue || 0,
+      revenue: shopRevenue,
+      previousRevenue: prevShopRevenue,
       orders: d.shopeeOrders || 0,
+      previousOrders: d.previousShopeeOrders || 0,
       visitors: d.shopeeVisitors || 0,
+      previousVisitors: d.previousShopeeVisitors || 0,
       productClick: d.shopeeProductClick || 0,
+      previousProductClick: d.previousShopeeProductClick || 0,
       cancelledOrders: d.shopeeCancelledOrders || 0,
-      topProducts: (d.shopeeTopProducts || []).map((p: any) => ({ name: p.name || "", units: p.units || 0, revenue: p.revenue || 0 })),
+      previousCancelledOrders: d.previousShopeeCancelledOrders || 0,
+      topProducts: shopProducts,
     },
   };
 }

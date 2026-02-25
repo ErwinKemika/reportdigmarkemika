@@ -95,18 +95,28 @@ export interface MarketplaceData {
   previousUnitsSold: number;
   tokopedia: {
     revenue: number;
+    previousRevenue: number;
     gmv: number;
+    previousGmv: number;
     unitsSold: number;
+    previousUnitsSold: number;
     visitors: number;
+    previousVisitors: number;
     pageViews: number;
+    previousPageViews: number;
     topProducts: { name: string; units: number; revenue: number }[];
   };
   shopee: {
     revenue: number;
+    previousRevenue: number;
     orders: number;
+    previousOrders: number;
     visitors: number;
+    previousVisitors: number;
     productClick: number;
+    previousProductClick: number;
     cancelledOrders: number;
+    previousCancelledOrders: number;
     topProducts: { name: string; units: number; revenue: number }[];
   };
 }
@@ -329,7 +339,7 @@ const marketplaceJan: MarketplaceData = {
   totalUnitsSold: 3090,
   previousUnitsSold: 2700,
   tokopedia: {
-    revenue: 195000000, gmv: 220000000, unitsSold: 1240, visitors: 28500, pageViews: 85200,
+    revenue: 195000000, previousRevenue: 170000000, gmv: 220000000, previousGmv: 195000000, unitsSold: 1240, previousUnitsSold: 1050, visitors: 28500, previousVisitors: 25000, pageViews: 85200, previousPageViews: 75000,
     topProducts: [
       { name: "Brightening Serum 30ml", units: 280, revenue: 52920000 },
       { name: "Daily Moisturizer SPF30", units: 220, revenue: 31900000 },
@@ -337,7 +347,7 @@ const marketplaceJan: MarketplaceData = {
     ],
   },
   shopee: {
-    revenue: 230000000, orders: 1850, visitors: 35200, productClick: 22400, cancelledOrders: 85,
+    revenue: 230000000, previousRevenue: 210000000, orders: 1850, previousOrders: 1600, visitors: 35200, previousVisitors: 30000, productClick: 22400, previousProductClick: 19000, cancelledOrders: 85, previousCancelledOrders: 95,
     topProducts: [
       { name: "Brightening Serum 30ml", units: 350, revenue: 66150000 },
       { name: "Daily Moisturizer SPF30", units: 310, revenue: 44950000 },
@@ -352,7 +362,7 @@ const marketplaceFeb: MarketplaceData = {
   totalUnitsSold: 3430,
   previousUnitsSold: 3090,
   tokopedia: {
-    revenue: 215000000, gmv: 245000000, unitsSold: 1380, visitors: 31200, pageViews: 92400,
+    revenue: 215000000, previousRevenue: 195000000, gmv: 245000000, previousGmv: 220000000, unitsSold: 1380, previousUnitsSold: 1240, visitors: 31200, previousVisitors: 28500, pageViews: 92400, previousPageViews: 85200,
     topProducts: [
       { name: "Valentine Gift Set", units: 320, revenue: 95680000 },
       { name: "Brightening Serum 30ml", units: 300, revenue: 56700000 },
@@ -360,7 +370,7 @@ const marketplaceFeb: MarketplaceData = {
     ],
   },
   shopee: {
-    revenue: 265000000, orders: 2050, visitors: 38600, productClick: 25800, cancelledOrders: 72,
+    revenue: 265000000, previousRevenue: 230000000, orders: 2050, previousOrders: 1850, visitors: 38600, previousVisitors: 35200, productClick: 25800, previousProductClick: 22400, cancelledOrders: 72, previousCancelledOrders: 85,
     topProducts: [
       { name: "Valentine Gift Set", units: 380, revenue: 113620000 },
       { name: "Brightening Serum 30ml", units: 360, revenue: 68040000 },
