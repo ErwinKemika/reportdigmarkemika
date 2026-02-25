@@ -14,7 +14,7 @@ import ShopeeAdsPage from "./pages/ShopeeAdsPage";
 import AdsBudgetPage from "./pages/AdsBudgetPage";
 import InsightsPage from "./pages/InsightsPage";
 import RecommendationsPage from "./pages/RecommendationsPage";
-import ClosingPage from "./pages/ClosingPage";
+import ExecutionPage from "./pages/ExecutionPage";
 import ROIRevenuePage from "./pages/ROIRevenuePage";
 import BenchmarkPage from "./pages/BenchmarkPage";
 import AuthPage from "./pages/AuthPage";
@@ -36,7 +36,7 @@ function AppRoutes() {
         <Route path="/roi-revenue" element={<ROIRevenuePage />} />
         <Route path="/insights" element={<InsightsPage />} />
         <Route path="/recommendations" element={<RecommendationsPage />} />
-        <Route path="/closing" element={<ClosingPage />} />
+        <Route path="/execution" element={<ExecutionPage />} />
         <Route path="/admin-login" element={<AuthPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
