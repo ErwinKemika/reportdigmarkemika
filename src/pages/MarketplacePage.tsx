@@ -1,14 +1,17 @@
-import { useMonth } from "@/contexts/MonthContext";
+import { useMergedPageData } from "@/hooks/useMergedPageData";
 import { getMarketplaceData, formatCurrency, formatNumber, growthPercent } from "@/data/mockData";
+import { transformMarketplace } from "@/lib/dataTransformers";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { MetricCard } from "@/components/dashboard/MetricCard";
 import { NoData } from "@/components/dashboard/NoData";
 import { Store, TrendingUp, TrendingDown, ShoppingBag } from "lucide-react";
+import { useMonth } from "@/contexts/MonthContext";
 
 export default function MarketplacePage() {
   const { selectedMonth } = useMonth();
-  const data = getMarketplaceData(selectedMonth);
+  const { data, isLoading } = useMergedPageData("marketplace", getMarketplaceData, transformMarketplace);
 
+  if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
   if (!data) return <NoData month={selectedMonth} />;
 
   const revenueGrowth = growthPercent(data.totalCombinedRevenue, data.previousCombinedRevenue);

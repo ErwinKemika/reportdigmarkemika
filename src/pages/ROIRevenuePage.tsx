@@ -1,9 +1,11 @@
-import { useMonth } from "@/contexts/MonthContext";
+import { useMergedPageData } from "@/hooks/useMergedPageData";
 import { getROIRevenueData, formatCurrency, formatNumber } from "@/data/mockData";
+import { transformROIRevenue } from "@/lib/dataTransformers";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { KPICard } from "@/components/dashboard/KPICard";
 import { NoData } from "@/components/dashboard/NoData";
 import { Users, Briefcase, Landmark, DollarSign, PieChart, Lightbulb } from "lucide-react";
+import { useMonth } from "@/contexts/MonthContext";
 
 const STAGE_STYLES: Record<string, string> = {
   Won: "bg-status-won/10 text-status-won border border-status-won/20",
@@ -15,32 +17,22 @@ const STAGE_STYLES: Record<string, string> = {
 
 export default function ROIRevenuePage() {
   const { selectedMonth } = useMonth();
-  const data = getROIRevenueData(selectedMonth);
+  const { data, isLoading } = useMergedPageData("roi-revenue", getROIRevenueData, transformROIRevenue);
+
+  if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
   if (!data) return <NoData month={selectedMonth} />;
 
-  const totalInvestment =
-    data.investment.socialAds +
-    data.investment.websiteSEO +
-    data.investment.webstoreOps +
-    data.investment.marketplaceAds;
-
-  const projectedROI =
-    ((data.actualMarketplaceRevenue - totalInvestment) / totalInvestment) * 100;
-
-  const roas = data.actualMarketplaceRevenue / totalInvestment;
+  const totalInvestment = data.investment.socialAds + data.investment.websiteSEO + data.investment.webstoreOps + data.investment.marketplaceAds;
+  const projectedROI = totalInvestment > 0 ? ((data.actualMarketplaceRevenue - totalInvestment) / totalInvestment) * 100 : 0;
+  const roas = totalInvestment > 0 ? data.actualMarketplaceRevenue / totalInvestment : 0;
 
   const stageBadge = (stage: string) => {
     const style = STAGE_STYLES[stage] || "bg-muted text-muted-foreground";
-    return (
-      <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-md ${style}`}>
-        {stage}
-      </span>
-    );
+    return <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-md ${style}`}>{stage}</span>;
   };
 
   return (
     <div className="space-y-10 animate-fade-in">
-      {/* SECTION 1 — Lead Performance */}
       <section className="bg-tint-purple/50 rounded-2xl p-8">
         <SectionHeader title="Lead Performance" subtitle="B2B & B2G lead tracking" icon={<Users className="w-4 h-4" />} />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -51,11 +43,9 @@ export default function ROIRevenuePage() {
         </div>
       </section>
 
-      {/* SECTION 2 — Investment & Revenue */}
       <section>
         <SectionHeader title="Investment & Revenue" subtitle="Digital spend vs returns" icon={<PieChart className="w-4 h-4" />} />
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
-          {/* Left — 3 cards */}
           <div className="lg:col-span-2 space-y-5">
             <div className="bg-card rounded-xl p-6 shadow-card border border-border/40 border-l-[3px] border-l-channel-shopee">
               <p className="text-label text-muted-foreground uppercase tracking-wider mb-2">Total Digital Investment</p>
@@ -67,25 +57,19 @@ export default function ROIRevenuePage() {
                 <span>Marketplace Ads: {formatCurrency(data.investment.marketplaceAds)}</span>
               </div>
             </div>
-
             <div className="bg-card rounded-xl p-6 shadow-card border border-border/40 border-l-[3px] border-l-success">
               <p className="text-label text-muted-foreground uppercase tracking-wider mb-2">Actual Marketplace Revenue</p>
               <p className="text-kpi font-extrabold text-success tracking-tight">{formatCurrency(data.actualMarketplaceRevenue)}</p>
               <p className="mt-2 text-xs font-semibold text-foreground/70">ROAS {roas.toFixed(2)}x</p>
             </div>
-
             <div className={`rounded-xl p-6 shadow-hero text-primary-foreground ${projectedROI >= 0 ? "gradient-success" : "gradient-danger"}`}>
               <p className="text-label uppercase tracking-wider opacity-80 mb-2">Projected Digital ROI</p>
               <p className="text-kpi-lg font-extrabold tracking-tight">{projectedROI.toFixed(1)}%</p>
               <p className="mt-2 text-xs opacity-60">(Revenue − Investment) ÷ Investment × 100</p>
             </div>
           </div>
-
-          {/* Right — Lead Pipeline Table */}
           <div className="lg:col-span-3 bg-card rounded-xl shadow-card border border-border/40 overflow-hidden">
-            <div className="px-6 py-5 border-b border-border/40">
-              <h3 className="text-section-title text-card-foreground">Lead Pipeline</h3>
-            </div>
+            <div className="px-6 py-5 border-b border-border/40"><h3 className="text-section-title text-card-foreground">Lead Pipeline</h3></div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -112,7 +96,6 @@ export default function ROIRevenuePage() {
         </div>
       </section>
 
-      {/* Insight Summary */}
       <section>
         <div className="bg-tint-blue rounded-xl p-6 shadow-card border-l-4 border-l-channel-google border border-channel-google/15">
           <div className="flex items-center gap-2.5 mb-3">

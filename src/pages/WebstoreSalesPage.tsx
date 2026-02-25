@@ -1,30 +1,28 @@
-import { useMonth } from "@/contexts/MonthContext";
+import { useMergedPageData } from "@/hooks/useMergedPageData";
 import { getWebstoreSalesData, formatCurrency, formatNumber, growthPercent } from "@/data/mockData";
+import { transformWebstoreSales } from "@/lib/dataTransformers";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
 import { ShoppingCart, Eye, Package, TrendingUp, TrendingDown } from "lucide-react";
+import { useMonth } from "@/contexts/MonthContext";
 
 export default function WebstoreSalesPage() {
   const { selectedMonth } = useMonth();
-  const data = getWebstoreSalesData(selectedMonth);
+  const { data, isLoading } = useMergedPageData("webstore-sales", getWebstoreSalesData, transformWebstoreSales);
 
+  if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
   if (!data) return <NoData month={selectedMonth} />;
 
   const revenueGrowth = growthPercent(data.totalRevenue, data.previousRevenue);
 
   return (
     <div className="space-y-10 animate-fade-in">
-      {/* Hero Revenue Card */}
       <div className="bg-card rounded-2xl border border-border/40 p-8 shadow-hero border-l-[4px] border-l-success">
         <SectionHeader title="Webstore Sales" subtitle={selectedMonth} icon={<ShoppingCart className="w-4 h-4" />} />
         <div className="flex items-end gap-4">
           <span className="text-kpi-lg text-card-foreground tracking-tight">{formatCurrency(data.totalRevenue)}</span>
           <div className="flex items-center gap-1.5 mb-2">
-            {revenueGrowth >= 0 ? (
-              <TrendingUp className="w-4 h-4 text-success" />
-            ) : (
-              <TrendingDown className="w-4 h-4 text-destructive" />
-            )}
+            {revenueGrowth >= 0 ? <TrendingUp className="w-4 h-4 text-success" /> : <TrendingDown className="w-4 h-4 text-destructive" />}
             <span className={`text-sm font-semibold ${revenueGrowth >= 0 ? "text-success" : "text-destructive"}`}>
               {revenueGrowth >= 0 ? "+" : ""}{revenueGrowth.toFixed(1)}%
             </span>
@@ -33,7 +31,6 @@ export default function WebstoreSalesPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Top Products Viewed */}
         <section className="bg-card rounded-xl border border-border/40 p-6 shadow-card hover:shadow-card-hover transition-all duration-300">
           <SectionHeader title="Top 5 Product Viewed" icon={<Eye className="w-4 h-4" />} />
           <div className="space-y-1">
@@ -49,7 +46,6 @@ export default function WebstoreSalesPage() {
           </div>
         </section>
 
-        {/* Top Products Sold */}
         <section className="bg-card rounded-xl border border-border/40 p-6 shadow-card hover:shadow-card-hover transition-all duration-300">
           <SectionHeader title="Top 5 Product Sold" icon={<Package className="w-4 h-4" />} />
           <div className="overflow-x-auto">

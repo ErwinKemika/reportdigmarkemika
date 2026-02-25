@@ -1,14 +1,17 @@
-import { useMonth } from "@/contexts/MonthContext";
+import { useMergedPageData } from "@/hooks/useMergedPageData";
 import { getRecommendationsData } from "@/data/mockData";
+import { transformRecommendations } from "@/lib/dataTransformers";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
 import { ActionTag } from "@/components/dashboard/ActionTag";
 import { ClipboardList, Globe, Store, Clock } from "lucide-react";
+import { useMonth } from "@/contexts/MonthContext";
 
 export default function RecommendationsPage() {
   const { selectedMonth } = useMonth();
-  const data = getRecommendationsData(selectedMonth);
+  const { data, isLoading } = useMergedPageData("recommendations", getRecommendationsData, transformRecommendations);
 
+  if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
   if (!data) return <NoData month={selectedMonth} />;
 
   const ActionPlanSection = ({ title, subtitle, items }: { title: string; subtitle: string; items: { action: string; tag: string }[] }) => (
@@ -34,7 +37,6 @@ export default function RecommendationsPage() {
       <SectionHeader title="Recommendation & Action Plan" subtitle={selectedMonth} icon={<ClipboardList className="w-4 h-4" />} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Optimasi Website */}
         <div className="bg-card rounded-xl border border-border/40 p-6 shadow-card">
           <div className="flex items-center gap-2.5 mb-5">
             <Globe className="w-4 h-4 text-foreground" />
@@ -50,7 +52,6 @@ export default function RecommendationsPage() {
           </ul>
         </div>
 
-        {/* Optimasi Marketplace */}
         <div className="bg-card rounded-xl border border-border/40 p-6 shadow-card">
           <div className="flex items-center gap-2.5 mb-5">
             <Store className="w-4 h-4 text-foreground" />
@@ -67,7 +68,6 @@ export default function RecommendationsPage() {
         </div>
       </div>
 
-      {/* Action Plans */}
       <div className="flex items-center gap-2.5 mb-2">
         <Clock className="w-4 h-4 text-foreground" />
         <h3 className="text-section-title text-foreground">Next Action Plan</h3>
