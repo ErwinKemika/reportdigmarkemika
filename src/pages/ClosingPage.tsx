@@ -1,13 +1,16 @@
-import { useMonth } from "@/contexts/MonthContext";
+import { useMergedPageData } from "@/hooks/useMergedPageData";
 import { getClosingData } from "@/data/mockData";
+import { transformClosing } from "@/lib/dataTransformers";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
 import { Flag, FileText, Star, Crosshair, TrendingUp, Target, DollarSign } from "lucide-react";
+import { useMonth } from "@/contexts/MonthContext";
 
 export default function ClosingPage() {
   const { selectedMonth } = useMonth();
-  const data = getClosingData(selectedMonth);
+  const { data, isLoading } = useMergedPageData("closing", getClosingData, transformClosing);
 
+  if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
   if (!data) return <NoData month={selectedMonth} />;
 
   const targetKPIs = [
@@ -20,7 +23,6 @@ export default function ClosingPage() {
     <div className="space-y-10 animate-fade-in">
       <SectionHeader title="Closing & Summary" subtitle={selectedMonth} icon={<Flag className="w-4 h-4" />} />
 
-      {/* Monthly Summary */}
       <div className="bg-tint-blue rounded-xl border border-channel-google/15 p-8 shadow-card">
         <div className="flex items-center gap-2.5 mb-4">
           <FileText className="w-4 h-4 text-channel-google" />
@@ -30,7 +32,6 @@ export default function ClosingPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Highlights */}
         <div className="bg-tint-green rounded-xl border border-success/15 p-6 shadow-card">
           <div className="flex items-center gap-2.5 mb-5">
             <Star className="w-4 h-4 text-warning" />
@@ -46,7 +47,6 @@ export default function ClosingPage() {
           </ul>
         </div>
 
-        {/* Focus Area */}
         <div className="bg-tint-purple rounded-xl border border-channel-meta/15 p-6 shadow-card">
           <div className="flex items-center gap-2.5 mb-4">
             <Crosshair className="w-4 h-4 text-channel-meta" />
@@ -56,7 +56,6 @@ export default function ClosingPage() {
         </div>
       </div>
 
-      {/* Target KPIs */}
       <div>
         <h3 className="text-section-title text-foreground mb-5">Target Next Month KPI</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">

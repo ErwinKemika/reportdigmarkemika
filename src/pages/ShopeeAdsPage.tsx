@@ -1,21 +1,23 @@
-import { useMonth } from "@/contexts/MonthContext";
+import { useMergedPageData } from "@/hooks/useMergedPageData";
 import { getShopeeAdsData, formatCurrency, formatNumber, growthPercent } from "@/data/mockData";
+import { transformShopeeAds } from "@/lib/dataTransformers";
 import { KPICard } from "@/components/dashboard/KPICard";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
 import { ShoppingBag, TrendingUp, TrendingDown } from "lucide-react";
+import { useMonth } from "@/contexts/MonthContext";
 
 export default function ShopeeAdsPage() {
   const { selectedMonth } = useMonth();
-  const data = getShopeeAdsData(selectedMonth);
+  const { data, isLoading } = useMergedPageData("shopee-ads", getShopeeAdsData, transformShopeeAds);
 
+  if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
   if (!data) return <NoData month={selectedMonth} />;
 
   const roasGrowth = growthPercent(data.roas, data.previousRoas);
 
   return (
     <div className="space-y-10 animate-fade-in">
-      {/* Hero KPI Section */}
       <section className="bg-tint-orange/50 rounded-2xl p-8">
         <SectionHeader title="Shopee Ads KPIs" subtitle={selectedMonth} icon={<ShoppingBag className="w-4 h-4 text-channel-shopee" />} />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -40,7 +42,6 @@ export default function ShopeeAdsPage() {
         </div>
       </section>
 
-      {/* Product Cards */}
       <section>
         <SectionHeader title="Product Performance" subtitle="Individual product ads metrics" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">

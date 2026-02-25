@@ -1,14 +1,17 @@
-import { useMonth } from "@/contexts/MonthContext";
+import { useMergedPageData } from "@/hooks/useMergedPageData";
 import { getOverviewData } from "@/data/mockData";
+import { transformOverview } from "@/lib/dataTransformers";
 import { KPICard } from "@/components/dashboard/KPICard";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
 import { Globe, ShoppingBag, Store, Target } from "lucide-react";
+import { useMonth } from "@/contexts/MonthContext";
 
 export default function OverviewPage() {
   const { selectedMonth } = useMonth();
-  const data = getOverviewData(selectedMonth);
+  const { data, isLoading } = useMergedPageData("overview", getOverviewData, transformOverview);
 
+  if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
   if (!data) return <NoData month={selectedMonth} />;
 
   return (

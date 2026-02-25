@@ -1,13 +1,16 @@
-import { useMonth } from "@/contexts/MonthContext";
+import { useMergedPageData } from "@/hooks/useMergedPageData";
 import { getInsightsData } from "@/data/mockData";
+import { transformInsights } from "@/lib/dataTransformers";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
 import { Lightbulb, ThumbsUp, ThumbsDown, Award, Target, FileText } from "lucide-react";
+import { useMonth } from "@/contexts/MonthContext";
 
 export default function InsightsPage() {
   const { selectedMonth } = useMonth();
-  const data = getInsightsData(selectedMonth);
+  const { data, isLoading } = useMergedPageData("insights", getInsightsData, transformInsights);
 
+  if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
   if (!data) return <NoData month={selectedMonth} />;
 
   return (
@@ -15,7 +18,6 @@ export default function InsightsPage() {
       <SectionHeader title="Insight & Analysis" subtitle={selectedMonth} icon={<Lightbulb className="w-4 h-4" />} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Key Insights */}
         <div className="bg-tint-blue rounded-xl border border-channel-google/15 p-6 shadow-card">
           <div className="flex items-center gap-2.5 mb-5">
             <Lightbulb className="w-4 h-4 text-channel-google" />
@@ -31,7 +33,6 @@ export default function InsightsPage() {
           </ul>
         </div>
 
-        {/* Supporting Factors */}
         <div className="bg-tint-green rounded-xl border border-success/15 p-6 shadow-card">
           <div className="flex items-center gap-2.5 mb-5">
             <ThumbsUp className="w-4 h-4 text-success" />
@@ -47,7 +48,6 @@ export default function InsightsPage() {
           </ul>
         </div>
 
-        {/* Limiting Factors */}
         <div className="bg-tint-red rounded-xl border border-destructive/15 p-6 shadow-card">
           <div className="flex items-center gap-2.5 mb-5">
             <ThumbsDown className="w-4 h-4 text-destructive" />
@@ -63,7 +63,6 @@ export default function InsightsPage() {
           </ul>
         </div>
 
-        {/* Best Channel & Achievement */}
         <div className="space-y-5">
           <div className="bg-card rounded-xl border border-border/40 p-6 shadow-card">
             <div className="flex items-center gap-2.5 mb-3">
@@ -79,16 +78,12 @@ export default function InsightsPage() {
             </div>
             <p className={`text-kpi font-extrabold tracking-tight ${data.achievementPercent >= 100 ? "text-success" : data.achievementPercent >= 75 ? "text-warning" : "text-destructive"}`}>{data.achievementPercent}%</p>
             <div className="w-full bg-muted rounded-full h-2.5 mt-4 overflow-hidden">
-              <div
-                className="gradient-primary h-2.5 rounded-full transition-all duration-700 ease-out"
-                style={{ width: `${Math.min(data.achievementPercent, 100)}%` }}
-              />
+              <div className="gradient-primary h-2.5 rounded-full transition-all duration-700 ease-out" style={{ width: `${Math.min(data.achievementPercent, 100)}%` }} />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Insight Summary */}
       <div className="bg-tint-blue rounded-xl border-l-4 border-l-channel-google border border-channel-google/15 p-6 shadow-card">
         <div className="flex items-center gap-2.5 mb-3">
           <FileText className="w-4 h-4 text-channel-google" />
