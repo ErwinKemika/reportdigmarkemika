@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMonth } from "@/contexts/MonthContext";
 import { usePageData, useUpsertPageData } from "@/hooks/usePageData";
@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { formatCurrency } from "@/data/mockData";
 
 interface PageEditDialogProps {
   schema: PageSchema;
@@ -34,6 +35,13 @@ export function PageEditDialog({ schema }: PageEditDialogProps) {
       setValues({});
     }
   }, [open, existingData]);
+
+  // Auto-calculated total revenue for webstore
+  const autoTotalRevenue = useMemo(() => {
+    if (schema.pageKey !== "webstore-sales") return null;
+    const products: any[] = values.topProductsSold || [];
+    return products.reduce((sum: number, p: any) => sum + ((p.units || 0) * (p.pricePerUnit || 0)), 0);
+  }, [schema.pageKey, values.topProductsSold]);
 
   if (!isAdmin) return null;
 
@@ -118,6 +126,7 @@ export function PageEditDialog({ schema }: PageEditDialogProps) {
 
   const renderArrayField = (af: ArrayFieldDef) => {
     const rows: any[] = values[af.key] || [];
+    const isWebstoreProducts = schema.pageKey === "webstore-sales" && af.key === "topProductsSold";
     return (
       <div key={af.key} className="space-y-3">
         <div className="flex items-center justify-between">
@@ -131,34 +140,51 @@ export function PageEditDialog({ schema }: PageEditDialogProps) {
         {rows.length === 0 && (
           <p className="text-xs text-muted-foreground italic">No items yet. Click "Add Row" to start.</p>
         )}
-        {rows.map((row, ri) => (
-          <div key={ri} className="flex items-start gap-2 p-3 bg-muted/30 rounded-lg">
-            <div className="flex-1 grid grid-cols-2 gap-2">
-              {af.columns.map(col => (
-                <div key={col.key} className="space-y-1">
-                  <Label className="text-[10px] text-muted-foreground">{col.label}</Label>
-                  <Input
-                    type={col.type === "text" ? "text" : "number"}
-                    step={col.type === "percent" ? "0.01" : "1"}
-                    min="0"
-                    value={row[col.key] ?? ""}
-                    onChange={e => handleArrayChange(af.key, ri, col.key, e.target.value, col.type)}
-                    className="h-8 text-sm"
-                  />
-                </div>
-              ))}
+        {rows.map((row, ri) => {
+          const rowRevenue = isWebstoreProducts ? (row.units || 0) * (row.pricePerUnit || 0) : 0;
+          return (
+            <div key={ri} className="flex items-start gap-2 p-3 bg-muted/30 rounded-lg">
+              <div className="flex-1 grid grid-cols-2 gap-2">
+                {af.columns.map(col => (
+                  <div key={col.key} className="space-y-1">
+                    <Label className="text-[10px] text-muted-foreground">{col.label}</Label>
+                    <Input
+                      type={col.type === "text" ? "text" : "number"}
+                      step={col.type === "percent" ? "0.01" : "1"}
+                      min="0"
+                      value={row[col.key] ?? ""}
+                      onChange={e => handleArrayChange(af.key, ri, col.key, e.target.value, col.type)}
+                      className="h-8 text-sm"
+                    />
+                  </div>
+                ))}
+                {isWebstoreProducts && (
+                  <div className="space-y-1">
+                    <Label className="text-[10px] text-muted-foreground">Revenue (auto)</Label>
+                    <div className="h-8 flex items-center text-sm font-semibold text-success px-3 bg-muted/50 rounded-md">
+                      {formatCurrency(rowRevenue)}
+                    </div>
+                  </div>
+                )}
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => removeArrayRow(af.key, ri)}
+                className="h-8 w-8 p-0 mt-5 text-destructive hover:text-destructive"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </Button>
             </div>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => removeArrayRow(af.key, ri)}
-              className="h-8 w-8 p-0 mt-5 text-destructive hover:text-destructive"
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-            </Button>
+          );
+        })}
+        {isWebstoreProducts && rows.length > 0 && (
+          <div className="flex justify-between items-center pt-2 border-t border-border/40">
+            <span className="text-xs font-semibold text-muted-foreground uppercase">Total Revenue</span>
+            <span className="text-sm font-bold text-success">{formatCurrency(autoTotalRevenue || 0)}</span>
           </div>
-        ))}
+        )}
       </div>
     );
   };
