@@ -4,8 +4,11 @@ import { transformROIRevenue } from "@/lib/dataTransformers";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { KPICard } from "@/components/dashboard/KPICard";
 import { NoData } from "@/components/dashboard/NoData";
-import { Users, Briefcase, Landmark, DollarSign, PieChart, Lightbulb } from "lucide-react";
+import { Users, Briefcase, Landmark, DollarSign, PieChart, Lightbulb, Sparkles, Loader2 } from "lucide-react";
 import { useMonth } from "@/contexts/MonthContext";
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const STAGE_STYLES: Record<string, string> = {
   Won: "bg-status-won/10 text-status-won border border-status-won/20",
@@ -18,6 +21,8 @@ const STAGE_STYLES: Record<string, string> = {
 export default function ROIRevenuePage() {
   const { selectedMonth } = useMonth();
   const { data, isLoading } = useMergedPageData("roi-revenue", getROIRevenueData, transformROIRevenue);
+  const [aiInsight, setAiInsight] = useState<string | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
   if (!data) return <NoData month={selectedMonth} />;
@@ -25,6 +30,38 @@ export default function ROIRevenuePage() {
   const totalInvestment = data.investment.socialAds + data.investment.websiteSEO + data.investment.webstoreOps + data.investment.marketplaceAds;
   const projectedROI = totalInvestment > 0 ? ((data.actualMarketplaceRevenue - totalInvestment) / totalInvestment) * 100 : 0;
   const roas = totalInvestment > 0 ? data.actualMarketplaceRevenue / totalInvestment : 0;
+
+  const generateInsight = async () => {
+    setIsGenerating(true);
+    try {
+      const { data: result, error } = await supabase.functions.invoke("generate-roi-insight", {
+        body: {
+          data: {
+            b2bLeads: data.b2bLeads,
+            b2gLeads: data.b2gLeads,
+            totalLeads: data.totalLeads,
+            estimatedRevenue: data.estimatedRevenue,
+            investment: data.investment,
+            actualMarketplaceRevenue: data.actualMarketplaceRevenue,
+            projectedROI,
+            roas,
+            leadPipeline: data.leadPipeline,
+          },
+        },
+      });
+      if (error) throw error;
+      if (result?.error) {
+        toast.error(result.error);
+      } else {
+        setAiInsight(result.insight);
+      }
+    } catch (e: any) {
+      console.error(e);
+      toast.error("Gagal generate insight. Coba lagi nanti.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   const stageBadge = (stage: string) => {
     const style = STAGE_STYLES[stage] || "bg-muted text-muted-foreground";
@@ -98,11 +135,31 @@ export default function ROIRevenuePage() {
 
       <section>
         <div className="bg-tint-blue rounded-xl p-6 shadow-card border-l-4 border-l-channel-google border border-channel-google/15">
-          <div className="flex items-center gap-2.5 mb-3">
-            <Lightbulb className="w-4 h-4 text-channel-google" />
-            <h3 className="text-sm font-semibold text-card-foreground">Insight Summary</h3>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2.5">
+              <Lightbulb className="w-4 h-4 text-channel-google" />
+              <h3 className="text-sm font-semibold text-card-foreground">Insight Summary</h3>
+            </div>
+            <button
+              onClick={generateInsight}
+              disabled={isGenerating}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-channel-google/10 text-channel-google hover:bg-channel-google/20 transition-colors disabled:opacity-50"
+            >
+              {isGenerating ? (
+                <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Generating...</>
+              ) : (
+                <><Sparkles className="w-3.5 h-3.5" /> Generate dengan AI</>
+              )}
+            </button>
           </div>
-          <p className="text-sm text-muted-foreground leading-relaxed">{data.insightSummary}</p>
+          {isGenerating ? (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground py-2">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>AI sedang menganalisis data...</span>
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground leading-relaxed">{aiInsight || data.insightSummary}</p>
+          )}
         </div>
       </section>
     </div>
