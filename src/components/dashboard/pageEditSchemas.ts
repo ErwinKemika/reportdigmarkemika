@@ -1,6 +1,6 @@
 // Page edit form schemas - defines fields for each page's Edit Data modal
 
-export type FieldType = "number" | "currency" | "percent" | "text" | "textarea";
+export type FieldType = "number" | "currency" | "percent" | "text" | "textarea" | "image";
 
 export interface FieldDef {
   key: string;
@@ -145,6 +145,8 @@ export const marketplaceSchema: PageSchema = {
         { key: "previousShopeeOrders", label: "Previous Orders", type: "number" },
         { key: "shopeeVisitors", label: "Visitors", type: "number" },
         { key: "previousShopeeVisitors", label: "Previous Visitors", type: "number" },
+        { key: "shopeePageViews", label: "Page Views", type: "number" },
+        { key: "previousShopeePageViews", label: "Previous Page Views", type: "number" },
         { key: "shopeeProductClick", label: "Product Clicks", type: "number" },
         { key: "previousShopeeProductClick", label: "Previous Product Clicks", type: "number" },
         { key: "shopeeCancelledOrders", label: "Cancelled Orders", type: "number" },
@@ -157,6 +159,7 @@ export const marketplaceSchema: PageSchema = {
       key: "tokopediaTopProducts",
       label: "Tokopedia Top Products",
       columns: [
+        { key: "imageUrl", label: "Product Image", type: "image" as FieldType },
         { key: "name", label: "Product Name", type: "text" },
         { key: "units", label: "Units Sold", type: "number" },
         { key: "pricePerUnit", label: "Price/Unit (Rp)", type: "currency" },
@@ -167,6 +170,7 @@ export const marketplaceSchema: PageSchema = {
       key: "shopeeTopProducts",
       label: "Shopee Top Products",
       columns: [
+        { key: "imageUrl", label: "Product Image", type: "image" as FieldType },
         { key: "name", label: "Product Name", type: "text" },
         { key: "units", label: "Units Sold", type: "number" },
         { key: "pricePerUnit", label: "Price/Unit (Rp)", type: "currency" },

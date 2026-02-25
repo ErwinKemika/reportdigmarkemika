@@ -80,13 +80,13 @@ export function transformMarketplace(d: Record<string, any>): MarketplaceData {
     const units = p.units || 0;
     const pricePerUnit = p.pricePerUnit || 0;
     const revenue = p.revenue || (units * pricePerUnit);
-    return { name: p.name || "", units, revenue };
+    return { name: p.name || "", units, revenue, imageUrl: p.imageUrl || "" };
   });
   const shopProducts = (d.shopeeTopProducts || []).map((p: any) => {
     const units = p.units || 0;
     const pricePerUnit = p.pricePerUnit || 0;
     const revenue = p.revenue || (units * pricePerUnit);
-    return { name: p.name || "", units, revenue };
+    return { name: p.name || "", units, revenue, imageUrl: p.imageUrl || "" };
   });
 
   const tokRevenue = d.tokopediaRevenue || 0;
@@ -123,6 +123,8 @@ export function transformMarketplace(d: Record<string, any>): MarketplaceData {
       previousOrders: d.previousShopeeOrders || 0,
       visitors: d.shopeeVisitors || 0,
       previousVisitors: d.previousShopeeVisitors || 0,
+      pageViews: d.shopeePageViews || 0,
+      previousPageViews: d.previousShopeePageViews || 0,
       productClick: d.shopeeProductClick || 0,
       previousProductClick: d.previousShopeeProductClick || 0,
       cancelledOrders: d.shopeeCancelledOrders || 0,

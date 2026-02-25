@@ -105,7 +105,7 @@ export interface MarketplaceData {
     previousVisitors: number;
     pageViews: number;
     previousPageViews: number;
-    topProducts: { name: string; units: number; revenue: number }[];
+    topProducts: { name: string; units: number; revenue: number; imageUrl?: string }[];
   };
   shopee: {
     revenue: number;
@@ -114,11 +114,13 @@ export interface MarketplaceData {
     previousOrders: number;
     visitors: number;
     previousVisitors: number;
+    pageViews: number;
+    previousPageViews: number;
     productClick: number;
     previousProductClick: number;
     cancelledOrders: number;
     previousCancelledOrders: number;
-    topProducts: { name: string; units: number; revenue: number }[];
+    topProducts: { name: string; units: number; revenue: number; imageUrl?: string }[];
   };
 }
 
@@ -349,7 +351,7 @@ const marketplaceJan: MarketplaceData = {
     ],
   },
   shopee: {
-    revenue: 230000000, previousRevenue: 210000000, orders: 1850, previousOrders: 1600, visitors: 35200, previousVisitors: 30000, productClick: 22400, previousProductClick: 19000, cancelledOrders: 85, previousCancelledOrders: 95,
+    revenue: 230000000, previousRevenue: 210000000, orders: 1850, previousOrders: 1600, visitors: 35200, previousVisitors: 30000, pageViews: 95000, previousPageViews: 82000, productClick: 22400, previousProductClick: 19000, cancelledOrders: 85, previousCancelledOrders: 95,
     topProducts: [
       { name: "Brightening Serum 30ml", units: 350, revenue: 66150000 },
       { name: "Daily Moisturizer SPF30", units: 310, revenue: 44950000 },
@@ -373,7 +375,7 @@ const marketplaceFeb: MarketplaceData = {
     ],
   },
   shopee: {
-    revenue: 265000000, previousRevenue: 230000000, orders: 2050, previousOrders: 1850, visitors: 38600, previousVisitors: 35200, productClick: 25800, previousProductClick: 22400, cancelledOrders: 72, previousCancelledOrders: 85,
+    revenue: 265000000, previousRevenue: 230000000, orders: 2050, previousOrders: 1850, visitors: 38600, previousVisitors: 35200, pageViews: 105000, previousPageViews: 95000, productClick: 25800, previousProductClick: 22400, cancelledOrders: 72, previousCancelledOrders: 85,
     topProducts: [
       { name: "Valentine Gift Set", units: 380, revenue: 113620000 },
       { name: "Brightening Serum 30ml", units: 360, revenue: 68040000 },
