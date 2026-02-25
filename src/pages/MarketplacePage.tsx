@@ -76,12 +76,8 @@ export default function MarketplacePage() {
           <div className="space-y-1">
             {data.tokopedia.topProducts.map((p, i) => (
               <div key={i} className="flex justify-between items-center py-2.5 border-b border-border/20 last:border-0">
-                <div className="flex items-center gap-2.5">
-                  {p.imageUrl ? (
-                    <img src={p.imageUrl} alt={p.name} className="w-8 h-8 rounded-lg object-cover" />
-                  ) : (
-                    <span className="w-6 h-6 rounded-lg bg-channel-tokopedia text-primary-foreground flex items-center justify-center text-xs font-bold">{i + 1}</span>
-                  )}
+                 <div className="flex items-center gap-2.5">
+                   <span className="w-6 h-6 rounded-lg bg-channel-tokopedia text-primary-foreground flex items-center justify-center text-xs font-bold">{i + 1}</span>
                   <div>
                     <span className="text-sm font-medium">{p.name}</span>
                     <p className="text-xs text-muted-foreground">{p.units.toLocaleString("id-ID")} unit terjual</p>
@@ -126,12 +122,8 @@ export default function MarketplacePage() {
           <div className="space-y-1">
             {data.shopee.topProducts.map((p, i) => (
               <div key={i} className="flex justify-between items-center py-2.5 border-b border-border/20 last:border-0">
-                <div className="flex items-center gap-2.5">
-                  {p.imageUrl ? (
-                    <img src={p.imageUrl} alt={p.name} className="w-8 h-8 rounded-lg object-cover" />
-                  ) : (
-                    <span className="w-6 h-6 rounded-lg bg-channel-shopee text-primary-foreground flex items-center justify-center text-xs font-bold">{i + 1}</span>
-                  )}
+                 <div className="flex items-center gap-2.5">
+                   <span className="w-6 h-6 rounded-lg bg-channel-shopee text-primary-foreground flex items-center justify-center text-xs font-bold">{i + 1}</span>
                   <div>
                     <span className="text-sm font-medium">{p.name}</span>
                     <p className="text-xs text-muted-foreground">{p.units.toLocaleString("id-ID")} unit terjual</p>

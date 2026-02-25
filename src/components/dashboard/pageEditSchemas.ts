@@ -159,7 +159,6 @@ export const marketplaceSchema: PageSchema = {
       key: "tokopediaTopProducts",
       label: "Tokopedia Top Products",
       columns: [
-        { key: "imageUrl", label: "Product Image", type: "image" as FieldType },
         { key: "name", label: "Product Name", type: "text" },
         { key: "units", label: "Units Sold", type: "number" },
         { key: "pricePerUnit", label: "Price/Unit (Rp)", type: "currency" },
@@ -170,7 +169,6 @@ export const marketplaceSchema: PageSchema = {
       key: "shopeeTopProducts",
       label: "Shopee Top Products",
       columns: [
-        { key: "imageUrl", label: "Product Image", type: "image" as FieldType },
         { key: "name", label: "Product Name", type: "text" },
         { key: "units", label: "Units Sold", type: "number" },
         { key: "pricePerUnit", label: "Price/Unit (Rp)", type: "currency" },
@@ -208,11 +206,13 @@ export const shopeeAdsSchema: PageSchema = {
       key: "products",
       label: "Product Ads",
       columns: [
+        { key: "imageUrl", label: "Product Image", type: "image" as FieldType },
         { key: "name", label: "Product Name", type: "text" },
         { key: "spend", label: "Spend (Rp)", type: "currency" },
         { key: "revenue", label: "Revenue (Rp)", type: "currency" },
         { key: "clicks", label: "Clicks", type: "number" },
         { key: "units", label: "Units", type: "number" },
+        { key: "views", label: "Views", type: "number" },
       ],
       maxRows: 10,
     },

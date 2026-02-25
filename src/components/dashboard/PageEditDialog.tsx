@@ -183,7 +183,7 @@ export function PageEditDialog({ schema }: PageEditDialogProps) {
   const renderArrayField = (af: ArrayFieldDef) => {
     const rows: any[] = values[af.key] || [];
     const isWebstoreProducts = schema.pageKey === "webstore-sales" && af.key === "topProductsSold";
-    const isMarketplaceProducts = schema.pageKey === "marketplace" && (af.key === "tokopediaTopProducts" || af.key === "shopeeTopProducts");
+    const isMarketplaceProducts = false;
     const showAutoRevenue = isWebstoreProducts || isMarketplaceProducts;
     return (
       <div key={af.key} className="space-y-3">
