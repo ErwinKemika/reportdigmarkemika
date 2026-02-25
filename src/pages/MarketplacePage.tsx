@@ -48,13 +48,13 @@ export default function MarketplacePage() {
         <section className="bg-card rounded-xl border border-border/40 p-6 shadow-card hover:shadow-card-hover transition-all duration-300 border-t-[3px] border-t-channel-tokopedia">
           <SectionHeader title="Tokopedia" icon={<Store className="w-4 h-4 text-channel-tokopedia" />} />
           <div className="grid grid-cols-3 gap-2 mb-4">
-            <MetricCard title="Revenue" value={data.tokopedia.revenue} format="currency" />
-            <MetricCard title="GMV" value={data.tokopedia.gmv} format="currency" />
-            <MetricCard title="Units Sold" value={data.tokopedia.unitsSold} />
+            <MetricCard title="Revenue" value={data.tokopedia.revenue} previousValue={data.tokopedia.previousRevenue} format="currency" />
+            <MetricCard title="GMV" value={data.tokopedia.gmv} previousValue={data.tokopedia.previousGmv} format="currency" />
+            <MetricCard title="Units Sold" value={data.tokopedia.unitsSold} previousValue={data.tokopedia.previousUnitsSold} />
           </div>
           <div className="grid grid-cols-2 gap-2 mb-6">
-            <MetricCard title="Visitors" value={data.tokopedia.visitors} />
-            <MetricCard title="Page Views" value={data.tokopedia.pageViews} />
+            <MetricCard title="Visitors" value={data.tokopedia.visitors} previousValue={data.tokopedia.previousVisitors} />
+            <MetricCard title="Page Views" value={data.tokopedia.pageViews} previousValue={data.tokopedia.previousPageViews} />
           </div>
           <p className="text-label text-muted-foreground uppercase tracking-wider mb-3">Top 3 Best Selling</p>
           <div className="space-y-1">
@@ -74,13 +74,13 @@ export default function MarketplacePage() {
         <section className="bg-card rounded-xl border border-border/40 p-6 shadow-card hover:shadow-card-hover transition-all duration-300 border-t-[3px] border-t-channel-shopee">
           <SectionHeader title="Shopee" icon={<ShoppingBag className="w-4 h-4 text-channel-shopee" />} />
           <div className="grid grid-cols-3 gap-2 mb-4">
-            <MetricCard title="Revenue" value={data.shopee.revenue} format="currency" />
-            <MetricCard title="Orders" value={data.shopee.orders} />
-            <MetricCard title="Visitors" value={data.shopee.visitors} />
+            <MetricCard title="Revenue" value={data.shopee.revenue} previousValue={data.shopee.previousRevenue} format="currency" />
+            <MetricCard title="Orders" value={data.shopee.orders} previousValue={data.shopee.previousOrders} />
+            <MetricCard title="Visitors" value={data.shopee.visitors} previousValue={data.shopee.previousVisitors} />
           </div>
           <div className="grid grid-cols-2 gap-2 mb-6">
-            <MetricCard title="Product Click" value={data.shopee.productClick} />
-            <MetricCard title="Cancelled" value={data.shopee.cancelledOrders} />
+            <MetricCard title="Product Click" value={data.shopee.productClick} previousValue={data.shopee.previousProductClick} />
+            <MetricCard title="Cancelled" value={data.shopee.cancelledOrders} previousValue={data.shopee.previousCancelledOrders} />
           </div>
           <p className="text-label text-muted-foreground uppercase tracking-wider mb-3">Top 3 Best Selling</p>
           <div className="space-y-1">

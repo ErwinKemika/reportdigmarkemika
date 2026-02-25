@@ -43,6 +43,17 @@ export function PageEditDialog({ schema }: PageEditDialogProps) {
     return products.reduce((sum: number, p: any) => sum + ((p.units || 0) * (p.pricePerUnit || 0)), 0);
   }, [schema.pageKey, values.topProductsSold]);
 
+  // Auto-calculated combined revenue for marketplace
+  const autoMarketplaceCombinedRevenue = useMemo(() => {
+    if (schema.pageKey !== "marketplace") return null;
+    return (Number(values.tokopediaRevenue) || 0) + (Number(values.shopeeRevenue) || 0);
+  }, [schema.pageKey, values.tokopediaRevenue, values.shopeeRevenue]);
+
+  const autoMarketplacePrevCombinedRevenue = useMemo(() => {
+    if (schema.pageKey !== "marketplace") return null;
+    return (Number(values.previousTokopediaRevenue) || 0) + (Number(values.previousShopeeRevenue) || 0);
+  }, [schema.pageKey, values.previousTokopediaRevenue, values.previousShopeeRevenue]);
+
   if (!isAdmin) return null;
 
   const handleFieldChange = (key: string, raw: string, type: string) => {
@@ -92,6 +103,26 @@ export function PageEditDialog({ schema }: PageEditDialogProps) {
 
   const renderFieldGroups = () => (
     <div className="space-y-6">
+      {/* Marketplace auto-calculated combined revenue */}
+      {schema.pageKey === "marketplace" && (
+        <div className="p-4 bg-muted/30 rounded-lg space-y-2">
+          <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Combined Revenue (Auto)</h4>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label className="text-[10px] text-muted-foreground">Total Combined Revenue</Label>
+              <div className="h-9 flex items-center text-sm font-bold text-success px-3 bg-muted/50 rounded-md">
+                {formatCurrency(autoMarketplaceCombinedRevenue || 0)}
+              </div>
+            </div>
+            <div>
+              <Label className="text-[10px] text-muted-foreground">Previous Combined Revenue</Label>
+              <div className="h-9 flex items-center text-sm font-bold text-muted-foreground px-3 bg-muted/50 rounded-md">
+                {formatCurrency(autoMarketplacePrevCombinedRevenue || 0)}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {schema.groups.map((group, gi) => (
         <div key={gi}>
           <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">{group.title}</h4>
@@ -127,6 +158,8 @@ export function PageEditDialog({ schema }: PageEditDialogProps) {
   const renderArrayField = (af: ArrayFieldDef) => {
     const rows: any[] = values[af.key] || [];
     const isWebstoreProducts = schema.pageKey === "webstore-sales" && af.key === "topProductsSold";
+    const isMarketplaceProducts = schema.pageKey === "marketplace" && (af.key === "tokopediaTopProducts" || af.key === "shopeeTopProducts");
+    const showAutoRevenue = isWebstoreProducts || isMarketplaceProducts;
     return (
       <div key={af.key} className="space-y-3">
         <div className="flex items-center justify-between">
@@ -141,7 +174,7 @@ export function PageEditDialog({ schema }: PageEditDialogProps) {
           <p className="text-xs text-muted-foreground italic">No items yet. Click "Add Row" to start.</p>
         )}
         {rows.map((row, ri) => {
-          const rowRevenue = isWebstoreProducts ? (row.units || 0) * (row.pricePerUnit || 0) : 0;
+          const rowRevenue = showAutoRevenue ? (row.units || 0) * (row.pricePerUnit || 0) : 0;
           return (
             <div key={ri} className="flex items-start gap-2 p-3 bg-muted/30 rounded-lg">
               <div className="flex-1 grid grid-cols-2 gap-2">
@@ -158,7 +191,7 @@ export function PageEditDialog({ schema }: PageEditDialogProps) {
                     />
                   </div>
                 ))}
-                {isWebstoreProducts && (
+                {showAutoRevenue && (
                   <div className="space-y-1">
                     <Label className="text-[10px] text-muted-foreground">Revenue (auto)</Label>
                     <div className="h-8 flex items-center text-sm font-semibold text-success px-3 bg-muted/50 rounded-md">
