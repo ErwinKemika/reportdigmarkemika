@@ -20,7 +20,7 @@ export default function WebstoreSalesPage() {
       <div className="bg-card rounded-2xl border border-border/40 p-8 shadow-hero border-l-[4px] border-l-success">
         <SectionHeader title="Webstore Sales" subtitle={selectedMonth} icon={<ShoppingCart className="w-4 h-4" />} />
         <div className="flex items-end gap-4">
-          <span className="text-kpi-lg text-card-foreground tracking-tight">{formatCurrency(data.totalRevenue)}</span>
+          <span className="text-kpi-lg text-card-foreground tracking-tight">Rp {data.totalRevenue.toLocaleString("id-ID")}</span>
           <div className="flex items-center gap-1.5 mb-2">
             {revenueGrowth >= 0 ? <TrendingUp className="w-4 h-4 text-success" /> : <TrendingDown className="w-4 h-4 text-destructive" />}
             <span className={`text-sm font-semibold ${revenueGrowth >= 0 ? "text-success" : "text-destructive"}`}>
