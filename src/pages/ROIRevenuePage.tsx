@@ -27,7 +27,7 @@ export default function ROIRevenuePage() {
   if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
   if (!data) return <NoData month={selectedMonth} />;
 
-  const totalInvestment = data.investment.socialAds + data.investment.websiteSEO + data.investment.webstoreOps + data.investment.marketplaceAds;
+  const totalInvestment = data.investment.ads + data.investment.websiteSEO + data.investment.maintenanceWebSosmed;
   const projectedROI = totalInvestment > 0 ? ((data.actualMarketplaceRevenue - totalInvestment) / totalInvestment) * 100 : 0;
   const roas = totalInvestment > 0 ? data.actualMarketplaceRevenue / totalInvestment : 0;
 
@@ -87,11 +87,10 @@ export default function ROIRevenuePage() {
             <div className="bg-card rounded-xl p-6 shadow-card border border-border/40 border-l-[3px] border-l-channel-shopee">
               <p className="text-label text-muted-foreground uppercase tracking-wider mb-2">Total Digital Investment</p>
               <p className="text-kpi font-extrabold text-card-foreground tracking-tight">{formatCurrencyFull(totalInvestment)}</p>
-              <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-muted-foreground">
-                <span>Social Ads: {formatCurrencyFull(data.investment.socialAds)}</span>
+              <div className="mt-4 grid grid-cols-3 gap-2 text-xs text-muted-foreground">
                 <span>Website/SEO: {formatCurrencyFull(data.investment.websiteSEO)}</span>
-                <span>Webstore Ops: {formatCurrencyFull(data.investment.webstoreOps)}</span>
-                <span>Marketplace Ads: {formatCurrencyFull(data.investment.marketplaceAds)}</span>
+                <span>Ads: {formatCurrencyFull(data.investment.ads)}</span>
+                <span>Maintenance Web&amp;Sosmed: {formatCurrencyFull(data.investment.maintenanceWebSosmed)}</span>
               </div>
             </div>
             <div className="bg-card rounded-xl p-6 shadow-card border border-border/40 border-l-[3px] border-l-success">

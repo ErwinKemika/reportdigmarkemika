@@ -29,10 +29,9 @@ serve(async (req) => {
     } = data;
 
     const totalInvestment =
-      investment.socialAds +
+      investment.ads +
       investment.websiteSEO +
-      investment.webstoreOps +
-      investment.marketplaceAds;
+      investment.maintenanceWebSosmed;
 
     const pipelineSummary = leadPipeline
       .map(
@@ -52,10 +51,9 @@ serve(async (req) => {
 - Total Leads: ${totalLeads.value} (bulan lalu: ${totalLeads.previousValue})
 - Est. Revenue: Rp ${estimatedRevenue.value.toLocaleString("id-ID")}
 - Total Digital Investment: Rp ${totalInvestment.toLocaleString("id-ID")}
-  - Social Ads: Rp ${investment.socialAds.toLocaleString("id-ID")}
   - Website/SEO: Rp ${investment.websiteSEO.toLocaleString("id-ID")}
-  - Webstore Ops: Rp ${investment.webstoreOps.toLocaleString("id-ID")}
-  - Marketplace Ads: Rp ${investment.marketplaceAds.toLocaleString("id-ID")}
+  - Ads: Rp ${investment.ads.toLocaleString("id-ID")}
+  - Maintenance Web&Sosmed: Rp ${investment.maintenanceWebSosmed.toLocaleString("id-ID")}
 - Actual Marketplace Revenue: Rp ${actualMarketplaceRevenue.toLocaleString("id-ID")}
 - ROAS: ${roas.toFixed(2)}x
 - Projected Digital ROI: ${projectedROI.toFixed(1)}%

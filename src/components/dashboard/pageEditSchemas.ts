@@ -272,10 +272,9 @@ export const roiRevenueSchema: PageSchema = {
     {
       title: "Investment Breakdown",
       fields: [
-        { key: "socialAds", label: "Social Ads (Rp)", type: "currency" },
         { key: "websiteSEO", label: "Website/SEO (Rp)", type: "currency" },
-        { key: "webstoreOps", label: "Webstore Ops (Rp)", type: "currency" },
-        { key: "marketplaceAds", label: "Marketplace Ads (Rp)", type: "currency" },
+        { key: "ads", label: "Ads (Rp)", type: "currency" },
+        { key: "maintenanceWebSosmed", label: "Maintenance Web&Sosmed (Rp)", type: "currency" },
       ],
     },
     {

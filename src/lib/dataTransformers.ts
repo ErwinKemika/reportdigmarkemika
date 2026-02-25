@@ -213,10 +213,9 @@ export function transformROIRevenue(d: Record<string, any>): ROIRevenueData {
     totalLeads: kpi(b2b + b2g, prevB2b + prevB2g),
     estimatedRevenue: kpi(autoEstRevenue || d.estimatedRevenue || 0, d.previousEstimatedRevenue || 0),
     investment: {
-      socialAds: d.socialAds || 0,
+      ads: (d.socialAds || 0) + (d.marketplaceAds || 0) + (d.ads || 0),
       websiteSEO: d.websiteSEO || 0,
-      webstoreOps: d.webstoreOps || 0,
-      marketplaceAds: d.marketplaceAds || 0,
+      maintenanceWebSosmed: d.webstoreOps || d.maintenanceWebSosmed || 0,
     },
     actualMarketplaceRevenue: d.actualMarketplaceRevenue || 0,
     leadPipeline,

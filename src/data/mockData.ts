@@ -183,10 +183,9 @@ export interface ROIRevenueData {
   totalLeads: KPIValue;
   estimatedRevenue: KPIValue;
   investment: {
-    socialAds: number;
+    ads: number;
     websiteSEO: number;
-    webstoreOps: number;
-    marketplaceAds: number;
+    maintenanceWebSosmed: number;
   };
   actualMarketplaceRevenue: number;
   leadPipeline: {
@@ -583,7 +582,7 @@ const roiRevenueJan: ROIRevenueData = {
   b2gLeads: kpi(8, 5),
   totalLeads: kpi(32, 23),
   estimatedRevenue: kpi(roiRevenueJanPipeline.reduce((s, l) => s + l.estimatedRevenue, 0), 1200000000),
-  investment: { socialAds: 25000000, websiteSEO: 12000000, webstoreOps: 8000000, marketplaceAds: 28000000 },
+  investment: { ads: 53000000, websiteSEO: 12000000, maintenanceWebSosmed: 8000000 },
   actualMarketplaceRevenue: 425000000,
   leadPipeline: roiRevenueJanPipeline,
   insightSummary: "January generated 32 total leads with Rp 1.75B estimated pipeline value. B2B leads dominate the funnel with Google Ads and Website as top-performing lead sources. Two deals are in qualified stage worth Rp 840M combined.",
@@ -602,7 +601,7 @@ const roiRevenueFeb: ROIRevenueData = {
   b2gLeads: kpi(11, 8),
   totalLeads: kpi(42, 32),
   estimatedRevenue: kpi(roiRevenueFebPipeline.reduce((s, l) => s + l.estimatedRevenue, 0), roiRevenueJanPipeline.reduce((s, l) => s + l.estimatedRevenue, 0)),
-  investment: { socialAds: 28000000, websiteSEO: 14000000, webstoreOps: 9000000, marketplaceAds: 32000000 },
+  investment: { ads: 60000000, websiteSEO: 14000000, maintenanceWebSosmed: 9000000 },
   actualMarketplaceRevenue: 480000000,
   leadPipeline: roiRevenueFebPipeline,
   insightSummary: "February saw a 31% increase in total leads (42 vs 32). Three deals closed worth Rp 1.29B. The Valentine campaign indirectly boosted B2B inquiries through increased brand visibility. Projected digital ROI stands at a healthy level with marketplace ROAS at 5.78x.",
