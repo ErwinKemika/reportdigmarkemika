@@ -25,6 +25,7 @@ export default function MarketplacePage() {
           <p className="text-label text-muted-foreground uppercase tracking-wider mb-2">Total Combined Revenue</p>
           <p className="text-kpi font-extrabold text-card-foreground tracking-tight">Rp {data.totalCombinedRevenue.toLocaleString("id-ID")}</p>
           <div className="flex items-center gap-1.5 mt-2">
+            <span className="text-xs text-muted-foreground">vs Prev Month: Rp {data.previousCombinedRevenue.toLocaleString("id-ID")}</span>
             {revenueGrowth >= 0 ? <TrendingUp className="w-3.5 h-3.5 text-success" /> : <TrendingDown className="w-3.5 h-3.5 text-destructive" />}
             <span className={`text-xs font-semibold ${revenueGrowth >= 0 ? "text-success" : "text-destructive"}`}>{revenueGrowth >= 0 ? "+" : ""}{revenueGrowth.toFixed(1)}%</span>
           </div>
@@ -48,8 +49,22 @@ export default function MarketplacePage() {
         {/* Tokopedia */}
         <section className="bg-card rounded-xl border border-border/40 p-6 shadow-card hover:shadow-card-hover transition-all duration-300 border-t-[3px] border-t-channel-tokopedia">
           <SectionHeader title="Tokopedia" icon={<Store className="w-4 h-4 text-channel-tokopedia" />} />
-          <div className="grid grid-cols-3 gap-2 mb-4">
-            <MetricCard title="Revenue" value={data.tokopedia.revenue} previousValue={data.tokopedia.previousRevenue} format="currency" />
+          {/* Tokopedia Total Revenue */}
+          <div className="mb-4 p-4 bg-muted/30 rounded-lg">
+            <p className="text-label text-muted-foreground uppercase tracking-wider mb-1">Total Revenue</p>
+            <p className="text-lg font-extrabold text-card-foreground">Rp {data.tokopedia.revenue.toLocaleString("id-ID")}</p>
+            {data.tokopedia.previousRevenue !== undefined && (() => {
+              const g = growthPercent(data.tokopedia.revenue, data.tokopedia.previousRevenue);
+              return (
+                <div className="flex items-center gap-1.5 mt-1">
+                  <span className="text-xs text-muted-foreground">vs Prev Month: Rp {data.tokopedia.previousRevenue.toLocaleString("id-ID")}</span>
+                  {g >= 0 ? <TrendingUp className="w-3.5 h-3.5 text-success" /> : <TrendingDown className="w-3.5 h-3.5 text-destructive" />}
+                  <span className={`text-xs font-semibold ${g >= 0 ? "text-success" : "text-destructive"}`}>{g >= 0 ? "+" : ""}{g.toFixed(1)}%</span>
+                </div>
+              );
+            })()}
+          </div>
+          <div className="grid grid-cols-2 gap-2 mb-4">
             <MetricCard title="GMV" value={data.tokopedia.gmv} previousValue={data.tokopedia.previousGmv} format="currency" />
             <MetricCard title="Units Sold" value={data.tokopedia.unitsSold} previousValue={data.tokopedia.previousUnitsSold} />
           </div>
@@ -77,8 +92,22 @@ export default function MarketplacePage() {
         {/* Shopee */}
         <section className="bg-card rounded-xl border border-border/40 p-6 shadow-card hover:shadow-card-hover transition-all duration-300 border-t-[3px] border-t-channel-shopee">
           <SectionHeader title="Shopee" icon={<ShoppingBag className="w-4 h-4 text-channel-shopee" />} />
-          <div className="grid grid-cols-3 gap-2 mb-4">
-            <MetricCard title="Revenue" value={data.shopee.revenue} previousValue={data.shopee.previousRevenue} format="currency" />
+          {/* Shopee Total Revenue */}
+          <div className="mb-4 p-4 bg-muted/30 rounded-lg">
+            <p className="text-label text-muted-foreground uppercase tracking-wider mb-1">Total Revenue</p>
+            <p className="text-lg font-extrabold text-card-foreground">Rp {data.shopee.revenue.toLocaleString("id-ID")}</p>
+            {data.shopee.previousRevenue !== undefined && (() => {
+              const g = growthPercent(data.shopee.revenue, data.shopee.previousRevenue);
+              return (
+                <div className="flex items-center gap-1.5 mt-1">
+                  <span className="text-xs text-muted-foreground">vs Prev Month: Rp {data.shopee.previousRevenue.toLocaleString("id-ID")}</span>
+                  {g >= 0 ? <TrendingUp className="w-3.5 h-3.5 text-success" /> : <TrendingDown className="w-3.5 h-3.5 text-destructive" />}
+                  <span className={`text-xs font-semibold ${g >= 0 ? "text-success" : "text-destructive"}`}>{g >= 0 ? "+" : ""}{g.toFixed(1)}%</span>
+                </div>
+              );
+            })()}
+          </div>
+          <div className="grid grid-cols-2 gap-2 mb-4">
             <MetricCard title="Orders" value={data.shopee.orders} previousValue={data.shopee.previousOrders} />
             <MetricCard title="Visitors" value={data.shopee.visitors} previousValue={data.shopee.previousVisitors} />
           </div>
