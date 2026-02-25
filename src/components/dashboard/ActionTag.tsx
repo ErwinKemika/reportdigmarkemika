@@ -1,7 +1,7 @@
 const tagColors: Record<string, string> = {
   Ads: "bg-primary/10 text-primary border-primary/20",
   SEO: "bg-success/10 text-success border-success/20",
-  UX: "bg-accent/10 text-accent border-accent/20",
+  UX: "bg-purple-500/10 text-purple-600 border-purple-500/20 dark:text-purple-400",
   Campaign: "bg-warning/10 text-warning border-warning/20",
 };
 
