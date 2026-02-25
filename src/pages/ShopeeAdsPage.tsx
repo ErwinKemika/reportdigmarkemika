@@ -21,13 +21,13 @@ export default function ShopeeAdsPage() {
       <section className="bg-tint-orange/50 rounded-2xl p-8">
         <SectionHeader title="Shopee Ads KPIs" subtitle={selectedMonth} icon={<ShoppingBag className="w-4 h-4 text-channel-shopee" />} />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <KPICard title="Impressions" data={data.impressions} accentColor="orange" />
-          <KPICard title="Clicks" data={data.clicks} accentColor="orange" />
-          <KPICard title="CTR" data={data.ctr} format="percent" accentColor="orange" />
-          <KPICard title="Orders" data={data.orders} accentColor="orange" />
-          <KPICard title="Units Sold" data={data.unitsSold} accentColor="orange" />
-          <KPICard title="Revenue from Ads" data={data.revenueFromAds} format="currency" accentColor="green" hero />
-          <KPICard title="Ad Spend" data={data.adSpend} format="currency" accentColor="orange" />
+          <KPICard title="Iklan Dilihat" data={data.impressions} accentColor="orange" />
+          <KPICard title="Jumlah Klik" data={data.clicks} accentColor="orange" />
+          <KPICard title="Persentase Klik (%)" data={data.ctr} format="percent" accentColor="orange" />
+          <KPICard title="Pesanan" data={data.orders} accentColor="orange" />
+          <KPICard title="Produk Terjual" data={data.unitsSold} accentColor="orange" />
+          <KPICard title="Penjualan dari Iklan (Rp)" data={data.revenueFromAds} format="currency" accentColor="green" hero />
+          <KPICard title="Biaya Iklan (Rp)" data={data.adSpend} format="currency" accentColor="orange" />
           <div className="bg-card rounded-xl p-6 shadow-card border border-channel-shopee/20 border-l-[3px] border-l-channel-shopee animate-fade-in">
             <span className="text-label uppercase tracking-wider text-channel-shopee">ROAS</span>
             <div className="text-kpi font-extrabold text-card-foreground mt-3 mb-3 tracking-tight">{data.roas.toFixed(2)}x</div>
