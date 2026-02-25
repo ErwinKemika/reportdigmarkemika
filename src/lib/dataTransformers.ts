@@ -94,11 +94,15 @@ export function transformMarketplace(d: Record<string, any>): MarketplaceData {
   const prevTokRevenue = d.previousTokopediaRevenue || 0;
   const prevShopRevenue = d.previousShopeeRevenue || 0;
 
+  const totalProductCount = tokProducts.length + shopProducts.length;
+  const autoTotalUnitsSold = tokProducts.reduce((s: number, p: any) => s + p.units, 0) + shopProducts.reduce((s: number, p: any) => s + p.units, 0);
+
   return {
     totalCombinedRevenue: tokRevenue + shopRevenue,
     previousCombinedRevenue: prevTokRevenue + prevShopRevenue,
-    totalUnitsSold: d.totalUnitsSold || 0,
+    totalUnitsSold: autoTotalUnitsSold || d.totalUnitsSold || 0,
     previousUnitsSold: d.previousUnitsSold || 0,
+    totalProductCount,
     tokopedia: {
       revenue: tokRevenue,
       previousRevenue: prevTokRevenue,
