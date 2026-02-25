@@ -117,7 +117,14 @@ export function PageEditDialog({ schema }: PageEditDialogProps) {
   };
 
   const handleSave = () => {
-    upsert.mutate({ period, pageKey: schema.pageKey, data: values });
+    // Strip legacy investment keys when saving ROI page to prevent double-counting
+    const cleanedValues = { ...values };
+    if (schema.pageKey === "roi-revenue") {
+      delete cleanedValues.socialAds;
+      delete cleanedValues.marketplaceAds;
+      delete cleanedValues.webstoreOps;
+    }
+    upsert.mutate({ period, pageKey: schema.pageKey, data: cleanedValues });
     setOpen(false);
   };
 
