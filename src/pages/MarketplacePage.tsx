@@ -63,7 +63,10 @@ export default function MarketplacePage() {
               <div key={i} className="flex justify-between items-center py-2.5 border-b border-border/20 last:border-0">
                 <div className="flex items-center gap-2.5">
                   <span className="w-6 h-6 rounded-lg bg-channel-tokopedia text-primary-foreground flex items-center justify-center text-xs font-bold">{i + 1}</span>
-                  <span className="text-sm font-medium">{p.name}</span>
+                  <div>
+                    <span className="text-sm font-medium">{p.name}</span>
+                    <p className="text-xs text-muted-foreground">{p.units.toLocaleString("id-ID")} unit terjual</p>
+                  </div>
                 </div>
                 <span className="text-sm font-semibold">{formatCurrency(p.revenue)}</span>
               </div>
@@ -89,7 +92,10 @@ export default function MarketplacePage() {
               <div key={i} className="flex justify-between items-center py-2.5 border-b border-border/20 last:border-0">
                 <div className="flex items-center gap-2.5">
                   <span className="w-6 h-6 rounded-lg bg-channel-shopee text-primary-foreground flex items-center justify-center text-xs font-bold">{i + 1}</span>
-                  <span className="text-sm font-medium">{p.name}</span>
+                  <div>
+                    <span className="text-sm font-medium">{p.name}</span>
+                    <p className="text-xs text-muted-foreground">{p.units.toLocaleString("id-ID")} unit terjual</p>
+                  </div>
                 </div>
                 <span className="text-sm font-semibold">{formatCurrency(p.revenue)}</span>
               </div>
