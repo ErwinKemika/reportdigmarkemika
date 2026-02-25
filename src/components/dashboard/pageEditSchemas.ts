@@ -1,0 +1,513 @@
+// Page edit form schemas - defines fields for each page's Edit Data modal
+
+export type FieldType = "number" | "currency" | "percent" | "text" | "textarea";
+
+export interface FieldDef {
+  key: string;
+  label: string;
+  type: FieldType;
+  placeholder?: string;
+}
+
+export interface FieldGroup {
+  title: string;
+  fields: FieldDef[];
+}
+
+export interface ArrayFieldDef {
+  key: string;
+  label: string;
+  columns: { key: string; label: string; type: FieldType }[];
+  maxRows?: number;
+}
+
+export interface PageSchema {
+  pageKey: string;
+  pageTitle: string;
+  groups: FieldGroup[];
+  arrayFields?: ArrayFieldDef[];
+}
+
+// ===== WEBSITE PERFORMANCE =====
+export const websitePerformanceSchema: PageSchema = {
+  pageKey: "website-performance",
+  pageTitle: "Website Performance",
+  groups: [
+    {
+      title: "Traffic Metrics",
+      fields: [
+        { key: "sessions", label: "Sessions", type: "number" },
+        { key: "previousSessions", label: "Previous Sessions", type: "number" },
+        { key: "users", label: "Users", type: "number" },
+        { key: "previousUsers", label: "Previous Users", type: "number" },
+        { key: "engagedSessions", label: "Engaged Sessions", type: "number" },
+        { key: "previousEngagedSessions", label: "Previous Engaged Sessions", type: "number" },
+        { key: "avgSessionDuration", label: "Avg Session Duration (sec)", type: "number" },
+        { key: "previousAvgSessionDuration", label: "Previous Duration (sec)", type: "number" },
+        { key: "waClicks", label: "WA Clicks", type: "number" },
+        { key: "previousWaClicks", label: "Previous WA Clicks", type: "number" },
+      ],
+    },
+    {
+      title: "Traffic Sources",
+      fields: [
+        { key: "organicSessions", label: "Organic Sessions", type: "number" },
+        { key: "directSessions", label: "Direct Sessions", type: "number" },
+        { key: "referralSessions", label: "Referral Sessions", type: "number" },
+        { key: "socialSessions", label: "Social Sessions", type: "number" },
+        { key: "paidSessions", label: "Paid Sessions", type: "number" },
+      ],
+    },
+  ],
+  arrayFields: [
+    {
+      key: "topKeywords",
+      label: "Top Keywords",
+      columns: [
+        { key: "keyword", label: "Keyword", type: "text" },
+        { key: "sessions", label: "Sessions", type: "number" },
+      ],
+      maxRows: 5,
+    },
+  ],
+};
+
+// ===== WEBSTORE SALES =====
+export const webstoreSalesSchema: PageSchema = {
+  pageKey: "webstore-sales",
+  pageTitle: "Webstore Sales",
+  groups: [
+    {
+      title: "Sales Metrics",
+      fields: [
+        { key: "totalRevenue", label: "Total Revenue (Rp)", type: "currency" },
+        { key: "previousRevenue", label: "Previous Revenue (Rp)", type: "currency" },
+        { key: "orders", label: "Orders", type: "number" },
+        { key: "conversionRate", label: "Conversion Rate (%)", type: "percent" },
+      ],
+    },
+  ],
+  arrayFields: [
+    {
+      key: "topProductsViewed",
+      label: "Top Products Viewed",
+      columns: [
+        { key: "name", label: "Product Name", type: "text" },
+        { key: "sessions", label: "Views", type: "number" },
+      ],
+      maxRows: 5,
+    },
+    {
+      key: "topProductsSold",
+      label: "Top Products Sold",
+      columns: [
+        { key: "name", label: "Product Name", type: "text" },
+        { key: "units", label: "Units", type: "number" },
+        { key: "revenue", label: "Revenue (Rp)", type: "currency" },
+      ],
+      maxRows: 5,
+    },
+  ],
+};
+
+// ===== MARKETPLACE OVERVIEW =====
+export const marketplaceSchema: PageSchema = {
+  pageKey: "marketplace",
+  pageTitle: "Marketplace Overview",
+  groups: [
+    {
+      title: "Combined Metrics",
+      fields: [
+        { key: "totalCombinedRevenue", label: "Combined Revenue (Rp)", type: "currency" },
+        { key: "previousCombinedRevenue", label: "Previous Combined Revenue (Rp)", type: "currency" },
+        { key: "totalUnitsSold", label: "Total Units Sold", type: "number" },
+        { key: "previousUnitsSold", label: "Previous Units Sold", type: "number" },
+      ],
+    },
+    {
+      title: "Tokopedia",
+      fields: [
+        { key: "tokopediaRevenue", label: "Revenue (Rp)", type: "currency" },
+        { key: "tokopediaGmv", label: "GMV (Rp)", type: "currency" },
+        { key: "tokopediaUnitsSold", label: "Products Sold", type: "number" },
+        { key: "tokopediaVisitors", label: "Visitors", type: "number" },
+        { key: "tokopediaPageViews", label: "Page Views", type: "number" },
+      ],
+    },
+    {
+      title: "Shopee",
+      fields: [
+        { key: "shopeeRevenue", label: "Revenue (Rp)", type: "currency" },
+        { key: "shopeeOrders", label: "Orders", type: "number" },
+        { key: "shopeeVisitors", label: "Visitors", type: "number" },
+        { key: "shopeeProductClick", label: "Product Clicks", type: "number" },
+        { key: "shopeeCancelledOrders", label: "Cancelled Orders", type: "number" },
+      ],
+    },
+  ],
+  arrayFields: [
+    {
+      key: "tokopediaTopProducts",
+      label: "Tokopedia Top Products",
+      columns: [
+        { key: "name", label: "Product Name", type: "text" },
+        { key: "revenue", label: "Revenue (Rp)", type: "currency" },
+        { key: "units", label: "Units", type: "number" },
+      ],
+      maxRows: 5,
+    },
+    {
+      key: "shopeeTopProducts",
+      label: "Shopee Top Products",
+      columns: [
+        { key: "name", label: "Product Name", type: "text" },
+        { key: "revenue", label: "Revenue (Rp)", type: "currency" },
+        { key: "units", label: "Units", type: "number" },
+      ],
+      maxRows: 5,
+    },
+  ],
+};
+
+// ===== SHOPEE ADS =====
+export const shopeeAdsSchema: PageSchema = {
+  pageKey: "shopee-ads",
+  pageTitle: "Shopee Ads",
+  groups: [
+    {
+      title: "Ads KPIs",
+      fields: [
+        { key: "spend", label: "Spend (Rp)", type: "currency" },
+        { key: "previousSpend", label: "Previous Spend", type: "currency" },
+        { key: "impressions", label: "Impressions", type: "number" },
+        { key: "previousImpressions", label: "Previous Impressions", type: "number" },
+        { key: "clicks", label: "Clicks", type: "number" },
+        { key: "previousClicks", label: "Previous Clicks", type: "number" },
+        { key: "ctr", label: "CTR (%)", type: "percent" },
+        { key: "previousCtr", label: "Previous CTR (%)", type: "percent" },
+        { key: "orders", label: "Orders/Conversions", type: "number" },
+        { key: "previousOrders", label: "Previous Orders", type: "number" },
+        { key: "adRevenue", label: "Ad Revenue (Rp)", type: "currency" },
+        { key: "previousAdRevenue", label: "Previous Ad Revenue", type: "currency" },
+      ],
+    },
+  ],
+  arrayFields: [
+    {
+      key: "products",
+      label: "Product Ads",
+      columns: [
+        { key: "name", label: "Product Name", type: "text" },
+        { key: "spend", label: "Spend (Rp)", type: "currency" },
+        { key: "revenue", label: "Revenue (Rp)", type: "currency" },
+        { key: "clicks", label: "Clicks", type: "number" },
+        { key: "units", label: "Units", type: "number" },
+      ],
+      maxRows: 10,
+    },
+  ],
+};
+
+// ===== ADS BUDGET PERFORMANCE =====
+export const adsBudgetSchema: PageSchema = {
+  pageKey: "ads-budget",
+  pageTitle: "Ads Budget Performance",
+  groups: [
+    {
+      title: "Google Ads",
+      fields: [
+        { key: "googleSpend", label: "Spend (Rp)", type: "currency" },
+        { key: "googleClicks", label: "Clicks", type: "number" },
+        { key: "googleConversions", label: "Conversions", type: "number" },
+        { key: "googleRevenue", label: "Revenue (Rp)", type: "currency" },
+      ],
+    },
+    {
+      title: "Meta Ads",
+      fields: [
+        { key: "metaSpend", label: "Spend (Rp)", type: "currency" },
+        { key: "metaClicks", label: "Clicks", type: "number" },
+        { key: "metaConversions", label: "Conversions", type: "number" },
+        { key: "metaRevenue", label: "Revenue (Rp)", type: "currency" },
+      ],
+    },
+    {
+      title: "Shopee Ads",
+      fields: [
+        { key: "shopeeSpend", label: "Spend (Rp)", type: "currency" },
+        { key: "shopeeClicks", label: "Clicks", type: "number" },
+        { key: "shopeeConversions", label: "Conversions", type: "number" },
+        { key: "shopeeRevenue", label: "Revenue (Rp)", type: "currency" },
+      ],
+    },
+  ],
+};
+
+// ===== ROI & REVENUE =====
+export const roiRevenueSchema: PageSchema = {
+  pageKey: "roi-revenue",
+  pageTitle: "ROI & Revenue",
+  groups: [
+    {
+      title: "Lead KPIs",
+      fields: [
+        { key: "b2bLeads", label: "B2B Leads", type: "number" },
+        { key: "previousB2bLeads", label: "Previous B2B Leads", type: "number" },
+        { key: "b2gLeads", label: "B2G Leads", type: "number" },
+        { key: "previousB2gLeads", label: "Previous B2G Leads", type: "number" },
+        { key: "estimatedRevenue", label: "Estimated Revenue (Rp)", type: "currency" },
+        { key: "previousEstimatedRevenue", label: "Previous Est. Revenue", type: "currency" },
+      ],
+    },
+    {
+      title: "Investment Breakdown",
+      fields: [
+        { key: "socialAds", label: "Social Ads (Rp)", type: "currency" },
+        { key: "websiteSEO", label: "Website/SEO (Rp)", type: "currency" },
+        { key: "webstoreOps", label: "Webstore Ops (Rp)", type: "currency" },
+        { key: "marketplaceAds", label: "Marketplace Ads (Rp)", type: "currency" },
+      ],
+    },
+    {
+      title: "Revenue",
+      fields: [
+        { key: "actualMarketplaceRevenue", label: "Actual Marketplace Revenue (Rp)", type: "currency" },
+        { key: "insightSummary", label: "Insight Summary", type: "textarea" },
+      ],
+    },
+  ],
+  arrayFields: [
+    {
+      key: "leadPipeline",
+      label: "Lead Pipeline",
+      columns: [
+        { key: "projectName", label: "Project Name", type: "text" },
+        { key: "leadSource", label: "Lead Source", type: "text" },
+        { key: "stage", label: "Stage", type: "text" },
+        { key: "estimatedRevenue", label: "Est. Revenue (Rp)", type: "currency" },
+      ],
+      maxRows: 10,
+    },
+  ],
+};
+
+// ===== BENCHMARK =====
+export const benchmarkSchema: PageSchema = {
+  pageKey: "benchmark",
+  pageTitle: "Benchmark",
+  groups: [
+    {
+      title: "Tokopedia",
+      fields: [
+        { key: "tokopediaTraffic", label: "Traffic Actual", type: "number" },
+        { key: "tokopediaTargetTraffic", label: "Traffic Target", type: "number" },
+        { key: "tokopediaCR", label: "Conversion Rate (%)", type: "percent" },
+        { key: "tokopediaTargetCR", label: "Target CR (%)", type: "percent" },
+      ],
+    },
+    {
+      title: "Shopee",
+      fields: [
+        { key: "shopeeTraffic", label: "Traffic Actual", type: "number" },
+        { key: "shopeeTargetTraffic", label: "Traffic Target", type: "number" },
+        { key: "shopeeCR", label: "Conversion Rate (%)", type: "percent" },
+        { key: "shopeeTargetCR", label: "Target CR (%)", type: "percent" },
+      ],
+    },
+    {
+      title: "Webstore",
+      fields: [
+        { key: "webstoreTraffic", label: "Traffic Actual", type: "number" },
+        { key: "webstoreTargetTraffic", label: "Traffic Target", type: "number" },
+        { key: "webstoreCR", label: "Conversion Rate (%)", type: "percent" },
+        { key: "webstoreTargetCR", label: "Target CR (%)", type: "percent" },
+      ],
+    },
+  ],
+};
+
+// ===== INSIGHTS =====
+export const insightsSchema: PageSchema = {
+  pageKey: "insights",
+  pageTitle: "Insights",
+  groups: [
+    {
+      title: "Best Channel",
+      fields: [
+        { key: "bestChannel", label: "Best Channel", type: "text" },
+        { key: "achievementPercent", label: "Achievement (%)", type: "percent" },
+        { key: "insightSummary", label: "Insight Summary", type: "textarea" },
+      ],
+    },
+  ],
+  arrayFields: [
+    {
+      key: "keyInsights",
+      label: "Key Insights",
+      columns: [{ key: "text", label: "Insight", type: "text" }],
+      maxRows: 8,
+    },
+    {
+      key: "supportingFactors",
+      label: "Supporting Factors",
+      columns: [{ key: "text", label: "Factor", type: "text" }],
+      maxRows: 6,
+    },
+    {
+      key: "limitingFactors",
+      label: "Blocking Factors",
+      columns: [{ key: "text", label: "Factor", type: "text" }],
+      maxRows: 6,
+    },
+  ],
+};
+
+// ===== RECOMMENDATIONS =====
+export const recommendationsSchema: PageSchema = {
+  pageKey: "recommendations",
+  pageTitle: "Recommendation & Action Plan",
+  groups: [],
+  arrayFields: [
+    {
+      key: "optimasiWebsite",
+      label: "Website Optimization",
+      columns: [{ key: "text", label: "Action Item", type: "text" }],
+      maxRows: 6,
+    },
+    {
+      key: "optimasiMarketplace",
+      label: "Marketplace Optimization",
+      columns: [{ key: "text", label: "Action Item", type: "text" }],
+      maxRows: 6,
+    },
+    {
+      key: "actionPlan30",
+      label: "30-Day Actions",
+      columns: [
+        { key: "action", label: "Action", type: "text" },
+        { key: "tag", label: "Tag (Ads/SEO/UX/Campaign)", type: "text" },
+      ],
+      maxRows: 5,
+    },
+    {
+      key: "actionPlan60",
+      label: "60-Day Actions",
+      columns: [
+        { key: "action", label: "Action", type: "text" },
+        { key: "tag", label: "Tag", type: "text" },
+      ],
+      maxRows: 5,
+    },
+    {
+      key: "actionPlan90",
+      label: "90-Day Actions",
+      columns: [
+        { key: "action", label: "Action", type: "text" },
+        { key: "tag", label: "Tag", type: "text" },
+      ],
+      maxRows: 5,
+    },
+  ],
+};
+
+// ===== CLOSING & SUMMARY =====
+export const closingSchema: PageSchema = {
+  pageKey: "closing",
+  pageTitle: "Closing & Summary",
+  groups: [
+    {
+      title: "Summary",
+      fields: [
+        { key: "monthlySummary", label: "Monthly Performance Summary", type: "textarea" },
+        { key: "focusAreaNextMonth", label: "Focus Area Next Month", type: "textarea" },
+      ],
+    },
+    {
+      title: "Target Next Month KPI",
+      fields: [
+        { key: "targetTrafficGrowth", label: "Traffic Growth (%)", type: "percent" },
+        { key: "targetConversionImprovement", label: "Conversion Improvement (%)", type: "percent" },
+        { key: "targetROAS", label: "Target ROAS (x)", type: "number" },
+      ],
+    },
+  ],
+  arrayFields: [
+    {
+      key: "highlights",
+      label: "Highlights",
+      columns: [{ key: "text", label: "Highlight", type: "text" }],
+      maxRows: 6,
+    },
+  ],
+};
+
+// ===== OVERVIEW =====
+export const overviewSchema: PageSchema = {
+  pageKey: "overview",
+  pageTitle: "Overview",
+  groups: [
+    {
+      title: "Website",
+      fields: [
+        { key: "websiteObjective", label: "Objective", type: "textarea" },
+        { key: "websiteSessions", label: "Sessions", type: "number" },
+        { key: "websitePrevSessions", label: "Prev Sessions", type: "number" },
+        { key: "websiteUsers", label: "Users", type: "number" },
+        { key: "websitePrevUsers", label: "Prev Users", type: "number" },
+        { key: "websiteCR", label: "Conversion Rate (%)", type: "percent" },
+        { key: "websitePrevCR", label: "Prev CR (%)", type: "percent" },
+        { key: "websiteRevenue", label: "Revenue (Rp)", type: "currency" },
+        { key: "websitePrevRevenue", label: "Prev Revenue (Rp)", type: "currency" },
+        { key: "websiteAvgDuration", label: "Avg Duration (sec)", type: "number" },
+        { key: "websitePrevAvgDuration", label: "Prev Duration (sec)", type: "number" },
+      ],
+    },
+    {
+      title: "Tokopedia",
+      fields: [
+        { key: "tokopediaVisitorToko", label: "Visitor Toko", type: "number" },
+        { key: "tokopediaPrevVisitorToko", label: "Prev Visitor Toko", type: "number" },
+        { key: "tokopediaVisitorProduk", label: "Visitor Produk", type: "number" },
+        { key: "tokopediaPrevVisitorProduk", label: "Prev Visitor Produk", type: "number" },
+        { key: "tokopediaSoldProducts", label: "Sold Products", type: "number" },
+        { key: "tokopediaPrevSoldProducts", label: "Prev Sold Products", type: "number" },
+        { key: "tokopediaRating", label: "Rating Toko", type: "percent" },
+        { key: "tokopediaPrevRating", label: "Prev Rating", type: "percent" },
+      ],
+    },
+    {
+      title: "Shopee",
+      fields: [
+        { key: "shopeeVisitorToko", label: "Visitor Toko", type: "number" },
+        { key: "shopeePrevVisitorToko", label: "Prev Visitor Toko", type: "number" },
+        { key: "shopeeChatResponse", label: "Chat Response (%)", type: "percent" },
+        { key: "shopeePrevChatResponse", label: "Prev Chat Response", type: "percent" },
+        { key: "shopeeCR", label: "Conversion Rate (%)", type: "percent" },
+        { key: "shopeePrevCR", label: "Prev CR (%)", type: "percent" },
+        { key: "shopeeTotalOrders", label: "Total Orders", type: "number" },
+        { key: "shopeePrevTotalOrders", label: "Prev Total Orders", type: "number" },
+      ],
+    },
+    {
+      title: "Target",
+      fields: [
+        { key: "monthlyTarget", label: "Monthly Target Description", type: "textarea" },
+      ],
+    },
+  ],
+};
+
+// Map page routes to schemas
+export const PAGE_SCHEMA_MAP: Record<string, PageSchema> = {
+  "/": overviewSchema,
+  "/website": websitePerformanceSchema,
+  "/webstore": webstoreSalesSchema,
+  "/marketplace": marketplaceSchema,
+  "/shopee-ads": shopeeAdsSchema,
+  "/ads-budget": adsBudgetSchema,
+  "/roi-revenue": roiRevenueSchema,
+  "/benchmark": benchmarkSchema,
+  "/insights": insightsSchema,
+  "/recommendations": recommendationsSchema,
+  "/closing": closingSchema,
+};
