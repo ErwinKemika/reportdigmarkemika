@@ -236,7 +236,7 @@ export function PageEditDialog({ schema }: PageEditDialogProps) {
           </DialogTitle>
         </DialogHeader>
 
-        <ScrollArea className="flex-1 pr-4">
+        <div className="flex-1 overflow-y-auto pr-4" style={{ maxHeight: "calc(85vh - 160px)" }}>
           {needsTabs ? (
             <Tabs defaultValue="fields" className="w-full">
               <TabsList className="mb-4">
@@ -259,7 +259,7 @@ export function PageEditDialog({ schema }: PageEditDialogProps) {
               {schema.arrayFields?.map(af => renderArrayField(af))}
             </div>
           ) : null}
-        </ScrollArea>
+        </div>
 
         <div className="flex gap-3 pt-4 border-t border-border/40">
           <Button variant="outline" onClick={() => setOpen(false)} className="flex-1">
