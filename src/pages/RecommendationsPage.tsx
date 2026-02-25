@@ -39,7 +39,7 @@ export default function RecommendationsPage() {
 
   return (
     <div className="space-y-10 animate-fade-in">
-      <SectionHeader title="Recommendation & Action Plan" subtitle={selectedMonth} icon={<ClipboardList className="w-4 h-4" />} />
+      <SectionHeader title="Action Plan" subtitle={selectedMonth} icon={<ClipboardList className="w-4 h-4" />} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-card rounded-xl border border-border/40 p-6 shadow-card">
