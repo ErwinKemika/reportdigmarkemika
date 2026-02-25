@@ -111,10 +111,8 @@ export default function MarketplacePage() {
             <MetricCard title="Orders" value={data.shopee.orders} previousValue={data.shopee.previousOrders} />
             <MetricCard title="Visitors" value={data.shopee.visitors} previousValue={data.shopee.previousVisitors} />
           </div>
-          <div className="grid grid-cols-2 gap-2 mb-4">
-            <MetricCard title="Product Click" value={data.shopee.productClick} previousValue={data.shopee.previousProductClick} />
-          </div>
           <div className="grid grid-cols-2 gap-2 mb-6">
+            <MetricCard title="Product Click" value={data.shopee.productClick} previousValue={data.shopee.previousProductClick} />
             <MetricCard title="Cancelled" value={data.shopee.cancelledOrders} previousValue={data.shopee.previousCancelledOrders} />
           </div>
           <p className="text-label text-muted-foreground uppercase tracking-wider mb-3">Top 3 Best Selling</p>
