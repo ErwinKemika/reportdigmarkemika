@@ -266,7 +266,6 @@ export const roiRevenueSchema: PageSchema = {
         { key: "previousB2bLeads", label: "Previous B2B Leads", type: "number" },
         { key: "b2gLeads", label: "B2G Leads", type: "number" },
         { key: "previousB2gLeads", label: "Previous B2G Leads", type: "number" },
-        { key: "estimatedRevenue", label: "Estimated Revenue (Rp)", type: "currency" },
         { key: "previousEstimatedRevenue", label: "Previous Est. Revenue", type: "currency" },
       ],
     },

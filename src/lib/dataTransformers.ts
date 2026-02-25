@@ -202,11 +202,16 @@ export function transformROIRevenue(d: Record<string, any>): ROIRevenueData {
   const b2g = d.b2gLeads || 0;
   const prevB2b = d.previousB2bLeads || 0;
   const prevB2g = d.previousB2gLeads || 0;
+  const leadPipeline = (d.leadPipeline || []).map((l: any) => ({
+    projectName: l.projectName || "", leadSource: l.leadSource || "",
+    stage: l.stage || "Processing", estimatedRevenue: l.estimatedRevenue || 0,
+  }));
+  const autoEstRevenue = leadPipeline.reduce((sum: number, l: any) => sum + l.estimatedRevenue, 0);
   return {
     b2bLeads: kpi(b2b, prevB2b),
     b2gLeads: kpi(b2g, prevB2g),
     totalLeads: kpi(b2b + b2g, prevB2b + prevB2g),
-    estimatedRevenue: kpi(d.estimatedRevenue || 0, d.previousEstimatedRevenue || 0),
+    estimatedRevenue: kpi(autoEstRevenue || d.estimatedRevenue || 0, d.previousEstimatedRevenue || 0),
     investment: {
       socialAds: d.socialAds || 0,
       websiteSEO: d.websiteSEO || 0,
@@ -214,10 +219,7 @@ export function transformROIRevenue(d: Record<string, any>): ROIRevenueData {
       marketplaceAds: d.marketplaceAds || 0,
     },
     actualMarketplaceRevenue: d.actualMarketplaceRevenue || 0,
-    leadPipeline: (d.leadPipeline || []).map((l: any) => ({
-      projectName: l.projectName || "", leadSource: l.leadSource || "",
-      stage: l.stage || "Processing", estimatedRevenue: l.estimatedRevenue || 0,
-    })),
+    leadPipeline,
     insightSummary: d.insightSummary || "",
   };
 }

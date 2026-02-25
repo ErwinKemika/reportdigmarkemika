@@ -567,38 +567,40 @@ const closingFeb: ClosingData = {
   targetROAS: 6.0,
 };
 
+const roiRevenueJanPipeline = [
+  { projectName: "PT Mandiri Konstruksi", leadSource: "Google Ads", stage: "Won" as const, estimatedRevenue: 450000000 },
+  { projectName: "Dinas Kesehatan Jabar", leadSource: "Website", stage: "Qualified" as const, estimatedRevenue: 320000000 },
+  { projectName: "RS Premier Bintaro", leadSource: "Referral", stage: "Processing" as const, estimatedRevenue: 280000000 },
+  { projectName: "PT Astra Infra", leadSource: "Meta Ads", stage: "Qualified" as const, estimatedRevenue: 520000000 },
+  { projectName: "Kemenkes RI", leadSource: "Website", stage: "Processing" as const, estimatedRevenue: 180000000 },
+];
 const roiRevenueJan: ROIRevenueData = {
   b2bLeads: kpi(24, 18),
   b2gLeads: kpi(8, 5),
   totalLeads: kpi(32, 23),
-  estimatedRevenue: kpi(1850000000, 1200000000),
+  estimatedRevenue: kpi(roiRevenueJanPipeline.reduce((s, l) => s + l.estimatedRevenue, 0), 1200000000),
   investment: { socialAds: 25000000, websiteSEO: 12000000, webstoreOps: 8000000, marketplaceAds: 28000000 },
   actualMarketplaceRevenue: 425000000,
-  leadPipeline: [
-    { projectName: "PT Mandiri Konstruksi", leadSource: "Google Ads", stage: "Won", estimatedRevenue: 450000000 },
-    { projectName: "Dinas Kesehatan Jabar", leadSource: "Website", stage: "Qualified", estimatedRevenue: 320000000 },
-    { projectName: "RS Premier Bintaro", leadSource: "Referral", stage: "Processing", estimatedRevenue: 280000000 },
-    { projectName: "PT Astra Infra", leadSource: "Meta Ads", stage: "Qualified", estimatedRevenue: 520000000 },
-    { projectName: "Kemenkes RI", leadSource: "Website", stage: "Processing", estimatedRevenue: 180000000 },
-  ],
-  insightSummary: "January generated 32 total leads with Rp 1.85B estimated pipeline value. B2B leads dominate the funnel with Google Ads and Website as top-performing lead sources. Two deals are in qualified stage worth Rp 840M combined.",
+  leadPipeline: roiRevenueJanPipeline,
+  insightSummary: "January generated 32 total leads with Rp 1.75B estimated pipeline value. B2B leads dominate the funnel with Google Ads and Website as top-performing lead sources. Two deals are in qualified stage worth Rp 840M combined.",
 };
 
+const roiRevenueFebPipeline = [
+  { projectName: "PT Mandiri Konstruksi", leadSource: "Google Ads", stage: "Won" as const, estimatedRevenue: 450000000 },
+  { projectName: "Dinas Kesehatan Jabar", leadSource: "Website", stage: "Won" as const, estimatedRevenue: 320000000 },
+  { projectName: "RS Premier Bintaro", leadSource: "Referral", stage: "Qualified" as const, estimatedRevenue: 280000000 },
+  { projectName: "PT Astra Infra", leadSource: "Meta Ads", stage: "Won" as const, estimatedRevenue: 520000000 },
+  { projectName: "Kemenkes RI", leadSource: "Website", stage: "Qualified" as const, estimatedRevenue: 180000000 },
+  { projectName: "PT Pelindo III", leadSource: "Google Ads", stage: "Processing" as const, estimatedRevenue: 600000000 },
+];
 const roiRevenueFeb: ROIRevenueData = {
   b2bLeads: kpi(31, 24),
   b2gLeads: kpi(11, 8),
   totalLeads: kpi(42, 32),
-  estimatedRevenue: kpi(2350000000, 1850000000),
+  estimatedRevenue: kpi(roiRevenueFebPipeline.reduce((s, l) => s + l.estimatedRevenue, 0), roiRevenueJanPipeline.reduce((s, l) => s + l.estimatedRevenue, 0)),
   investment: { socialAds: 28000000, websiteSEO: 14000000, webstoreOps: 9000000, marketplaceAds: 32000000 },
   actualMarketplaceRevenue: 480000000,
-  leadPipeline: [
-    { projectName: "PT Mandiri Konstruksi", leadSource: "Google Ads", stage: "Won", estimatedRevenue: 450000000 },
-    { projectName: "Dinas Kesehatan Jabar", leadSource: "Website", stage: "Won", estimatedRevenue: 320000000 },
-    { projectName: "RS Premier Bintaro", leadSource: "Referral", stage: "Qualified", estimatedRevenue: 280000000 },
-    { projectName: "PT Astra Infra", leadSource: "Meta Ads", stage: "Won", estimatedRevenue: 520000000 },
-    { projectName: "Kemenkes RI", leadSource: "Website", stage: "Qualified", estimatedRevenue: 180000000 },
-    { projectName: "PT Pelindo III", leadSource: "Google Ads", stage: "Processing", estimatedRevenue: 600000000 },
-  ],
+  leadPipeline: roiRevenueFebPipeline,
   insightSummary: "February saw a 31% increase in total leads (42 vs 32). Three deals closed worth Rp 1.29B. The Valentine campaign indirectly boosted B2B inquiries through increased brand visibility. Projected digital ROI stands at a healthy level with marketplace ROAS at 5.78x.",
 };
 
