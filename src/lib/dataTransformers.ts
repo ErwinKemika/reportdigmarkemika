@@ -207,15 +207,18 @@ export function transformROIRevenue(d: Record<string, any>): ROIRevenueData {
     stage: l.stage || "Processing", estimatedRevenue: l.estimatedRevenue || 0,
   }));
   const autoEstRevenue = leadPipeline.reduce((sum: number, l: any) => sum + l.estimatedRevenue, 0);
+  // If new keys exist, use them directly; otherwise fallback to legacy keys
+  const hasNewAds = d.ads !== undefined && d.ads !== null;
+  const hasNewMaintenance = d.maintenanceWebSosmed !== undefined && d.maintenanceWebSosmed !== null;
   return {
     b2bLeads: kpi(b2b, prevB2b),
     b2gLeads: kpi(b2g, prevB2g),
     totalLeads: kpi(b2b + b2g, prevB2b + prevB2g),
     estimatedRevenue: kpi(autoEstRevenue || d.estimatedRevenue || 0, d.previousEstimatedRevenue || 0),
     investment: {
-      ads: (d.socialAds || 0) + (d.marketplaceAds || 0) + (d.ads || 0),
+      ads: hasNewAds ? d.ads : (d.socialAds || 0) + (d.marketplaceAds || 0),
       websiteSEO: d.websiteSEO || 0,
-      maintenanceWebSosmed: d.webstoreOps || d.maintenanceWebSosmed || 0,
+      maintenanceWebSosmed: hasNewMaintenance ? d.maintenanceWebSosmed : (d.webstoreOps || 0),
     },
     actualMarketplaceRevenue: d.actualMarketplaceRevenue || 0,
     leadPipeline,
