@@ -419,37 +419,48 @@ export const recommendationsSchema: PageSchema = {
   ],
 };
 
-// ===== CLOSING & SUMMARY =====
-export const closingSchema: PageSchema = {
-  pageKey: "closing",
-  pageTitle: "Closing & Summary",
+// ===== EXECUTION & REALIZATION =====
+export const executionSchema: PageSchema = {
+  pageKey: "execution",
+  pageTitle: "Execution & Realization",
   groups: [
     {
-      title: "Summary",
+      title: "Impact Notes",
       fields: [
-        { key: "monthlySummary", label: "Monthly Performance Summary", type: "textarea" },
-        { key: "focusAreaNextMonth", label: "Focus Area Next Month", type: "textarea" },
-      ],
-    },
-    {
-      title: "Target Next Month KPI",
-      fields: [
-        { key: "targetTrafficGrowth", label: "Traffic Growth (%)", type: "percent" },
-        { key: "targetConversionImprovement", label: "Conversion Improvement (%)", type: "percent" },
-        { key: "targetROAS", label: "Target ROAS (x)", type: "number" },
+        { key: "impactNotes", label: "Impact Notes (Optional)", type: "textarea", placeholder: "Describe the impact of completed actions on KPI performance..." },
       ],
     },
   ],
   arrayFields: [
     {
-      key: "highlights",
-      label: "Highlights",
-      columns: [{ key: "text", label: "Highlight", type: "text" }],
-      maxRows: 6,
+      key: "immediateStatuses",
+      label: "Immediate Actions Status",
+      columns: [
+        { key: "action", label: "Action (Reference)", type: "text" },
+        { key: "status", label: "Status (Completed/Ongoing/Pending/Cancelled)", type: "text" },
+      ],
+      maxRows: 10,
+    },
+    {
+      key: "tacticalStatuses",
+      label: "Tactical Actions Status",
+      columns: [
+        { key: "action", label: "Action (Reference)", type: "text" },
+        { key: "status", label: "Status (Completed/Ongoing/Pending/Cancelled)", type: "text" },
+      ],
+      maxRows: 10,
+    },
+    {
+      key: "strategicStatuses",
+      label: "Strategic Actions Status",
+      columns: [
+        { key: "action", label: "Action (Reference)", type: "text" },
+        { key: "status", label: "Status (Completed/Ongoing/Pending/Cancelled)", type: "text" },
+      ],
+      maxRows: 10,
     },
   ],
 };
-
 // ===== OVERVIEW =====
 export const overviewSchema: PageSchema = {
   pageKey: "overview",
@@ -518,5 +529,5 @@ export const PAGE_SCHEMA_MAP: Record<string, PageSchema> = {
   "/benchmark": benchmarkSchema,
   "/insights": insightsSchema,
   "/recommendations": recommendationsSchema,
-  "/closing": closingSchema,
+  "/execution": executionSchema,
 };
