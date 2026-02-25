@@ -59,13 +59,18 @@ export function transformWebsitePerformance(d: Record<string, any>): WebsitePerf
 }
 
 export function transformWebstoreSales(d: Record<string, any>): WebstoreSalesData {
+  const products = (d.topProductsSold || []).map((p: any) => {
+    const units = p.units || 0;
+    const pricePerUnit = p.pricePerUnit || p.price || 0;
+    const revenue = units * pricePerUnit;
+    return { name: p.name || "", units, price: pricePerUnit, revenue };
+  });
+  const totalRevenue = d.totalRevenue || products.reduce((sum: number, p: any) => sum + p.revenue, 0);
   return {
-    totalRevenue: d.totalRevenue || 0,
+    totalRevenue,
     previousRevenue: d.previousRevenue || 0,
     topProductsViewed: (d.topProductsViewed || []).map((p: any) => ({ name: p.name || "", sessions: p.sessions || 0 })),
-    topProductsSold: (d.topProductsSold || []).map((p: any) => ({
-      name: p.name || "", units: p.units || 0, price: (p.revenue || 0) / (p.units || 1), revenue: p.revenue || 0,
-    })),
+    topProductsSold: products,
   };
 }
 

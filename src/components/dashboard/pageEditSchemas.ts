@@ -80,7 +80,6 @@ export const webstoreSalesSchema: PageSchema = {
     {
       title: "Sales Metrics",
       fields: [
-        { key: "totalRevenue", label: "Total Revenue (Rp)", type: "currency" },
         { key: "previousRevenue", label: "Previous Revenue (Rp)", type: "currency" },
         { key: "orders", label: "Orders", type: "number" },
         { key: "conversionRate", label: "Conversion Rate (%)", type: "percent" },
@@ -102,8 +101,8 @@ export const webstoreSalesSchema: PageSchema = {
       label: "Top Products Sold",
       columns: [
         { key: "name", label: "Product Name", type: "text" },
-        { key: "units", label: "Units", type: "number" },
-        { key: "revenue", label: "Revenue (Rp)", type: "currency" },
+        { key: "units", label: "Units Sold", type: "number" },
+        { key: "pricePerUnit", label: "Price/Unit (Rp)", type: "currency" },
       ],
       maxRows: 5,
     },
