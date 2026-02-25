@@ -167,9 +167,9 @@ export function transformAdsBudget(d: Record<string, any>): AdsBudgetData {
 
 export function transformInsights(d: Record<string, any>): InsightsData {
   return {
-    keyInsights: (d.keyInsights || []).map((x: any) => x.text || x),
-    supportingFactors: (d.supportingFactors || []).map((x: any) => x.text || x),
-    limitingFactors: (d.limitingFactors || []).map((x: any) => x.text || x),
+    keyInsights: (d.keyInsights || []).map((x: any) => typeof x === "string" ? x : (x.text ?? "")),
+    supportingFactors: (d.supportingFactors || []).map((x: any) => typeof x === "string" ? x : (x.text ?? "")),
+    limitingFactors: (d.limitingFactors || []).map((x: any) => typeof x === "string" ? x : (x.text ?? "")),
     bestChannel: d.bestChannel || "",
     achievementPercent: d.achievementPercent || 0,
     insightSummary: d.insightSummary || "",
@@ -178,8 +178,8 @@ export function transformInsights(d: Record<string, any>): InsightsData {
 
 export function transformRecommendations(d: Record<string, any>): RecommendationsData {
   return {
-    optimasiWebsite: (d.optimasiWebsite || []).map((x: any) => x.text || x),
-    optimasiMarketplace: (d.optimasiMarketplace || []).map((x: any) => x.text || x),
+    optimasiWebsite: (d.optimasiWebsite || []).map((x: any) => typeof x === "string" ? x : (x.text ?? "")),
+    optimasiMarketplace: (d.optimasiMarketplace || []).map((x: any) => typeof x === "string" ? x : (x.text ?? "")),
     actionPlan30: (d.actionPlan30 || []).map((x: any) => ({ action: x.action || "", tag: x.tag || "" })),
     actionPlan60: (d.actionPlan60 || []).map((x: any) => ({ action: x.action || "", tag: x.tag || "" })),
     actionPlan90: (d.actionPlan90 || []).map((x: any) => ({ action: x.action || "", tag: x.tag || "" })),
