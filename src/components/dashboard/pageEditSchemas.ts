@@ -161,7 +161,7 @@ export const marketplaceSchema: PageSchema = {
         { key: "units", label: "Units Sold", type: "number" },
         { key: "pricePerUnit", label: "Price/Unit (Rp)", type: "currency" },
       ],
-      maxRows: 5,
+      maxRows: 15,
     },
     {
       key: "shopeeTopProducts",
@@ -171,7 +171,7 @@ export const marketplaceSchema: PageSchema = {
         { key: "units", label: "Units Sold", type: "number" },
         { key: "pricePerUnit", label: "Price/Unit (Rp)", type: "currency" },
       ],
-      maxRows: 5,
+      maxRows: 15,
     },
   ],
 };
