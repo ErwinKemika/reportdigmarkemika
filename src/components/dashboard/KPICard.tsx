@@ -9,6 +9,7 @@ interface KPICardProps {
   icon?: React.ReactNode;
   accentColor?: "blue" | "green" | "orange" | "purple" | "navy";
   hero?: boolean;
+  currencyFormatter?: (n: number) => string;
 }
 
 const accentBorders: Record<string, string> = {
@@ -19,14 +20,14 @@ const accentBorders: Record<string, string> = {
   navy: "border-l-[3px] border-l-channel-website",
 };
 
-export function KPICard({ title, data, format = "number", icon, accentColor, hero }: KPICardProps) {
+export function KPICard({ title, data, format = "number", icon, accentColor, hero, currencyFormatter }: KPICardProps) {
   const growth = growthPercent(data.value, data.previousValue);
   const isPositive = growth > 0;
   const isNeutral = growth === 0;
 
   const displayValue = () => {
     switch (format) {
-      case "currency": return formatCurrency(data.value);
+      case "currency": return (currencyFormatter || formatCurrency)(data.value);
       case "percent": return data.value.toFixed(1) + "%";
       case "duration": return formatDuration(data.value);
       default: return formatNumber(data.value);

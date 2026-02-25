@@ -1,5 +1,5 @@
 import { useMergedPageData } from "@/hooks/useMergedPageData";
-import { getROIRevenueData, formatCurrency, formatNumber } from "@/data/mockData";
+import { getROIRevenueData, formatCurrencyFull } from "@/data/mockData";
 import { transformROIRevenue } from "@/lib/dataTransformers";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { KPICard } from "@/components/dashboard/KPICard";
@@ -39,7 +39,7 @@ export default function ROIRevenuePage() {
           <KPICard title="B2B Leads" data={data.b2bLeads} icon={<Briefcase className="w-4 h-4" />} accentColor="blue" />
           <KPICard title="B2G Leads" data={data.b2gLeads} icon={<Landmark className="w-4 h-4" />} accentColor="purple" />
           <KPICard title="Total Leads" data={data.totalLeads} icon={<Users className="w-4 h-4" />} accentColor="navy" />
-          <KPICard title="Est. Revenue" data={data.estimatedRevenue} format="currency" icon={<DollarSign className="w-4 h-4" />} accentColor="green" hero />
+          <KPICard title="Est. Revenue" data={data.estimatedRevenue} format="currency" icon={<DollarSign className="w-4 h-4" />} accentColor="green" hero currencyFormatter={formatCurrencyFull} />
         </div>
       </section>
 
@@ -49,17 +49,17 @@ export default function ROIRevenuePage() {
           <div className="lg:col-span-2 space-y-5">
             <div className="bg-card rounded-xl p-6 shadow-card border border-border/40 border-l-[3px] border-l-channel-shopee">
               <p className="text-label text-muted-foreground uppercase tracking-wider mb-2">Total Digital Investment</p>
-              <p className="text-kpi font-extrabold text-card-foreground tracking-tight">{formatCurrency(totalInvestment)}</p>
+              <p className="text-kpi font-extrabold text-card-foreground tracking-tight">{formatCurrencyFull(totalInvestment)}</p>
               <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-muted-foreground">
-                <span>Social Ads: {formatCurrency(data.investment.socialAds)}</span>
-                <span>Website/SEO: {formatCurrency(data.investment.websiteSEO)}</span>
-                <span>Webstore Ops: {formatCurrency(data.investment.webstoreOps)}</span>
-                <span>Marketplace Ads: {formatCurrency(data.investment.marketplaceAds)}</span>
+                <span>Social Ads: {formatCurrencyFull(data.investment.socialAds)}</span>
+                <span>Website/SEO: {formatCurrencyFull(data.investment.websiteSEO)}</span>
+                <span>Webstore Ops: {formatCurrencyFull(data.investment.webstoreOps)}</span>
+                <span>Marketplace Ads: {formatCurrencyFull(data.investment.marketplaceAds)}</span>
               </div>
             </div>
             <div className="bg-card rounded-xl p-6 shadow-card border border-border/40 border-l-[3px] border-l-success">
               <p className="text-label text-muted-foreground uppercase tracking-wider mb-2">Actual Marketplace Revenue</p>
-              <p className="text-kpi font-extrabold text-success tracking-tight">{formatCurrency(data.actualMarketplaceRevenue)}</p>
+              <p className="text-kpi font-extrabold text-success tracking-tight">{formatCurrencyFull(data.actualMarketplaceRevenue)}</p>
               <p className="mt-2 text-xs font-semibold text-foreground/70">ROAS {roas.toFixed(2)}x</p>
             </div>
             <div className={`rounded-xl p-6 shadow-hero text-primary-foreground ${projectedROI >= 0 ? "gradient-success" : "gradient-danger"}`}>
@@ -86,7 +86,7 @@ export default function ROIRevenuePage() {
                       <td className="px-6 py-4 font-medium text-card-foreground">{lead.projectName}</td>
                       <td className="px-6 py-4 text-muted-foreground">{lead.leadSource}</td>
                       <td className="px-6 py-4">{stageBadge(lead.stage)}</td>
-                      <td className="px-6 py-4 text-right font-semibold text-card-foreground">{formatCurrency(lead.estimatedRevenue)}</td>
+                      <td className="px-6 py-4 text-right font-semibold text-card-foreground">{formatCurrencyFull(lead.estimatedRevenue)}</td>
                     </tr>
                   ))}
                 </tbody>

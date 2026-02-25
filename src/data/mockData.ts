@@ -37,6 +37,10 @@ export function formatCurrency(n: number): string {
   return "Rp " + n.toLocaleString("id-ID");
 }
 
+export function formatCurrencyFull(n: number): string {
+  return "Rp " + n.toLocaleString("id-ID");
+}
+
 export function formatDuration(seconds: number): string {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
