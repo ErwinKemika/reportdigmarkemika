@@ -145,8 +145,6 @@ export const marketplaceSchema: PageSchema = {
         { key: "previousShopeeOrders", label: "Previous Orders", type: "number" },
         { key: "shopeeVisitors", label: "Visitors", type: "number" },
         { key: "previousShopeeVisitors", label: "Previous Visitors", type: "number" },
-        { key: "shopeePageViews", label: "Page Views", type: "number" },
-        { key: "previousShopeePageViews", label: "Previous Page Views", type: "number" },
         { key: "shopeeProductClick", label: "Product Clicks", type: "number" },
         { key: "previousShopeeProductClick", label: "Previous Product Clicks", type: "number" },
         { key: "shopeeCancelledOrders", label: "Cancelled Orders", type: "number" },
