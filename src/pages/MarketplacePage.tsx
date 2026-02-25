@@ -23,7 +23,7 @@ export default function MarketplacePage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         <div className="bg-card rounded-xl border border-border/40 p-6 shadow-hero border-l-[4px] border-l-success">
           <p className="text-label text-muted-foreground uppercase tracking-wider mb-2">Total Combined Revenue</p>
-          <p className="text-kpi font-extrabold text-card-foreground tracking-tight">{formatCurrency(data.totalCombinedRevenue)}</p>
+          <p className="text-kpi font-extrabold text-card-foreground tracking-tight">Rp {data.totalCombinedRevenue.toLocaleString("id-ID")}</p>
           <div className="flex items-center gap-1.5 mt-2">
             {revenueGrowth >= 0 ? <TrendingUp className="w-3.5 h-3.5 text-success" /> : <TrendingDown className="w-3.5 h-3.5 text-destructive" />}
             <span className={`text-xs font-semibold ${revenueGrowth >= 0 ? "text-success" : "text-destructive"}`}>{revenueGrowth >= 0 ? "+" : ""}{revenueGrowth.toFixed(1)}%</span>
@@ -31,7 +31,8 @@ export default function MarketplacePage() {
         </div>
         <div className="bg-card rounded-xl border border-border/40 p-6 shadow-card">
           <p className="text-label text-muted-foreground uppercase tracking-wider mb-2">Total Units Sold</p>
-          <p className="text-kpi font-extrabold text-card-foreground tracking-tight">{formatNumber(data.totalUnitsSold)}</p>
+          <p className="text-kpi font-extrabold text-card-foreground tracking-tight">{data.totalUnitsSold.toLocaleString("id-ID")}</p>
+          <p className="text-xs text-muted-foreground mt-1">{data.totalProductCount} produk terjual</p>
           <div className="flex items-center gap-1.5 mt-2">
             {unitsGrowth >= 0 ? <TrendingUp className="w-3.5 h-3.5 text-success" /> : <TrendingDown className="w-3.5 h-3.5 text-destructive" />}
             <span className={`text-xs font-semibold ${unitsGrowth >= 0 ? "text-success" : "text-destructive"}`}>{unitsGrowth >= 0 ? "+" : ""}{unitsGrowth.toFixed(1)}%</span>

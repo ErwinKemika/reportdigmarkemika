@@ -93,6 +93,7 @@ export interface MarketplaceData {
   previousCombinedRevenue: number;
   totalUnitsSold: number;
   previousUnitsSold: number;
+  totalProductCount: number;
   tokopedia: {
     revenue: number;
     previousRevenue: number;
@@ -338,6 +339,7 @@ const marketplaceJan: MarketplaceData = {
   previousCombinedRevenue: 380000000,
   totalUnitsSold: 3090,
   previousUnitsSold: 2700,
+  totalProductCount: 6,
   tokopedia: {
     revenue: 195000000, previousRevenue: 170000000, gmv: 220000000, previousGmv: 195000000, unitsSold: 1240, previousUnitsSold: 1050, visitors: 28500, previousVisitors: 25000, pageViews: 85200, previousPageViews: 75000,
     topProducts: [
@@ -361,6 +363,7 @@ const marketplaceFeb: MarketplaceData = {
   previousCombinedRevenue: 425000000,
   totalUnitsSold: 3430,
   previousUnitsSold: 3090,
+  totalProductCount: 6,
   tokopedia: {
     revenue: 215000000, previousRevenue: 195000000, gmv: 245000000, previousGmv: 220000000, unitsSold: 1380, previousUnitsSold: 1240, visitors: 31200, previousVisitors: 28500, pageViews: 92400, previousPageViews: 85200,
     topProducts: [
