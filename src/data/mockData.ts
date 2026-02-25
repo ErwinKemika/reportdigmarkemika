@@ -1,9 +1,9 @@
-// Mock data layer — designed to be replaced by Google Sheets API
+// Mock data layer — designed to be replaced by database
 // All data is keyed by month for the global month filter
 
-export type Month =
-  | "January" | "February" | "March" | "April" | "May" | "June"
-  | "July" | "August" | "September" | "October" | "November" | "December";
+import type { MonthName } from "@/contexts/MonthContext";
+
+export type Month = MonthName;
 
 export const MONTHS: Month[] = [
   "January","February","March","April","May","June",

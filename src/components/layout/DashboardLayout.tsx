@@ -1,9 +1,9 @@
 import { ReactNode, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useMonth } from "@/contexts/MonthContext";
+import { useMonth, MONTHS, YEARS } from "@/contexts/MonthContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { MONTHS } from "@/data/mockData";
-import { EditDataDialog } from "@/components/dashboard/EditDataDialog";
+import { PageEditDialog } from "@/components/dashboard/PageEditDialog";
+import { PAGE_SCHEMA_MAP } from "@/components/dashboard/pageEditSchemas";
 import {
   LayoutDashboard, Globe, ShoppingCart, Store, ShoppingBag,
   Megaphone, DollarSign, Lightbulb, ClipboardList, Flag,
@@ -13,7 +13,6 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 const navItems = [
@@ -33,8 +32,11 @@ const navItems = [
 export function DashboardLayout({ children }: { children: ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
-  const { selectedMonth, setSelectedMonth } = useMonth();
+  const { selectedMonth, selectedYear, setSelectedMonth, setSelectedYear } = useMonth();
   const { user, role, isAdmin, signOut } = useAuth();
+
+  // Get schema for current page
+  const currentSchema = PAGE_SCHEMA_MAP[location.pathname];
 
   return (
     <div className="flex min-h-screen w-full bg-background">
@@ -118,15 +120,25 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
             {navItems.find((n) => n.path === location.pathname)?.label || "Dashboard"}
           </h1>
           <div className="flex items-center gap-3">
-            <EditDataDialog />
+            {currentSchema && <PageEditDialog schema={currentSchema} />}
             <Calendar className="w-4 h-4 text-muted-foreground" />
             <Select value={selectedMonth} onValueChange={(v) => setSelectedMonth(v as any)}>
-              <SelectTrigger className="w-40 h-9 text-sm rounded-lg border-border/60 bg-background">
+              <SelectTrigger className="w-32 h-9 text-sm rounded-lg border-border/60 bg-background">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 {MONTHS.map((m) => (
                   <SelectItem key={m} value={m}>{m}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={String(selectedYear)} onValueChange={(v) => setSelectedYear(Number(v))}>
+              <SelectTrigger className="w-20 h-9 text-sm rounded-lg border-border/60 bg-background">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {YEARS.map((y) => (
+                  <SelectItem key={y} value={String(y)}>{y}</SelectItem>
                 ))}
               </SelectContent>
             </Select>

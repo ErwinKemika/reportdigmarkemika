@@ -92,6 +92,33 @@ export type Database = {
         }
         Relationships: []
       }
+      page_data: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          page_key: string
+          period: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data?: Json
+          id?: string
+          page_key: string
+          period: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          page_key?: string
+          period?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
