@@ -105,7 +105,7 @@ export interface MarketplaceData {
     previousVisitors: number;
     pageViews: number;
     previousPageViews: number;
-    topProducts: { name: string; units: number; revenue: number; imageUrl?: string }[];
+    topProducts: { name: string; units: number; revenue: number }[];
   };
   shopee: {
     revenue: number;
@@ -120,7 +120,7 @@ export interface MarketplaceData {
     previousProductClick: number;
     cancelledOrders: number;
     previousCancelledOrders: number;
-    topProducts: { name: string; units: number; revenue: number; imageUrl?: string }[];
+    topProducts: { name: string; units: number; revenue: number }[];
   };
 }
 
@@ -142,6 +142,7 @@ export interface ShopeeAdsData {
     views: number;
     clicks: number;
     budget: number;
+    imageUrl?: string;
   }[];
 }
 

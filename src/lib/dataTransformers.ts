@@ -80,13 +80,13 @@ export function transformMarketplace(d: Record<string, any>): MarketplaceData {
     const units = p.units || 0;
     const pricePerUnit = p.pricePerUnit || 0;
     const revenue = p.revenue || (units * pricePerUnit);
-    return { name: p.name || "", units, revenue, imageUrl: p.imageUrl || "" };
+    return { name: p.name || "", units, revenue };
   });
   const shopProducts = (d.shopeeTopProducts || []).map((p: any) => {
     const units = p.units || 0;
     const pricePerUnit = p.pricePerUnit || 0;
     const revenue = p.revenue || (units * pricePerUnit);
-    return { name: p.name || "", units, revenue, imageUrl: p.imageUrl || "" };
+    return { name: p.name || "", units, revenue };
   });
 
   const tokRevenue = d.tokopediaRevenue || 0;
@@ -151,7 +151,8 @@ export function transformShopeeAds(d: Record<string, any>): ShopeeAdsData {
     previousRoas: prevSpend > 0 ? prevAdRevenue / prevSpend : 0,
     products: (d.products || []).map((p: any) => ({
       name: p.name || "", revenue: p.revenue || 0, unitsSold: p.units || 0,
-      views: 0, clicks: p.clicks || 0, budget: p.spend || 0,
+      views: p.views || 0, clicks: p.clicks || 0, budget: p.spend || 0,
+      imageUrl: p.imageUrl || "",
     })),
   };
 }

@@ -45,9 +45,16 @@ export default function ShopeeAdsPage() {
       <section>
         <SectionHeader title="Product Performance" subtitle="Individual product ads metrics" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {data.products.map((p, i) => (
+         {data.products.map((p, i) => (
             <div key={i} className="bg-card rounded-xl border border-border/40 p-6 shadow-card hover:shadow-card-hover transition-all duration-300 border-t-[3px] border-t-channel-shopee">
-              <h3 className="font-semibold text-sm text-card-foreground mb-5">{p.name}</h3>
+              <div className="flex items-center gap-3 mb-5">
+                {p.imageUrl ? (
+                  <img src={p.imageUrl} alt={p.name} className="w-10 h-10 rounded-lg object-cover border border-border/40" />
+                ) : (
+                  <span className="w-10 h-10 rounded-lg bg-channel-shopee text-primary-foreground flex items-center justify-center text-sm font-bold">{i + 1}</span>
+                )}
+                <h3 className="font-semibold text-sm text-card-foreground">{p.name}</h3>
+              </div>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <p className="text-label text-muted-foreground mb-1">Revenue</p>
