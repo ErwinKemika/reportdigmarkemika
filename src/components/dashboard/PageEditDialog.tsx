@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMonth } from "@/contexts/MonthContext";
 import { usePageData, useUpsertPageData } from "@/hooks/usePageData";
@@ -11,9 +11,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2, Upload, Image as ImageIcon } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { formatCurrency } from "@/data/mockData";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface PageEditDialogProps {
   schema: PageSchema;
@@ -53,6 +55,29 @@ export function PageEditDialog({ schema }: PageEditDialogProps) {
     if (schema.pageKey !== "marketplace") return null;
     return (Number(values.previousTokopediaRevenue) || 0) + (Number(values.previousShopeeRevenue) || 0);
   }, [schema.pageKey, values.previousTokopediaRevenue, values.previousShopeeRevenue]);
+
+  const [uploadingKey, setUploadingKey] = useState<string | null>(null);
+
+  const handleImageUpload = useCallback(async (arrayKey: string, rowIndex: number, colKey: string, file: File) => {
+    const uploadId = `${arrayKey}-${rowIndex}`;
+    setUploadingKey(uploadId);
+    try {
+      const ext = file.name.split('.').pop();
+      const filePath = `${schema.pageKey}/${period}/${arrayKey}/${Date.now()}-${rowIndex}.${ext}`;
+      const { error: uploadError } = await supabase.storage.from('product-images').upload(filePath, file, { upsert: true });
+      if (uploadError) throw uploadError;
+      const { data: urlData } = supabase.storage.from('product-images').getPublicUrl(filePath);
+      const arr = [...(values[arrayKey] || [])];
+      if (!arr[rowIndex]) arr[rowIndex] = {};
+      arr[rowIndex] = { ...arr[rowIndex], [colKey]: urlData.publicUrl };
+      setValues(prev => ({ ...prev, [arrayKey]: arr }));
+      toast.success("Image uploaded");
+    } catch (err: any) {
+      toast.error("Upload failed: " + err.message);
+    } finally {
+      setUploadingKey(null);
+    }
+  }, [values, schema.pageKey, period]);
 
   if (!isAdmin) return null;
 
@@ -178,19 +203,64 @@ export function PageEditDialog({ schema }: PageEditDialogProps) {
           return (
             <div key={ri} className="flex items-start gap-2 p-3 bg-muted/30 rounded-lg">
               <div className="flex-1 grid grid-cols-2 gap-2">
-                {af.columns.map(col => (
-                  <div key={col.key} className="space-y-1">
-                    <Label className="text-[10px] text-muted-foreground">{col.label}</Label>
-                    <Input
-                      type={col.type === "text" ? "text" : "number"}
-                      step={col.type === "percent" ? "0.01" : "1"}
-                      min="0"
-                      value={row[col.key] ?? ""}
-                      onChange={e => handleArrayChange(af.key, ri, col.key, e.target.value, col.type)}
-                      className="h-8 text-sm"
-                    />
-                  </div>
-                ))}
+                {af.columns.map(col => {
+                  if (col.type === ("image" as any)) {
+                    const currentUrl = row[col.key];
+                    const isUploading = uploadingKey === `${af.key}-${ri}`;
+                    return (
+                      <div key={col.key} className="space-y-1 col-span-2">
+                        <Label className="text-[10px] text-muted-foreground">{col.label}</Label>
+                        <div className="flex items-center gap-2">
+                          {currentUrl ? (
+                            <img src={currentUrl} alt="Product" className="w-10 h-10 rounded-md object-cover border border-border/40" />
+                          ) : (
+                            <div className="w-10 h-10 rounded-md border border-dashed border-border/60 flex items-center justify-center bg-muted/50">
+                              <ImageIcon className="w-4 h-4 text-muted-foreground" />
+                            </div>
+                          )}
+                          <label className={`flex items-center gap-1.5 px-3 h-8 text-xs rounded-md border border-border/40 cursor-pointer hover:bg-muted/50 transition-colors ${isUploading ? "opacity-50 pointer-events-none" : ""}`}>
+                            <Upload className="w-3 h-3" />
+                            {isUploading ? "Uploading..." : currentUrl ? "Change" : "Upload"}
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={e => {
+                                const file = e.target.files?.[0];
+                                if (file) handleImageUpload(af.key, ri, col.key, file);
+                                e.target.value = "";
+                              }}
+                            />
+                          </label>
+                          {currentUrl && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 text-destructive"
+                              onClick={() => handleArrayChange(af.key, ri, col.key, "", "text")}
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  }
+                  return (
+                    <div key={col.key} className="space-y-1">
+                      <Label className="text-[10px] text-muted-foreground">{col.label}</Label>
+                      <Input
+                        type={col.type === "text" ? "text" : "number"}
+                        step={col.type === "percent" ? "0.01" : "1"}
+                        min="0"
+                        value={row[col.key] ?? ""}
+                        onChange={e => handleArrayChange(af.key, ri, col.key, e.target.value, col.type)}
+                        className="h-8 text-sm"
+                      />
+                    </div>
+                  );
+                })}
                 {showAutoRevenue && (
                   <div className="space-y-1">
                     <Label className="text-[10px] text-muted-foreground">Revenue (auto)</Label>

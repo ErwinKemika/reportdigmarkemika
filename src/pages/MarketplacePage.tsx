@@ -77,7 +77,11 @@ export default function MarketplacePage() {
             {data.tokopedia.topProducts.map((p, i) => (
               <div key={i} className="flex justify-between items-center py-2.5 border-b border-border/20 last:border-0">
                 <div className="flex items-center gap-2.5">
-                  <span className="w-6 h-6 rounded-lg bg-channel-tokopedia text-primary-foreground flex items-center justify-center text-xs font-bold">{i + 1}</span>
+                  {p.imageUrl ? (
+                    <img src={p.imageUrl} alt={p.name} className="w-8 h-8 rounded-lg object-cover" />
+                  ) : (
+                    <span className="w-6 h-6 rounded-lg bg-channel-tokopedia text-primary-foreground flex items-center justify-center text-xs font-bold">{i + 1}</span>
+                  )}
                   <div>
                     <span className="text-sm font-medium">{p.name}</span>
                     <p className="text-xs text-muted-foreground">{p.units.toLocaleString("id-ID")} unit terjual</p>
@@ -111,8 +115,11 @@ export default function MarketplacePage() {
             <MetricCard title="Orders" value={data.shopee.orders} previousValue={data.shopee.previousOrders} />
             <MetricCard title="Visitors" value={data.shopee.visitors} previousValue={data.shopee.previousVisitors} />
           </div>
-          <div className="grid grid-cols-2 gap-2 mb-6">
+          <div className="grid grid-cols-2 gap-2 mb-4">
             <MetricCard title="Product Click" value={data.shopee.productClick} previousValue={data.shopee.previousProductClick} />
+            <MetricCard title="Page Views" value={data.shopee.pageViews} previousValue={data.shopee.previousPageViews} />
+          </div>
+          <div className="grid grid-cols-2 gap-2 mb-6">
             <MetricCard title="Cancelled" value={data.shopee.cancelledOrders} previousValue={data.shopee.previousCancelledOrders} />
           </div>
           <p className="text-label text-muted-foreground uppercase tracking-wider mb-3">Top 3 Best Selling</p>
@@ -120,7 +127,11 @@ export default function MarketplacePage() {
             {data.shopee.topProducts.map((p, i) => (
               <div key={i} className="flex justify-between items-center py-2.5 border-b border-border/20 last:border-0">
                 <div className="flex items-center gap-2.5">
-                  <span className="w-6 h-6 rounded-lg bg-channel-shopee text-primary-foreground flex items-center justify-center text-xs font-bold">{i + 1}</span>
+                  {p.imageUrl ? (
+                    <img src={p.imageUrl} alt={p.name} className="w-8 h-8 rounded-lg object-cover" />
+                  ) : (
+                    <span className="w-6 h-6 rounded-lg bg-channel-shopee text-primary-foreground flex items-center justify-center text-xs font-bold">{i + 1}</span>
+                  )}
                   <div>
                     <span className="text-sm font-medium">{p.name}</span>
                     <p className="text-xs text-muted-foreground">{p.units.toLocaleString("id-ID")} unit terjual</p>
