@@ -95,13 +95,13 @@ function TimelineBar({
           <div className="absolute inset-y-0 left-0 bg-white/20 rounded-l-lg" style={{ width: `${progress}%` }} />
         )}
         <div className="absolute inset-0 flex items-center px-3 gap-2 overflow-hidden">
-          <span className="text-[11px] font-medium text-white truncate flex-1 drop-shadow-sm">
+          <span className="text-[11px] font-medium text-foreground truncate flex-1">
             {action}
           </span>
-          <span className="shrink-0 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-semibold bg-white/25 text-white backdrop-blur-sm">
+          <span className="shrink-0 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-semibold bg-black/10 text-foreground backdrop-blur-sm">
             {tag}
           </span>
-          <span className="shrink-0 inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-semibold bg-white/25 text-white backdrop-blur-sm">
+          <span className="shrink-0 inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-semibold bg-black/10 text-foreground backdrop-blur-sm">
             {STATUS_ICON[status]}
             {status}
           </span>
