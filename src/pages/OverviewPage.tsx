@@ -4,7 +4,7 @@ import { usePageData } from "@/hooks/usePageData";
 import {
   getWebstoreSalesData, getMarketplaceData, getROIRevenueData,
   getWebsitePerformanceData, getShopeeAdsData, getAdsBudgetData,
-  formatCurrency, formatNumber, growthPercent,
+  formatCurrency, formatCurrencyFull, formatNumber, growthPercent,
 } from "@/data/mockData";
 import {
   transformWebstoreSales, transformMarketplace,
@@ -151,7 +151,7 @@ function ChannelCard({ name, icon, traffic, prevTraffic, revenue, prevRevenue, c
           <p className="text-[10px] text-muted-foreground mt-0.5">Traffic</p>
         </div>
         <div>
-          <p className="text-sm font-bold text-card-foreground">{formatCurrency(revenue)}</p>
+          <p className="text-sm font-bold text-card-foreground">{formatCurrencyFull(revenue)}</p>
           <div className="flex items-center gap-1 mt-0.5">
             {revenueGrowth >= 0 ? (
               <TrendingUp className="w-3 h-3 text-success" />
@@ -259,7 +259,7 @@ function ChartTooltipContent({ active, payload, label }: any) {
           <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
           <span className="text-muted-foreground">{entry.name}:</span>
           <span className="font-bold text-card-foreground">
-            {entry.name === "Revenue" ? formatCurrency(entry.value) : formatNumber(entry.value)}
+            {entry.name === "Revenue" ? formatCurrencyFull(entry.value) : formatNumber(entry.value)}
           </span>
         </div>
       ))}
@@ -464,7 +464,7 @@ export default function OverviewPage() {
           title="Total Revenue"
           value={agg.totalRevenue}
           previousValue={agg.prevTotalRevenue}
-          formatter={formatCurrency}
+          formatter={formatCurrencyFull}
           icon={<DollarSign className="w-4 h-4" />}
           tooltip="Webstore + Marketplace combined revenue"
           gradientKey="revenue"
@@ -482,7 +482,7 @@ export default function OverviewPage() {
           title="Total Budget Ads"
           value={agg.totalBudget}
           previousValue={agg.prevBudget}
-          formatter={formatCurrency}
+          formatter={formatCurrencyFull}
           icon={<Wallet className="w-4 h-4" />}
           tooltip="Manually entered overview budget"
           gradientKey="budget"
@@ -593,7 +593,7 @@ export default function OverviewPage() {
               productName={agg.topByRevenue.name}
               channel={agg.topByRevenue.channel}
               metric="Revenue"
-              metricValue={formatCurrency(agg.topByRevenue.revenue)}
+              metricValue={formatCurrencyFull(agg.topByRevenue.revenue)}
               gradient="bg-gradient-to-br from-tint-green to-tint-blue"
               prevWinner={agg.prevTopByRevenue ? `${agg.prevTopByRevenue.name} (${agg.prevTopByRevenue.channel})` : undefined}
             />
