@@ -6,7 +6,7 @@ import { PageEditDialog } from "@/components/dashboard/PageEditDialog";
 import { PAGE_SCHEMA_MAP } from "@/components/dashboard/pageEditSchemas";
 import {
   LayoutDashboard, Globe, ShoppingCart, Store, ShoppingBag,
-  Megaphone, DollarSign, Lightbulb, ClipboardList, ListChecks,
+  Megaphone, DollarSign, Lightbulb, ClipboardList,
   ChevronLeft, ChevronRight, Calendar, TrendingUp, BarChart3,
   LogOut, Shield,
 } from "lucide-react";
@@ -26,7 +26,7 @@ const navItems = [
   { label: "ROI & Revenue", path: "/roi-revenue", icon: TrendingUp },
   { label: "Insights", path: "/insights", icon: Lightbulb },
   { label: "Action Plan", path: "/recommendations", icon: ClipboardList },
-  { label: "Execution & Realization", path: "/execution", icon: ListChecks },
+  
 ];
 
 export function DashboardLayout({ children }: { children: ReactNode }) {
