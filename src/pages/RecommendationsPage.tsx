@@ -339,12 +339,23 @@ export default function RecommendationsPage() {
   const { data: mockFallback } = useMergedPageData("recommendations", getRecommendationsData, transformRecommendations);
   const [view, setView] = useState<"table" | "board">("table");
 
-  // Also load actions from adjacent months that may span into this month
-  const prevMonthIdx = MONTHS.indexOf(selectedMonth);
-  const prevPeriod = prevMonthIdx === 0 ?
-  `December ${selectedYear - 1}` :
-  `${MONTHS[prevMonthIdx - 1]} ${selectedYear}`;
-  const { data: prevMonthData } = usePageData(prevPeriod, "recommendations");
+  // Also load actions from up to 4 previous months that may span into this month
+  const currentMonthIdx = MONTHS.indexOf(selectedMonth);
+  const prevPeriods = useMemo(() => {
+    const periods: string[] = [];
+    for (let i = 1; i <= 4; i++) {
+      let mIdx = currentMonthIdx - i;
+      let yr = selectedYear;
+      while (mIdx < 0) { mIdx += 12; yr -= 1; }
+      periods.push(`${MONTHS[mIdx]} ${yr}`);
+    }
+    return periods;
+  }, [currentMonthIdx, selectedYear]);
+
+  const { data: prevData1 } = usePageData(prevPeriods[0], "recommendations");
+  const { data: prevData2 } = usePageData(prevPeriods[1], "recommendations");
+  const { data: prevData3 } = usePageData(prevPeriods[2], "recommendations");
+  const { data: prevData4 } = usePageData(prevPeriods[3], "recommendations");
 
   const isLoading = loadingDb;
 
@@ -353,24 +364,25 @@ export default function RecommendationsPage() {
     const currentData = dbData || mockFallback;
     const currentActions = convertToActions(currentData, selectedMonth);
 
-    // Cross-month: get actions from previous month that extend into this month
-    if (prevMonthData) {
-      const prevActions = convertToActions(prevMonthData, selectedMonth);
-      const crossMonthActions = prevActions.filter((a) => {
-        if (a.status === "Done") return false; // Don't carry over completed
-        return actionVisibleInPeriod(a, selectedMonth, selectedYear);
-      });
-      // Add cross-month items that aren't already in current (by task name)
-      const currentTaskNames = new Set(currentActions.map((a) => a.task));
-      for (const a of crossMonthActions) {
-        if (!currentTaskNames.has(a.task)) {
+    // Cross-month: get actions from previous months that extend into this month
+    const allPrevData = [prevData1, prevData2, prevData3, prevData4];
+    const currentTaskNames = new Set(currentActions.map((a) => a.task));
+
+    for (const pData of allPrevData) {
+      if (!pData) continue;
+      const prevActions = convertToActions(pData, selectedMonth);
+      for (const a of prevActions) {
+        if (a.status === "Done") continue;
+        if (currentTaskNames.has(a.task)) continue;
+        if (actionVisibleInPeriod(a, selectedMonth, selectedYear)) {
           currentActions.push(a);
+          currentTaskNames.add(a.task);
         }
       }
     }
 
     return currentActions;
-  }, [dbData, mockFallback, prevMonthData, selectedMonth, selectedYear]);
+  }, [dbData, mockFallback, prevData1, prevData2, prevData3, prevData4, selectedMonth, selectedYear]);
 
   if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
   if (actions.length === 0) return <NoData month={selectedMonth} />;
