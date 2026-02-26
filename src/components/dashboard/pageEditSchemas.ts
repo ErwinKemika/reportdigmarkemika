@@ -461,65 +461,37 @@ export const executionSchema: PageSchema = {
     },
   ],
 };
-// ===== OVERVIEW =====
-export const overviewSchema: PageSchema = {
-  pageKey: "overview",
-  pageTitle: "Overview",
+// ===== OVERVIEW (Manual fields only — rest is auto-aggregated) =====
+export const overviewManualSchema: PageSchema = {
+  pageKey: "overview-manual",
+  pageTitle: "Overview (Manual Fields)",
   groups: [
     {
-      title: "Website",
+      title: "Total Budget Ads (Manual)",
       fields: [
-        { key: "websiteObjective", label: "Objective", type: "textarea" },
-        { key: "websiteSessions", label: "Sessions", type: "number" },
-        { key: "websitePrevSessions", label: "Prev Sessions", type: "number" },
-        { key: "websiteUsers", label: "Users", type: "number" },
-        { key: "websitePrevUsers", label: "Prev Users", type: "number" },
-        { key: "websiteCR", label: "Conversion Rate (%)", type: "percent" },
-        { key: "websitePrevCR", label: "Prev CR (%)", type: "percent" },
-        { key: "websiteRevenue", label: "Revenue (Rp)", type: "currency" },
-        { key: "websitePrevRevenue", label: "Prev Revenue (Rp)", type: "currency" },
-        { key: "websiteAvgDuration", label: "Avg Duration (sec)", type: "number" },
-        { key: "websitePrevAvgDuration", label: "Prev Duration (sec)", type: "number" },
+        { key: "totalBudgetAds", label: "Total Budget Ads (Rp)", type: "currency" },
+        { key: "previousBudgetAds", label: "Previous Budget Ads (Rp)", type: "currency" },
       ],
     },
     {
-      title: "Tokopedia",
+      title: "Top Revenue Channel (Manual)",
       fields: [
-        { key: "tokopediaVisitorToko", label: "Visitor Toko", type: "number" },
-        { key: "tokopediaPrevVisitorToko", label: "Prev Visitor Toko", type: "number" },
-        { key: "tokopediaVisitorProduk", label: "Visitor Produk", type: "number" },
-        { key: "tokopediaPrevVisitorProduk", label: "Prev Visitor Produk", type: "number" },
-        { key: "tokopediaSoldProducts", label: "Sold Products", type: "number" },
-        { key: "tokopediaPrevSoldProducts", label: "Prev Sold Products", type: "number" },
-        { key: "tokopediaRating", label: "Rating Toko", type: "percent" },
-        { key: "tokopediaPrevRating", label: "Prev Rating", type: "percent" },
-      ],
-    },
-    {
-      title: "Shopee",
-      fields: [
-        { key: "shopeeVisitorToko", label: "Visitor Toko", type: "number" },
-        { key: "shopeePrevVisitorToko", label: "Prev Visitor Toko", type: "number" },
-        { key: "shopeeChatResponse", label: "Chat Response (%)", type: "percent" },
-        { key: "shopeePrevChatResponse", label: "Prev Chat Response", type: "percent" },
-        { key: "shopeeCR", label: "Conversion Rate (%)", type: "percent" },
-        { key: "shopeePrevCR", label: "Prev CR (%)", type: "percent" },
-        { key: "shopeeTotalOrders", label: "Total Orders", type: "number" },
-        { key: "shopeePrevTotalOrders", label: "Prev Total Orders", type: "number" },
-      ],
-    },
-    {
-      title: "Target",
-      fields: [
-        { key: "monthlyTarget", label: "Monthly Target Description", type: "textarea" },
+        { key: "topRevenueChannel", label: "Top Revenue Channel", type: "text", placeholder: "Webstore / Tokopedia / Shopee / B2B-B2G / Other" },
+        { key: "topChannelNotes", label: "Reason / Notes", type: "textarea", placeholder: "Why this channel is top..." },
       ],
     },
   ],
 };
 
+// Legacy overview schema kept for reference
+export const overviewSchema: PageSchema = {
+  pageKey: "overview",
+  pageTitle: "Overview (Legacy)",
+  groups: [],
+};
+
 // Map page routes to schemas
 export const PAGE_SCHEMA_MAP: Record<string, PageSchema> = {
-  "/": overviewSchema,
   "/website": websitePerformanceSchema,
   "/webstore": webstoreSalesSchema,
   "/marketplace": marketplaceSchema,
