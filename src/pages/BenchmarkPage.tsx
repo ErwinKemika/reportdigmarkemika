@@ -39,8 +39,12 @@ export default function BenchmarkPage() {
 
   const totalTraffic = data.channels.reduce((sum, ch) => sum + ch.traffic, 0);
   const totalTargetTraffic = data.channels.reduce((sum, ch) => sum + ch.targetTraffic, 0);
-  const avgCR = data.channels.reduce((sum, ch) => sum + ch.conversionRate, 0) / (data.channels.length || 1);
-  const avgTargetCR = data.channels.reduce((sum, ch) => sum + ch.targetCR, 0) / (data.channels.length || 1);
+  // Weighted Average CR: (sum of orders across channels) / totalTraffic * 100
+  // Orders per channel = traffic * conversionRate / 100
+  const totalOrders = data.channels.reduce((sum, ch) => sum + (ch.traffic * ch.conversionRate / 100), 0);
+  const totalTargetOrders = data.channels.reduce((sum, ch) => sum + (ch.targetTraffic * ch.targetCR / 100), 0);
+  const weightedCR = totalTraffic > 0 ? (totalOrders / totalTraffic) * 100 : 0;
+  const weightedTargetCR = totalTargetTraffic > 0 ? (totalTargetOrders / totalTargetTraffic) * 100 : 0;
   const trafficAchievement = totalTargetTraffic > 0 ? (totalTraffic / totalTargetTraffic) * 100 : 0;
 
   return (
@@ -55,9 +59,9 @@ export default function BenchmarkPage() {
             <p className="text-xs text-muted-foreground mt-1">Target: {formatNumber(totalTargetTraffic)}</p>
           </div>
           <div className="bg-card rounded-xl border border-border/40 shadow-card p-5">
-            <p className="text-label text-muted-foreground uppercase tracking-wider mb-1">Avg. Conversion Rate</p>
-            <p className="text-2xl font-extrabold text-card-foreground">{avgCR.toFixed(2)}%</p>
-            <p className="text-xs text-muted-foreground mt-1">Target: {avgTargetCR.toFixed(2)}%</p>
+            <p className="text-label text-muted-foreground uppercase tracking-wider mb-1">Weighted Conversion Rate</p>
+            <p className="text-2xl font-extrabold text-card-foreground">{weightedCR.toFixed(2)}%</p>
+            <p className="text-xs text-muted-foreground mt-1">Target: {weightedTargetCR.toFixed(2)}%</p>
           </div>
           <div className="bg-card rounded-xl border border-border/40 shadow-card p-5">
             <p className="text-label text-muted-foreground uppercase tracking-wider mb-1">Traffic Achievement</p>
