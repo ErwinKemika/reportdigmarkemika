@@ -37,8 +37,38 @@ export default function BenchmarkPage() {
   const highestCR = [...data.channels].sort((a, b) => b.conversionRate - a.conversionRate)[0];
   const largestGap = [...data.channels].sort((a, b) => a.achievement - b.achievement)[0];
 
+  const totalTraffic = data.channels.reduce((sum, ch) => sum + ch.traffic, 0);
+  const totalTargetTraffic = data.channels.reduce((sum, ch) => sum + ch.targetTraffic, 0);
+  const avgCR = data.channels.reduce((sum, ch) => sum + ch.conversionRate, 0) / (data.channels.length || 1);
+  const avgTargetCR = data.channels.reduce((sum, ch) => sum + ch.targetCR, 0) / (data.channels.length || 1);
+  const trafficAchievement = totalTargetTraffic > 0 ? (totalTraffic / totalTargetTraffic) * 100 : 0;
+
   return (
     <div className="space-y-10 animate-fade-in">
+      {/* Total KPI Cards */}
+      <section>
+        <SectionHeader title="Overview" subtitle="Aggregated metrics across all channels" icon={<BarChart3 className="w-4 h-4" />} />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="bg-card rounded-xl border border-border/40 shadow-card p-5">
+            <p className="text-label text-muted-foreground uppercase tracking-wider mb-1">Total Traffic</p>
+            <p className="text-2xl font-extrabold text-card-foreground">{formatNumber(totalTraffic)}</p>
+            <p className="text-xs text-muted-foreground mt-1">Target: {formatNumber(totalTargetTraffic)}</p>
+          </div>
+          <div className="bg-card rounded-xl border border-border/40 shadow-card p-5">
+            <p className="text-label text-muted-foreground uppercase tracking-wider mb-1">Avg. Conversion Rate</p>
+            <p className="text-2xl font-extrabold text-card-foreground">{avgCR.toFixed(2)}%</p>
+            <p className="text-xs text-muted-foreground mt-1">Target: {avgTargetCR.toFixed(2)}%</p>
+          </div>
+          <div className="bg-card rounded-xl border border-border/40 shadow-card p-5">
+            <p className="text-label text-muted-foreground uppercase tracking-wider mb-1">Traffic Achievement</p>
+            <p className="text-2xl font-extrabold text-card-foreground">{trafficAchievement.toFixed(1)}%</p>
+            <div className="w-full h-2 bg-muted rounded-full overflow-hidden mt-2">
+              <div className={`h-full rounded-full transition-all duration-500 ${progressColor(trafficAchievement)}`} style={{ width: `${Math.min(trafficAchievement, 100)}%` }} />
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section>
         <SectionHeader title="Channel Benchmark" subtitle="Comparative performance across all e-commerce channels" icon={<BarChart3 className="w-4 h-4" />} />
         <div className="bg-card rounded-xl border border-border/40 shadow-hero overflow-hidden">
