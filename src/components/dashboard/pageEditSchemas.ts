@@ -371,50 +371,53 @@ export const insightsSchema: PageSchema = {
   ],
 };
 
-// ===== RECOMMENDATIONS =====
+// ===== ACTION PLAN =====
 export const recommendationsSchema: PageSchema = {
   pageKey: "recommendations",
-  pageTitle: "Recommendation & Action Plan",
+  pageTitle: "Action Plan",
   groups: [],
   arrayFields: [
     {
-      key: "optimasiWebsite",
-      label: "Website Optimization",
-      columns: [{ key: "text", label: "Action Item", type: "text" }],
-      maxRows: 6,
-    },
-    {
-      key: "optimasiMarketplace",
-      label: "Marketplace Optimization",
-      columns: [{ key: "text", label: "Action Item", type: "text" }],
-      maxRows: 6,
-    },
-    {
       key: "actionPlan30",
-      label: "30-Day Actions",
+      label: "Immediate Actions (30 Days)",
       columns: [
-        { key: "action", label: "Action", type: "text" },
+        { key: "action", label: "Task", type: "text" },
         { key: "tag", label: "Tag (Ads/SEO/UX/Campaign)", type: "text" },
+        { key: "priority", label: "Priority (High/Medium/Low)", type: "text" },
+        { key: "status", label: "Status (Done/Ongoing/Pending/Blocked)", type: "text" },
+        { key: "startDate", label: "Start Date (e.g. Feb 1)", type: "text" },
+        { key: "endDate", label: "End Date (e.g. Feb 10)", type: "text" },
+        { key: "progress", label: "Progress (0-100)", type: "number" },
       ],
-      maxRows: 5,
+      maxRows: 10,
     },
     {
       key: "actionPlan60",
-      label: "60-Day Actions",
+      label: "Tactical Actions (60 Days)",
       columns: [
-        { key: "action", label: "Action", type: "text" },
+        { key: "action", label: "Task", type: "text" },
         { key: "tag", label: "Tag", type: "text" },
+        { key: "priority", label: "Priority (High/Medium/Low)", type: "text" },
+        { key: "status", label: "Status (Done/Ongoing/Pending/Blocked)", type: "text" },
+        { key: "startDate", label: "Start Date", type: "text" },
+        { key: "endDate", label: "End Date", type: "text" },
+        { key: "progress", label: "Progress (0-100)", type: "number" },
       ],
-      maxRows: 5,
+      maxRows: 10,
     },
     {
       key: "actionPlan90",
-      label: "90-Day Actions",
+      label: "Strategic Actions (90 Days)",
       columns: [
-        { key: "action", label: "Action", type: "text" },
+        { key: "action", label: "Task", type: "text" },
         { key: "tag", label: "Tag", type: "text" },
+        { key: "priority", label: "Priority (High/Medium/Low)", type: "text" },
+        { key: "status", label: "Status (Done/Ongoing/Pending/Blocked)", type: "text" },
+        { key: "startDate", label: "Start Date", type: "text" },
+        { key: "endDate", label: "End Date", type: "text" },
+        { key: "progress", label: "Progress (0-100)", type: "number" },
       ],
-      maxRows: 5,
+      maxRows: 10,
     },
   ],
 };
