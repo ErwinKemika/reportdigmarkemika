@@ -46,7 +46,7 @@ function useSourceData(period: string, pageKey: string, mockMonth: MonthName, mo
 // ============ GRADIENT KPI CARD ============
 const GRADIENT_MAP: Record<string, string> = {
   traffic: "from-[hsl(217,91%,60%)] to-[hsl(210,100%,72%)]",
-  leads: "from-[hsl(174,72%,40%)] to-[hsl(160,60%,55%)]",
+  leads: "from-[hsl(45,100%,51%)] to-[hsl(55,95%,60%)]",
   revenue: "from-[hsl(160,84%,39%)] to-[hsl(142,60%,50%)]",
   conversion: "from-[hsl(245,58%,51%)] to-[hsl(262,52%,62%)]",
   budget: "from-[hsl(280,60%,55%)] to-[hsl(262,80%,70%)]",
