@@ -184,7 +184,7 @@ function ConversionFunnel({ impressions, clicks, leads, orders }: {
   orders: number;
 }) {
   const steps = [
-    { label: "Impressions", value: impressions, color: "from-[hsl(217,91%,55%)] to-[hsl(217,91%,65%)]", width: "100%" },
+    { label: "Impressions ADS", value: impressions, color: "from-[hsl(217,91%,55%)] to-[hsl(217,91%,65%)]", width: "100%" },
     { label: "Clicks", value: clicks, color: "from-[hsl(210,100%,55%)] to-[hsl(210,100%,65%)]", width: "78%" },
     { label: "Leads", value: leads, color: "from-[hsl(245,58%,51%)] to-[hsl(262,52%,60%)]", width: "55%" },
     { label: "Orders", value: orders, color: "from-[hsl(50,80%,50%)] to-[hsl(60,70%,55%)]", width: "35%" },
