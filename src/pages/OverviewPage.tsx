@@ -310,9 +310,9 @@ export default function OverviewPage() {
     const totalTraffic = webTraffic + tokVisitors + shopVisitors;
     const prevTotalTraffic = (web?.totalSessions?.previousValue || 0) + (mp?.tokopedia?.previousVisitors || 0) + (mp?.shopee?.previousVisitors || 0);
 
-    // 2) Total Leads
-    const totalLeads = (roiD?.b2bLeads?.value || 0) + (roiD?.b2gLeads?.value || 0);
-    const prevTotalLeads = (proi?.b2bLeads?.value || 0) + (proi?.b2gLeads?.value || 0);
+    // 2) Est. Revenue (from ROI lead pipeline)
+    const estRevenue = roiD?.estimatedRevenue?.value || 0;
+    const prevEstRevenue = roiD?.estimatedRevenue?.previousValue || proi?.estimatedRevenue?.value || 0;
 
     // 3) Total Revenue — use embedded previous values from current period's data
     const webstoreRev = ws?.totalRevenue || 0;
@@ -359,7 +359,7 @@ export default function OverviewPage() {
     // Funnel
     const impressions = ads?.impressions?.value || 0;
     const clicks = ads?.clicks?.value || 0;
-    const leads = totalLeads;
+    const leads = (roiD?.b2bLeads?.value || 0) + (roiD?.b2gLeads?.value || 0);
     const orders = totalOrders;
 
     // Channel details
@@ -380,7 +380,7 @@ export default function OverviewPage() {
       const progress = day / daysInMonth;
       const revBase = totalRevenue / daysInMonth;
       const trafficBase = totalTraffic / daysInMonth;
-      const leadsBase = totalLeads / daysInMonth;
+      const leadsBase = leads / daysInMonth;
       const jitter = 0.7 + Math.sin(day * 0.8) * 0.3 + Math.cos(day * 1.2) * 0.15;
       return {
         name: `${selectedMonth.slice(0, 3)} ${day}`,
@@ -392,7 +392,7 @@ export default function OverviewPage() {
 
     return {
       totalTraffic, prevTotalTraffic,
-      totalLeads, prevTotalLeads,
+      estRevenue, prevEstRevenue,
       totalRevenue, prevTotalRevenue,
       weightedCR, prevWeightedCR,
       totalBudget, prevBudget,
@@ -453,12 +453,12 @@ export default function OverviewPage() {
           gradientKey="traffic"
         />
         <GradientKPICard
-          title="Total Leads"
-          value={agg.totalLeads}
-          previousValue={agg.prevTotalLeads}
-          formatter={(n) => n.toLocaleString()}
-          icon={<Users className="w-4 h-4" />}
-          tooltip="B2B + B2G Leads from ROI & Revenue"
+          title="Est. Revenue"
+          value={agg.estRevenue}
+          previousValue={agg.prevEstRevenue}
+          formatter={formatCurrencyFull}
+          icon={<DollarSign className="w-4 h-4" />}
+          tooltip="Estimated revenue from lead pipeline (ROI & Revenue)"
           gradientKey="leads"
         />
         <GradientKPICard
