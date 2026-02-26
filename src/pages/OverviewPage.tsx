@@ -321,15 +321,13 @@ export default function OverviewPage() {
     const prevTotalRevenue = (ws?.previousRevenue || 0) + (mp?.previousCombinedRevenue || 0);
 
     // 4) Weighted CR
-    const webOrders = web?.eventClickWA?.value || 0;
     const tokOrders = mp?.tokopedia?.unitsSold || 0;
     const shopOrders = mp?.shopee?.orders || 0;
-    const totalOrders = webOrders + tokOrders + shopOrders;
+    const totalOrders = tokOrders + shopOrders;
     const weightedCR = totalTraffic > 0 ? (totalOrders / totalTraffic) * 100 : 0;
-    const prevWebOrders = pweb?.eventClickWA?.value || 0;
     const prevTokOrders = pmp?.tokopedia?.unitsSold || 0;
     const prevShopOrders = pmp?.shopee?.orders || 0;
-    const prevTotalOrders = prevWebOrders + prevTokOrders + prevShopOrders;
+    const prevTotalOrders = prevTokOrders + prevShopOrders;
     const prevWeightedCR = prevTotalTraffic > 0 ? (prevTotalOrders / prevTotalTraffic) * 100 : 0;
 
     // 5) Budget (manual)
@@ -365,10 +363,10 @@ export default function OverviewPage() {
     const orders = totalOrders;
 
     // Channel details
-    const webstoreCR = web?.totalSessions?.value ? ((web?.eventClickWA?.value || 0) / web.totalSessions.value) * 100 : 0;
+    const webstoreCR = 0;
     const tokCR = tokVisitors > 0 ? (tokOrders / tokVisitors) * 100 : 0;
     const shopCR = shopVisitors > 0 ? (shopOrders / shopVisitors) * 100 : 0;
-    const prevWebstoreCR = pweb?.totalSessions?.value ? ((pweb?.eventClickWA?.value || 0) / pweb.totalSessions.value) * 100 : 0;
+    const prevWebstoreCR = 0;
     const prevTokCR = (pmp?.tokopedia?.visitors || 0) > 0 ? (prevTokOrders / (pmp?.tokopedia?.visitors || 1)) * 100 : 0;
     const prevShopCR = (pmp?.shopee?.visitors || 0) > 0 ? (prevShopOrders / (pmp?.shopee?.visitors || 1)) * 100 : 0;
 
@@ -490,15 +488,20 @@ export default function OverviewPage() {
           tooltip="Manually entered overview budget"
           gradientKey="budget"
         />
-        <GradientKPICard
-          title="Campaign ROI"
-          value={agg.campaignROI}
-          previousValue={agg.prevCampaignROI}
-          formatter={(n) => n.toFixed(0) + "%"}
-          icon={<TrendingUp className="w-4 h-4" />}
-          tooltip="ROI = (Revenue - Ad Spend) / Ad Spend × 100"
-          gradientKey="roi"
-        />
+        <div className="flex flex-col">
+          <GradientKPICard
+            title="Campaign ROI"
+            value={agg.campaignROI}
+            previousValue={agg.prevCampaignROI}
+            formatter={(n) => n.toFixed(0) + "%"}
+            icon={<TrendingUp className="w-4 h-4" />}
+            tooltip="ROI = (Revenue - Ad Spend) / Ad Spend × 100"
+            gradientKey="roi"
+          />
+          <p className="text-[10px] text-muted-foreground mt-1.5 px-1 italic">
+            Formula: (Total Revenue - Total Ad Spend) / Total Ad Spend × 100
+          </p>
+        </div>
       </div>
 
       {/* ─── SECTION 2 + FUNNEL (side by side) ─── */}
