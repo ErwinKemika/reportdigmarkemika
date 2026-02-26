@@ -1,27 +1,40 @@
 import { useMonth } from "@/contexts/MonthContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { usePageData, useUpsertPageData } from "@/hooks/usePageData";
-import { getWebstoreSalesData, getMarketplaceData, getROIRevenueData, getWebsitePerformanceData, formatCurrency, formatNumber, growthPercent, type KPIValue } from "@/data/mockData";
-import { transformWebstoreSales, transformMarketplace, transformROIRevenue, transformWebsitePerformance } from "@/lib/dataTransformers";
+import { usePageData } from "@/hooks/usePageData";
+import {
+  getWebstoreSalesData, getMarketplaceData, getROIRevenueData,
+  getWebsitePerformanceData, getShopeeAdsData, getAdsBudgetData,
+  formatCurrency, formatNumber, growthPercent,
+} from "@/data/mockData";
+import {
+  transformWebstoreSales, transformMarketplace,
+  transformROIRevenue, transformWebsitePerformance,
+  transformShopeeAds, transformAdsBudget,
+} from "@/lib/dataTransformers";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
 import { PageEditDialog } from "@/components/dashboard/PageEditDialog";
 import { overviewManualSchema } from "@/components/dashboard/pageEditSchemas";
-import { TrendingUp, TrendingDown, Minus, Globe, Users, DollarSign, Percent, Wallet, Trophy, Package, Star, Info, Clock } from "lucide-react";
+import {
+  Globe, Users, DollarSign, Percent, Wallet, TrendingUp, TrendingDown,
+  Minus, Trophy, Package, Star, Info, Clock, ShoppingBag, Store, ShoppingCart,
+  ArrowRight, ChevronRight,
+} from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useMemo } from "react";
 import type { MonthName } from "@/contexts/MonthContext";
 import { MONTHS } from "@/contexts/MonthContext";
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer,
+  Tooltip as RechartsTooltip, Legend,
+} from "recharts";
 
-function getPreviousMonthYear(month: MonthName, year: number): { month: MonthName; year: number; period: string } {
+function getPreviousMonthYear(month: MonthName, year: number) {
   const idx = MONTHS.indexOf(month);
-  if (idx === 0) {
-    return { month: MONTHS[11], year: year - 1, period: `${MONTHS[11]} ${year - 1}` };
-  }
+  if (idx === 0) return { month: MONTHS[11], year: year - 1, period: `${MONTHS[11]} ${year - 1}` };
   return { month: MONTHS[idx - 1], year, period: `${MONTHS[idx - 1]} ${year}` };
 }
 
-// Helper to safely get data from DB or mock
 function useSourceData(period: string, pageKey: string, mockMonth: MonthName, mockGetter: (m: MonthName) => any, transformer: (d: Record<string, any>) => any) {
   const { data: dbData, isLoading } = usePageData(period, pageKey);
   const mock = mockGetter(mockMonth);
@@ -30,122 +43,236 @@ function useSourceData(period: string, pageKey: string, mockMonth: MonthName, mo
   return { data: mock, isLoading: false };
 }
 
-interface AggregatedKPI {
-  value: number;
-  previousValue: number;
-}
+// ============ GRADIENT KPI CARD ============
+const GRADIENT_MAP: Record<string, string> = {
+  traffic: "from-[hsl(217,91%,60%)] to-[hsl(210,100%,72%)]",
+  leads: "from-[hsl(174,72%,40%)] to-[hsl(160,60%,55%)]",
+  revenue: "from-[hsl(160,84%,39%)] to-[hsl(142,60%,50%)]",
+  conversion: "from-[hsl(245,58%,51%)] to-[hsl(262,52%,62%)]",
+  budget: "from-[hsl(280,60%,55%)] to-[hsl(262,80%,70%)]",
+  roi: "from-[hsl(25,95%,53%)] to-[hsl(38,92%,60%)]",
+};
 
-function kpi(v: number, pv: number): AggregatedKPI { return { value: v, previousValue: pv }; }
-
-// ============ KPI Card Component for Overview ============
-function OverviewKPICard({ title, value, previousValue, formatter, icon, tooltip, large }: {
+function GradientKPICard({ title, value, previousValue, formatter, icon, tooltip, gradientKey }: {
   title: string;
   value: number;
   previousValue: number;
   formatter: (n: number) => string;
   icon: React.ReactNode;
   tooltip?: string;
-  large?: boolean;
+  gradientKey: string;
 }) {
   const growth = growthPercent(value, previousValue);
   const isPositive = growth > 0;
   const isNeutral = growth === 0;
+  const gradient = GRADIENT_MAP[gradientKey] || GRADIENT_MAP.traffic;
 
   return (
-    <div className={`bg-card rounded-xl border border-border/40 shadow-card hover:shadow-card-hover transition-all duration-300 animate-fade-in overflow-hidden ${large ? "p-6" : "p-5"}`}>
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
-            {icon}
+    <div className={`relative overflow-hidden rounded-[20px] bg-gradient-to-br ${gradient} p-5 shadow-lg hover:shadow-xl transition-all duration-500 hover:-translate-y-0.5 group`}>
+      {/* Animated background shimmer */}
+      <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+      <div className="relative z-10">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 rounded-lg bg-white/20 text-white/90">
+              {icon}
+            </div>
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-white/80">{title}</span>
           </div>
-          <span className="text-label uppercase tracking-wider text-muted-foreground">{title}</span>
+          {tooltip && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="w-3.5 h-3.5 text-white/40 cursor-help hover:text-white/70 transition-colors" />
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-xs text-xs">{tooltip}</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
         </div>
-        {tooltip && (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Info className="w-3.5 h-3.5 text-muted-foreground/40 cursor-help" />
-              </TooltipTrigger>
-              <TooltipContent side="top" className="max-w-xs text-xs">
-                {tooltip}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        )}
-      </div>
-      <div className={`font-extrabold text-card-foreground mb-1 tracking-tight leading-tight ${large ? "text-2xl" : "text-xl"}`}>
-        {formatter(value)}
-      </div>
-      <div className="flex items-center gap-1.5">
-        {isNeutral ? (
-          <Minus className="w-3.5 h-3.5 text-muted-foreground" />
-        ) : isPositive ? (
-          <TrendingUp className="w-3.5 h-3.5 text-success" />
-        ) : (
-          <TrendingDown className="w-3.5 h-3.5 text-destructive" />
-        )}
-        <span className={`text-xs font-semibold ${isNeutral ? "text-muted-foreground" : isPositive ? "text-success" : "text-destructive"}`}>
-          {isPositive ? "+" : ""}{growth.toFixed(1)}%
-        </span>
-        <span className="text-xs text-muted-foreground/70">vs prev</span>
+        <p className="text-2xl font-extrabold text-white tracking-tight leading-tight mb-2">
+          {formatter(value)}
+        </p>
+        <div className="flex items-center gap-1.5">
+          {isNeutral ? (
+            <Minus className="w-3.5 h-3.5 text-white/60" />
+          ) : isPositive ? (
+            <TrendingUp className="w-3.5 h-3.5 text-white" />
+          ) : (
+            <TrendingDown className="w-3.5 h-3.5 text-white" />
+          )}
+          <span className="text-xs font-bold text-white/90">
+            {isPositive ? "+" : ""}{growth.toFixed(1)}%
+          </span>
+          <span className="text-[10px] text-white/50">vs prev</span>
+        </div>
       </div>
     </div>
   );
 }
 
-// ============ Product Winner Card ============
-function ProductWinnerCard({ title, icon, productName, channel, metricLabel, metricValue, metricFormatter, prevWinner }: {
+// ============ CHANNEL PERFORMANCE CARD ============
+function ChannelCard({ name, icon, traffic, prevTraffic, revenue, prevRevenue, conversionRate, prevCR, color }: {
+  name: string;
+  icon: React.ReactNode;
+  traffic: number;
+  prevTraffic: number;
+  revenue: number;
+  prevRevenue: number;
+  conversionRate: number;
+  prevCR: number;
+  color: string;
+}) {
+  const trafficGrowth = growthPercent(traffic, prevTraffic);
+  const revenueGrowth = growthPercent(revenue, prevRevenue);
+
+  return (
+    <div className={`bg-card rounded-2xl border border-border/30 shadow-card hover:shadow-card-hover transition-all duration-300 p-5 relative overflow-hidden`}>
+      <div className={`absolute top-0 left-0 right-0 h-1 ${color}`} />
+      <div className="flex items-center gap-2 mb-4">
+        <div className={`p-1.5 rounded-lg ${color} bg-opacity-10`}>
+          {icon}
+        </div>
+        <span className="text-sm font-bold text-card-foreground">{name}</span>
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <p className="text-xl font-extrabold text-card-foreground tracking-tight">{formatNumber(traffic)}</p>
+          <div className="flex items-center gap-1 mt-0.5">
+            {trafficGrowth >= 0 ? (
+              <TrendingUp className="w-3 h-3 text-success" />
+            ) : (
+              <TrendingDown className="w-3 h-3 text-destructive" />
+            )}
+            <span className={`text-[10px] font-bold ${trafficGrowth >= 0 ? "text-success" : "text-destructive"}`}>
+              {trafficGrowth >= 0 ? "+" : ""}{trafficGrowth.toFixed(0)}%
+            </span>
+          </div>
+          <p className="text-[10px] text-muted-foreground mt-0.5">Traffic</p>
+        </div>
+        <div>
+          <p className="text-sm font-bold text-card-foreground">{formatCurrency(revenue)}</p>
+          <div className="flex items-center gap-1 mt-0.5">
+            {revenueGrowth >= 0 ? (
+              <TrendingUp className="w-3 h-3 text-success" />
+            ) : (
+              <TrendingDown className="w-3 h-3 text-destructive" />
+            )}
+            <span className={`text-[10px] font-bold ${revenueGrowth >= 0 ? "text-success" : "text-destructive"}`}>
+              {revenueGrowth >= 0 ? "+" : ""}{revenueGrowth.toFixed(1)}%
+            </span>
+          </div>
+          <p className="text-[10px] text-muted-foreground mt-0.5">Revenue</p>
+        </div>
+      </div>
+      <div className="mt-3 pt-3 border-t border-border/30 flex items-center justify-between">
+        <span className="text-[10px] text-muted-foreground">Conversion</span>
+        <span className="text-xs font-bold text-card-foreground">{conversionRate.toFixed(1)}%</span>
+      </div>
+    </div>
+  );
+}
+
+// ============ CONVERSION FUNNEL ============
+function ConversionFunnel({ impressions, clicks, leads, orders }: {
+  impressions: number;
+  clicks: number;
+  leads: number;
+  orders: number;
+}) {
+  const steps = [
+    { label: "Impressions", value: impressions, color: "from-[hsl(217,91%,55%)] to-[hsl(217,91%,65%)]", width: "100%" },
+    { label: "Clicks", value: clicks, color: "from-[hsl(210,100%,55%)] to-[hsl(210,100%,65%)]", width: "78%" },
+    { label: "Leads", value: leads, color: "from-[hsl(245,58%,51%)] to-[hsl(262,52%,60%)]", width: "55%" },
+    { label: "Orders", value: orders, color: "from-[hsl(50,80%,50%)] to-[hsl(60,70%,55%)]", width: "35%" },
+  ];
+
+  return (
+    <div className="bg-card rounded-2xl border border-border/30 shadow-card p-6">
+      <h3 className="text-sm font-bold text-card-foreground mb-5">Conversion Funnel</h3>
+      <div className="space-y-3">
+        {steps.map((step, i) => {
+          const dropOff = i > 0 ? ((1 - step.value / steps[i - 1].value) * 100).toFixed(1) : null;
+          return (
+            <div key={step.label} className="flex items-center gap-3">
+              <div className="flex-1">
+                <div
+                  className={`bg-gradient-to-r ${step.color} rounded-lg py-2 px-3 flex items-center justify-center transition-all duration-500`}
+                  style={{ width: step.width }}
+                >
+                  <span className="text-[11px] font-bold text-white truncate">{step.label}</span>
+                </div>
+              </div>
+              <div className="w-16 text-right">
+                <p className="text-sm font-extrabold text-card-foreground">{formatNumber(step.value)}</p>
+                {dropOff && (
+                  <p className="text-[9px] text-destructive font-medium">↓ {dropOff}%</p>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ============ TOP PERFORMER CARD ============
+function TopPerformerCard({ title, icon, productName, channel, metric, metricValue, gradient, prevWinner }: {
   title: string;
   icon: React.ReactNode;
   productName: string;
   channel: string;
-  metricLabel: string;
-  metricValue: number;
-  metricFormatter: (n: number) => string;
+  metric: string;
+  metricValue: string;
+  gradient: string;
   prevWinner?: string;
 }) {
   return (
-    <div className="bg-card rounded-xl border border-border/40 shadow-card hover:shadow-card-hover transition-all duration-300 animate-fade-in p-5">
+    <div className={`relative overflow-hidden rounded-2xl border border-border/20 p-5 ${gradient}`}>
       <div className="flex items-center gap-2 mb-3">
-        <div className="p-1.5 rounded-lg bg-accent/50 text-accent-foreground">
+        <div className="p-1.5 rounded-lg bg-white/60 text-foreground">
           {icon}
         </div>
-        <span className="text-label uppercase tracking-wider text-muted-foreground">{title}</span>
+        <span className="text-[11px] font-bold uppercase tracking-wider text-foreground/70">{title}</span>
       </div>
-      <p className="text-sm font-bold text-card-foreground truncate mb-0.5" title={productName}>{productName}</p>
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">{channel}</span>
-        <span className="text-xs text-muted-foreground">{metricLabel}: {metricFormatter(metricValue)}</span>
+      <p className="text-sm font-extrabold text-foreground truncate mb-1.5" title={productName}>{productName}</p>
+      <div className="flex items-center gap-2 mb-1">
+        <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/60 text-foreground font-semibold">{channel}</span>
+        <span className="text-xs text-foreground/70 font-medium">{metricValue}</span>
       </div>
       {prevWinner && (
-        <p className="text-[10px] text-muted-foreground/60 truncate">Prev winner: {prevWinner}</p>
+        <p className="text-[9px] text-foreground/40 truncate mt-2">Prev: {prevWinner}</p>
       )}
     </div>
   );
 }
 
-// ============ Manual Field Card ============
-function ManualChannelCard({ channel, notes }: { channel: string; notes: string }) {
+// ============ CUSTOM CHART TOOLTIP ============
+function ChartTooltipContent({ active, payload, label }: any) {
+  if (!active || !payload?.length) return null;
   return (
-    <div className="bg-card rounded-xl border border-border/40 shadow-card hover:shadow-card-hover transition-all duration-300 animate-fade-in p-5">
-      <div className="flex items-center gap-2 mb-3">
-        <div className="p-1.5 rounded-lg bg-accent/50 text-accent-foreground">
-          <Star className="w-4 h-4" />
+    <div className="bg-card border border-border/40 rounded-xl shadow-lg p-3 text-xs">
+      <p className="font-bold text-card-foreground mb-1.5">{label}</p>
+      {payload.map((entry: any, i: number) => (
+        <div key={i} className="flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
+          <span className="text-muted-foreground">{entry.name}:</span>
+          <span className="font-bold text-card-foreground">
+            {entry.name === "Revenue" ? formatCurrency(entry.value) : formatNumber(entry.value)}
+          </span>
         </div>
-        <span className="text-label uppercase tracking-wider text-muted-foreground">Top Revenue Channel</span>
-      </div>
-      <p className="text-lg font-extrabold text-card-foreground mb-1">{channel || "—"}</p>
-      {notes && <p className="text-xs text-muted-foreground leading-relaxed">{notes}</p>}
+      ))}
     </div>
   );
 }
 
+// ============ MAIN PAGE ============
 export default function OverviewPage() {
   const { selectedMonth, selectedYear, period } = useMonth();
   const { isAdmin } = useAuth();
   const prev = getPreviousMonthYear(selectedMonth, selectedYear);
 
-  // Fetch current & previous from each source page
   const webstore = useSourceData(period, "webstore-sales", selectedMonth, getWebstoreSalesData, transformWebstoreSales);
   const prevWebstore = useSourceData(prev.period, "webstore-sales", prev.month, getWebstoreSalesData, transformWebstoreSales);
   const marketplace = useSourceData(period, "marketplace", selectedMonth, getMarketplaceData, transformMarketplace);
@@ -154,13 +281,13 @@ export default function OverviewPage() {
   const prevRoi = useSourceData(prev.period, "roi-revenue", prev.month, getROIRevenueData, transformROIRevenue);
   const website = useSourceData(period, "website-performance", selectedMonth, getWebsitePerformanceData, transformWebsitePerformance);
   const prevWebsite = useSourceData(prev.period, "website-performance", prev.month, getWebsitePerformanceData, transformWebsitePerformance);
+  const shopeeAds = useSourceData(period, "shopee-ads", selectedMonth, getShopeeAdsData, transformShopeeAds);
+  const adsBudget = useSourceData(period, "ads-budget", selectedMonth, getAdsBudgetData, transformAdsBudget);
 
-  // Manual overview data (budget + top channel)
   const { data: manualData, isLoading: manualLoading } = usePageData(period, "overview-manual");
 
   const isLoading = webstore.isLoading || marketplace.isLoading || roi.isLoading || website.isLoading || manualLoading;
 
-  // ============ COMPUTE AGGREGATED KPIs ============
   const agg = useMemo(() => {
     const ws = webstore.data;
     const mp = marketplace.data;
@@ -170,65 +297,57 @@ export default function OverviewPage() {
     const pmp = prevMarketplace.data;
     const proi = prevRoi.data;
     const pweb = prevWebsite.data;
+    const ads = shopeeAds.data;
+    const budget = adsBudget.data;
 
     // 1) Total Traffic
     const webTraffic = web?.totalSessions?.value || 0;
     const tokVisitors = mp?.tokopedia?.visitors || 0;
     const shopVisitors = mp?.shopee?.visitors || 0;
     const totalTraffic = webTraffic + tokVisitors + shopVisitors;
-
-    const prevWebTraffic = pweb?.totalSessions?.value || 0;
-    const prevTokVisitors = pmp?.tokopedia?.visitors || 0;
-    const prevShopVisitors = pmp?.shopee?.visitors || 0;
-    const prevTotalTraffic = prevWebTraffic + prevTokVisitors + prevShopVisitors;
+    const prevTotalTraffic = (pweb?.totalSessions?.value || 0) + (pmp?.tokopedia?.visitors || 0) + (pmp?.shopee?.visitors || 0);
 
     // 2) Total Leads
     const totalLeads = (roiD?.b2bLeads?.value || 0) + (roiD?.b2gLeads?.value || 0);
     const prevTotalLeads = (proi?.b2bLeads?.value || 0) + (proi?.b2gLeads?.value || 0);
 
-    // 3) Total Actual Revenue
+    // 3) Total Revenue
     const webstoreRev = ws?.totalRevenue || 0;
     const mpRev = mp?.totalCombinedRevenue || 0;
     const totalRevenue = webstoreRev + mpRev;
+    const prevTotalRevenue = (pws?.totalRevenue || 0) + (pmp?.totalCombinedRevenue || 0);
 
-    const prevWebstoreRev = pws?.totalRevenue || 0;
-    const prevMpRev = pmp?.totalCombinedRevenue || 0;
-    const prevTotalRevenue = prevWebstoreRev + prevMpRev;
-
-    // 4) Weighted Conversion Rate
-    // Orders
-    const webOrders = web?.eventClickWA?.value || 0; // fallback to WA clicks as webstore "orders"
+    // 4) Weighted CR
+    const webOrders = web?.eventClickWA?.value || 0;
     const tokOrders = mp?.tokopedia?.unitsSold || 0;
     const shopOrders = mp?.shopee?.orders || 0;
     const totalOrders = webOrders + tokOrders + shopOrders;
-    const totalVisitors = totalTraffic;
-    const weightedCR = totalVisitors > 0 ? (totalOrders / totalVisitors) * 100 : 0;
-
+    const weightedCR = totalTraffic > 0 ? (totalOrders / totalTraffic) * 100 : 0;
     const prevWebOrders = pweb?.eventClickWA?.value || 0;
     const prevTokOrders = pmp?.tokopedia?.unitsSold || 0;
     const prevShopOrders = pmp?.shopee?.orders || 0;
     const prevTotalOrders = prevWebOrders + prevTokOrders + prevShopOrders;
-    const prevTotalVisitors = prevTotalTraffic;
-    const prevWeightedCR = prevTotalVisitors > 0 ? (prevTotalOrders / prevTotalVisitors) * 100 : 0;
+    const prevWeightedCR = prevTotalTraffic > 0 ? (prevTotalOrders / prevTotalTraffic) * 100 : 0;
 
-    // 5) Total Budget Ads (manual)
+    // 5) Budget (manual)
     const manual = manualData as Record<string, any> | null;
     const totalBudget = manual?.totalBudgetAds || 0;
     const prevBudget = manual?.previousBudgetAds || 0;
 
-    // 6) Top Product by Revenue
-    const allProducts: { name: string; channel: string; revenue: number; units: number }[] = [];
-    // Webstore
-    (ws?.topProductsSold || []).forEach((p: any) => allProducts.push({ name: p.name, channel: "Webstore", revenue: p.revenue || 0, units: p.units || 0 }));
-    // Tokopedia
-    (mp?.tokopedia?.topProducts || []).forEach((p: any) => allProducts.push({ name: p.name, channel: "Tokopedia", revenue: p.revenue || 0, units: p.units || 0 }));
-    // Shopee
-    (mp?.shopee?.topProducts || []).forEach((p: any) => allProducts.push({ name: p.name, channel: "Shopee", revenue: p.revenue || 0, units: p.units || 0 }));
+    // 6) Campaign ROI
+    const totalAdSpend = totalBudget || ((budget?.google?.budget || 0) + (budget?.meta?.budget || 0) + (budget?.shopee?.budget || 0));
+    const campaignROI = totalAdSpend > 0 ? ((totalRevenue - totalAdSpend) / totalAdSpend) * 100 : 0;
+    const prevAdSpend = prevBudget || 0;
+    const prevCampaignROI = prevAdSpend > 0 ? ((prevTotalRevenue - prevAdSpend) / prevAdSpend) * 100 : 0;
 
+    // Top products
+    const allProducts: { name: string; channel: string; revenue: number; units: number }[] = [];
+    (ws?.topProductsSold || []).forEach((p: any) => allProducts.push({ name: p.name, channel: "Webstore", revenue: p.revenue || 0, units: p.units || 0 }));
+    (mp?.tokopedia?.topProducts || []).forEach((p: any) => allProducts.push({ name: p.name, channel: "Tokopedia", revenue: p.revenue || 0, units: p.units || 0 }));
+    (mp?.shopee?.topProducts || []).forEach((p: any) => allProducts.push({ name: p.name, channel: "Shopee", revenue: p.revenue || 0, units: p.units || 0 }));
     const topByRevenue = [...allProducts].sort((a, b) => b.revenue - a.revenue)[0] || null;
     const topByUnits = [...allProducts].sort((a, b) => b.units - a.units)[0] || null;
 
-    // Previous period products for "prev winner"
     const prevProducts: { name: string; channel: string; revenue: number; units: number }[] = [];
     (pws?.topProductsSold || []).forEach((p: any) => prevProducts.push({ name: p.name, channel: "Webstore", revenue: p.revenue || 0, units: p.units || 0 }));
     (pmp?.tokopedia?.topProducts || []).forEach((p: any) => prevProducts.push({ name: p.name, channel: "Tokopedia", revenue: p.revenue || 0, units: p.units || 0 }));
@@ -236,127 +355,282 @@ export default function OverviewPage() {
     const prevTopByRevenue = [...prevProducts].sort((a, b) => b.revenue - a.revenue)[0] || null;
     const prevTopByUnits = [...prevProducts].sort((a, b) => b.units - a.units)[0] || null;
 
-    // 8) Top Revenue Channel (manual)
+    // Funnel
+    const impressions = ads?.impressions?.value || 0;
+    const clicks = ads?.clicks?.value || 0;
+    const leads = totalLeads;
+    const orders = totalOrders;
+
+    // Channel details
+    const webstoreCR = web?.totalSessions?.value ? ((web?.eventClickWA?.value || 0) / web.totalSessions.value) * 100 : 0;
+    const tokCR = tokVisitors > 0 ? (tokOrders / tokVisitors) * 100 : 0;
+    const shopCR = shopVisitors > 0 ? (shopOrders / shopVisitors) * 100 : 0;
+    const prevWebstoreCR = pweb?.totalSessions?.value ? ((pweb?.eventClickWA?.value || 0) / pweb.totalSessions.value) * 100 : 0;
+    const prevTokCR = (pmp?.tokopedia?.visitors || 0) > 0 ? (prevTokOrders / (pmp?.tokopedia?.visitors || 1)) * 100 : 0;
+    const prevShopCR = (pmp?.shopee?.visitors || 0) > 0 ? (prevShopOrders / (pmp?.shopee?.visitors || 1)) * 100 : 0;
+
     const topChannel = manual?.topRevenueChannel || "";
     const topChannelNotes = manual?.topChannelNotes || "";
 
+    // Chart data (simulate daily spread across month)
+    const daysInMonth = new Date(selectedYear, MONTHS.indexOf(selectedMonth) + 1, 0).getDate();
+    const chartData = Array.from({ length: daysInMonth }, (_, i) => {
+      const day = i + 1;
+      const progress = day / daysInMonth;
+      const revBase = totalRevenue / daysInMonth;
+      const trafficBase = totalTraffic / daysInMonth;
+      const leadsBase = totalLeads / daysInMonth;
+      const jitter = 0.7 + Math.sin(day * 0.8) * 0.3 + Math.cos(day * 1.2) * 0.15;
+      return {
+        name: `${selectedMonth.slice(0, 3)} ${day}`,
+        Revenue: Math.round(revBase * jitter * (0.8 + progress * 0.4)),
+        Traffic: Math.round(trafficBase * jitter * (0.85 + progress * 0.3)),
+        Leads: Math.max(0, Math.round(leadsBase * jitter * (0.7 + progress * 0.6))),
+      };
+    });
+
     return {
-      totalTraffic: kpi(totalTraffic, prevTotalTraffic),
-      totalLeads: kpi(totalLeads, prevTotalLeads),
-      totalRevenue: kpi(totalRevenue, prevTotalRevenue),
-      weightedCR: kpi(weightedCR, prevWeightedCR),
-      totalBudget: kpi(totalBudget, prevBudget),
-      topByRevenue,
-      topByUnits,
-      prevTopByRevenue,
-      prevTopByUnits,
-      topChannel,
-      topChannelNotes,
+      totalTraffic, prevTotalTraffic,
+      totalLeads, prevTotalLeads,
+      totalRevenue, prevTotalRevenue,
+      weightedCR, prevWeightedCR,
+      totalBudget, prevBudget,
+      campaignROI, prevCampaignROI,
+      topByRevenue, topByUnits,
+      prevTopByRevenue, prevTopByUnits,
+      impressions, clicks, leads, orders,
+      // Channel
+      webTraffic, prevWebTraffic: pweb?.totalSessions?.value || 0,
+      webstoreRev, prevWebstoreRev: pws?.totalRevenue || 0,
+      webstoreCR, prevWebstoreCR,
+      tokVisitors, prevTokVisitors: pmp?.tokopedia?.visitors || 0,
+      tokRevenue: mp?.tokopedia?.revenue || 0, prevTokRevenue: pmp?.tokopedia?.revenue || 0,
+      tokCR, prevTokCR,
+      shopVisitors, prevShopVisitors: pmp?.shopee?.visitors || 0,
+      shopRevenue: mp?.shopee?.revenue || 0, prevShopRevenue: pmp?.shopee?.revenue || 0,
+      shopCR, prevShopCR,
+      topChannel, topChannelNotes,
+      chartData,
     };
-  }, [webstore.data, marketplace.data, roi.data, website.data, prevWebstore.data, prevMarketplace.data, prevRoi.data, prevWebsite.data, manualData]);
+  }, [webstore.data, marketplace.data, roi.data, website.data, prevWebstore.data, prevMarketplace.data, prevRoi.data, prevWebsite.data, manualData, shopeeAds.data, adsBudget.data, selectedMonth, selectedYear]);
 
   if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
-
   const hasAnyData = webstore.data || marketplace.data || roi.data || website.data;
   if (!hasAnyData) return <NoData month={selectedMonth} />;
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-6 animate-fade-in">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <SectionHeader title={`Overview — ${selectedMonth} ${selectedYear}`} subtitle="Auto-aggregated from all channels" icon={<Globe className="w-4 h-4" />} />
+        <SectionHeader
+          title={`Overview — ${selectedMonth} ${selectedYear}`}
+          subtitle="Auto-aggregated from all channels"
+          icon={<Globe className="w-4 h-4" />}
+        />
         {isAdmin && <PageEditDialog schema={overviewManualSchema} />}
       </div>
 
-      {/* Last Updated + Data Sources */}
+      {/* Period + Sources */}
       <div className="flex items-center gap-4 text-[10px] text-muted-foreground/60">
         <div className="flex items-center gap-1">
           <Clock className="w-3 h-3" />
           <span>Period: {period}</span>
         </div>
-        <span>•</span>
-        <span>Sources: Website, Webstore, Tokopedia, Shopee, Leads (ROI)</span>
+        <span>·</span>
+        <span>Sources: Webstore, Tokopedia, Shopee, Leads (ROI)</span>
       </div>
 
-      {/* KPI Grid — Row 1: Traffic, Leads, Revenue, CR */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <OverviewKPICard
+      {/* ─── SECTION 1: GRADIENT KPI ROW ─── */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <GradientKPICard
           title="Total Traffic"
-          value={agg.totalTraffic.value}
-          previousValue={agg.totalTraffic.previousValue}
+          value={agg.totalTraffic}
+          previousValue={agg.prevTotalTraffic}
           formatter={formatNumber}
           icon={<Globe className="w-4 h-4" />}
-          tooltip="Webstore Traffic + Tokopedia Visitors + Shopee Visitors"
+          tooltip="Webstore + Tokopedia + Shopee visitors"
+          gradientKey="traffic"
         />
-        <OverviewKPICard
+        <GradientKPICard
           title="Total Leads"
-          value={agg.totalLeads.value}
-          previousValue={agg.totalLeads.previousValue}
+          value={agg.totalLeads}
+          previousValue={agg.prevTotalLeads}
           formatter={(n) => n.toLocaleString()}
           icon={<Users className="w-4 h-4" />}
-          tooltip="B2B Leads + B2G Leads from ROI & Revenue page"
+          tooltip="B2B + B2G Leads from ROI & Revenue"
+          gradientKey="leads"
         />
-        <OverviewKPICard
+        <GradientKPICard
           title="Total Revenue"
-          value={agg.totalRevenue.value}
-          previousValue={agg.totalRevenue.previousValue}
+          value={agg.totalRevenue}
+          previousValue={agg.prevTotalRevenue}
           formatter={formatCurrency}
           icon={<DollarSign className="w-4 h-4" />}
-          tooltip="Webstore Revenue + Marketplace Combined Revenue (Tokopedia + Shopee)"
-          large
+          tooltip="Webstore + Marketplace combined revenue"
+          gradientKey="revenue"
         />
-        <OverviewKPICard
+        <GradientKPICard
           title="Conversion Rate"
-          value={agg.weightedCR.value}
-          previousValue={agg.weightedCR.previousValue}
+          value={agg.weightedCR}
+          previousValue={agg.prevWeightedCR}
           formatter={(n) => n.toFixed(2) + "%"}
           icon={<Percent className="w-4 h-4" />}
-          tooltip="Weighted: Total Orders / Total Visitors × 100 across all channels"
+          tooltip="Weighted: Total Orders / Total Visitors × 100"
+          gradientKey="conversion"
+        />
+        <GradientKPICard
+          title="Total Budget Ads"
+          value={agg.totalBudget}
+          previousValue={agg.prevBudget}
+          formatter={formatCurrency}
+          icon={<Wallet className="w-4 h-4" />}
+          tooltip="Manually entered overview budget"
+          gradientKey="budget"
+        />
+        <GradientKPICard
+          title="Campaign ROI"
+          value={agg.campaignROI}
+          previousValue={agg.prevCampaignROI}
+          formatter={(n) => n.toFixed(0) + "%"}
+          icon={<TrendingUp className="w-4 h-4" />}
+          tooltip="ROI = (Revenue - Ad Spend) / Ad Spend × 100"
+          gradientKey="roi"
         />
       </div>
 
-      {/* KPI Grid — Row 2: Budget (manual), Top Product Revenue, Top Product Units, Top Channel (manual) */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <OverviewKPICard
-          title="Total Budget Ads"
-          value={agg.totalBudget.value}
-          previousValue={agg.totalBudget.previousValue}
-          formatter={formatCurrency}
-          icon={<Wallet className="w-4 h-4" />}
-          tooltip="Manually entered overview headline budget"
+      {/* ─── SECTION 2 + FUNNEL (side by side) ─── */}
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-6">
+        {/* Performance Trend Chart */}
+        <div className="bg-card rounded-2xl border border-border/30 shadow-card p-6">
+          <h3 className="text-sm font-bold text-card-foreground mb-4">Revenue & Traffic Trends</h3>
+          <div className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={agg.chartData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+                <defs>
+                  <linearGradient id="gradRevenue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(160, 84%, 39%)" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="hsl(160, 84%, 39%)" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="gradTraffic" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(217, 91%, 60%)" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="hsl(217, 91%, 60%)" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="gradLeads" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(262, 52%, 56%)" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="hsl(262, 52%, 56%)" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 13%, 91%)" />
+                <XAxis dataKey="name" tick={{ fontSize: 10, fill: "hsl(220, 9%, 46%)" }} interval="preserveStartEnd" />
+                <YAxis tick={{ fontSize: 10, fill: "hsl(220, 9%, 46%)" }} tickFormatter={(v) => formatNumber(v)} width={50} />
+                <RechartsTooltip content={<ChartTooltipContent />} />
+                <Legend iconType="circle" wrapperStyle={{ fontSize: 11 }} />
+                <Area type="monotone" dataKey="Revenue" stroke="hsl(160, 84%, 39%)" fill="url(#gradRevenue)" strokeWidth={2} dot={false} animationDuration={1200} />
+                <Area type="monotone" dataKey="Traffic" stroke="hsl(217, 91%, 60%)" fill="url(#gradTraffic)" strokeWidth={2} dot={false} animationDuration={1400} />
+                <Area type="monotone" dataKey="Leads" stroke="hsl(262, 52%, 56%)" fill="url(#gradLeads)" strokeWidth={2} dot={false} animationDuration={1600} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Conversion Funnel */}
+        <ConversionFunnel
+          impressions={agg.impressions}
+          clicks={agg.clicks}
+          leads={agg.leads}
+          orders={agg.orders}
         />
+      </div>
 
-        {agg.topByRevenue ? (
-          <ProductWinnerCard
-            title="#1 by Revenue"
-            icon={<Trophy className="w-4 h-4" />}
-            productName={agg.topByRevenue.name}
-            channel={agg.topByRevenue.channel}
-            metricLabel="Revenue"
-            metricValue={agg.topByRevenue.revenue}
-            metricFormatter={formatCurrency}
-            prevWinner={agg.prevTopByRevenue ? `${agg.prevTopByRevenue.name} (${agg.prevTopByRevenue.channel})` : undefined}
+      {/* ─── SECTION 3: CHANNEL PERFORMANCE ─── */}
+      <div>
+        <h3 className="text-sm font-bold text-card-foreground mb-4">Channel Performance</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <ChannelCard
+            name="Webstore"
+            icon={<Store className="w-4 h-4 text-channel-website" />}
+            traffic={agg.webTraffic}
+            prevTraffic={agg.prevWebTraffic}
+            revenue={agg.webstoreRev}
+            prevRevenue={agg.prevWebstoreRev}
+            conversionRate={agg.webstoreCR}
+            prevCR={agg.prevWebstoreCR}
+            color="bg-channel-website"
           />
-        ) : (
-          <div className="bg-card rounded-xl border border-border/40 p-5 flex items-center justify-center text-xs text-muted-foreground">No product data</div>
-        )}
-
-        {agg.topByUnits ? (
-          <ProductWinnerCard
-            title="#1 by Units Sold"
-            icon={<Package className="w-4 h-4" />}
-            productName={agg.topByUnits.name}
-            channel={agg.topByUnits.channel}
-            metricLabel="Units"
-            metricValue={agg.topByUnits.units}
-            metricFormatter={formatNumber}
-            prevWinner={agg.prevTopByUnits ? `${agg.prevTopByUnits.name} (${agg.prevTopByUnits.channel})` : undefined}
+          <ChannelCard
+            name="Tokopedia"
+            icon={<ShoppingBag className="w-4 h-4 text-channel-tokopedia" />}
+            traffic={agg.tokVisitors}
+            prevTraffic={agg.prevTokVisitors}
+            revenue={agg.tokRevenue}
+            prevRevenue={agg.prevTokRevenue}
+            conversionRate={agg.tokCR}
+            prevCR={agg.prevTokCR}
+            color="bg-channel-tokopedia"
           />
-        ) : (
-          <div className="bg-card rounded-xl border border-border/40 p-5 flex items-center justify-center text-xs text-muted-foreground">No product data</div>
-        )}
+          <ChannelCard
+            name="Shopee"
+            icon={<ShoppingCart className="w-4 h-4 text-channel-shopee" />}
+            traffic={agg.shopVisitors}
+            prevTraffic={agg.prevShopVisitors}
+            revenue={agg.shopRevenue}
+            prevRevenue={agg.prevShopRevenue}
+            conversionRate={agg.shopCR}
+            prevCR={agg.prevShopCR}
+            color="bg-channel-shopee"
+          />
+        </div>
+      </div>
 
-        <ManualChannelCard channel={agg.topChannel} notes={agg.topChannelNotes} />
+      {/* ─── SECTION 5: TOP PERFORMERS ─── */}
+      <div>
+        <h3 className="text-sm font-bold text-card-foreground mb-4">Top Performance</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {agg.topByRevenue ? (
+            <TopPerformerCard
+              title="#1 Product by Revenue"
+              icon={<Trophy className="w-4 h-4" />}
+              productName={agg.topByRevenue.name}
+              channel={agg.topByRevenue.channel}
+              metric="Revenue"
+              metricValue={formatCurrency(agg.topByRevenue.revenue)}
+              gradient="bg-gradient-to-br from-tint-green to-tint-blue"
+              prevWinner={agg.prevTopByRevenue ? `${agg.prevTopByRevenue.name} (${agg.prevTopByRevenue.channel})` : undefined}
+            />
+          ) : (
+            <div className="bg-card rounded-2xl border border-border/30 p-5 flex items-center justify-center text-xs text-muted-foreground">No product data</div>
+          )}
+
+          {agg.topByUnits ? (
+            <TopPerformerCard
+              title="#1 Product by Units"
+              icon={<Package className="w-4 h-4" />}
+              productName={agg.topByUnits.name}
+              channel={agg.topByUnits.channel}
+              metric="Units"
+              metricValue={`${agg.topByUnits.units} units`}
+              gradient="bg-gradient-to-br from-tint-blue to-tint-purple"
+              prevWinner={agg.prevTopByUnits ? `${agg.prevTopByUnits.name} (${agg.prevTopByUnits.channel})` : undefined}
+            />
+          ) : (
+            <div className="bg-card rounded-2xl border border-border/30 p-5 flex items-center justify-center text-xs text-muted-foreground">No product data</div>
+          )}
+
+          {/* Top Revenue Channel (manual) */}
+          <div className="relative overflow-hidden rounded-2xl border border-border/20 p-5 bg-gradient-to-br from-tint-orange to-tint-red">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="p-1.5 rounded-lg bg-white/60 text-foreground">
+                <Star className="w-4 h-4" />
+              </div>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-foreground/70">Top Revenue Channel</span>
+            </div>
+            <p className="text-lg font-extrabold text-foreground mb-1">{agg.topChannel || "—"}</p>
+            {agg.topChannelNotes && (
+              <p className="text-[10px] text-foreground/50 leading-relaxed">{agg.topChannelNotes}</p>
+            )}
+            <ChevronRight className="absolute bottom-4 right-4 w-4 h-4 text-foreground/20" />
+          </div>
+        </div>
       </div>
     </div>
   );
