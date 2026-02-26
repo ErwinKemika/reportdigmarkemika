@@ -11,11 +11,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Pencil, Plus, Trash2, Upload, Image as ImageIcon } from "lucide-react";
+import { Pencil, Plus, Trash2, Upload, Image as ImageIcon, CalendarIcon } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { formatCurrency } from "@/data/mockData";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { format, parse } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 interface PageEditDialogProps {
   schema: PageSchema;
@@ -251,6 +255,47 @@ export function PageEditDialog({ schema }: PageEditDialogProps) {
                             </Button>
                           )}
                         </div>
+                      </div>
+                    );
+                  }
+                  if (col.type === "date") {
+                    const currentVal = row[col.key] || "";
+                    // Parse stored date string to Date object
+                    let dateValue: Date | undefined;
+                    if (currentVal) {
+                      const parsed = new Date(currentVal);
+                      if (!isNaN(parsed.getTime())) dateValue = parsed;
+                    }
+                    return (
+                      <div key={col.key} className="space-y-1">
+                        <Label className="text-[10px] text-muted-foreground">{col.label}</Label>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              className={cn(
+                                "h-8 w-full justify-start text-left text-sm font-normal",
+                                !dateValue && "text-muted-foreground"
+                              )}
+                            >
+                              <CalendarIcon className="mr-2 h-3 w-3" />
+                              {dateValue ? format(dateValue, "MMM d, yyyy") : "Pick date"}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0 z-50" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={dateValue}
+                              onSelect={(date) => {
+                                if (date) {
+                                  handleArrayChange(af.key, ri, col.key, format(date, "yyyy-MM-dd"), "text");
+                                }
+                              }}
+                              initialFocus
+                              className={cn("p-3 pointer-events-auto")}
+                            />
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     );
                   }

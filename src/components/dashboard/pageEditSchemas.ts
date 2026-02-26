@@ -1,6 +1,6 @@
 // Page edit form schemas - defines fields for each page's Edit Data modal
 
-export type FieldType = "number" | "currency" | "percent" | "text" | "textarea" | "image";
+export type FieldType = "number" | "currency" | "percent" | "text" | "textarea" | "image" | "date";
 
 export interface FieldDef {
   key: string;
@@ -385,8 +385,8 @@ export const recommendationsSchema: PageSchema = {
         { key: "tag", label: "Tag (Ads/SEO/UX/Campaign)", type: "text" },
         { key: "priority", label: "Priority (High/Medium/Low)", type: "text" },
         { key: "status", label: "Status (Done/Ongoing/Pending/Blocked)", type: "text" },
-        { key: "startDate", label: "Start Date (e.g. Feb 1)", type: "text" },
-        { key: "endDate", label: "End Date (e.g. Feb 10)", type: "text" },
+        { key: "startDate", label: "Start Date", type: "date" },
+        { key: "endDate", label: "End Date", type: "date" },
         { key: "progress", label: "Progress (0-100)", type: "number" },
       ],
       maxRows: 10,
@@ -399,8 +399,8 @@ export const recommendationsSchema: PageSchema = {
         { key: "tag", label: "Tag", type: "text" },
         { key: "priority", label: "Priority (High/Medium/Low)", type: "text" },
         { key: "status", label: "Status (Done/Ongoing/Pending/Blocked)", type: "text" },
-        { key: "startDate", label: "Start Date", type: "text" },
-        { key: "endDate", label: "End Date", type: "text" },
+        { key: "startDate", label: "Start Date", type: "date" },
+        { key: "endDate", label: "End Date", type: "date" },
         { key: "progress", label: "Progress (0-100)", type: "number" },
       ],
       maxRows: 10,
@@ -413,8 +413,8 @@ export const recommendationsSchema: PageSchema = {
         { key: "tag", label: "Tag", type: "text" },
         { key: "priority", label: "Priority (High/Medium/Low)", type: "text" },
         { key: "status", label: "Status (Done/Ongoing/Pending/Blocked)", type: "text" },
-        { key: "startDate", label: "Start Date", type: "text" },
-        { key: "endDate", label: "End Date", type: "text" },
+        { key: "startDate", label: "Start Date", type: "date" },
+        { key: "endDate", label: "End Date", type: "date" },
         { key: "progress", label: "Progress (0-100)", type: "number" },
       ],
       maxRows: 10,
