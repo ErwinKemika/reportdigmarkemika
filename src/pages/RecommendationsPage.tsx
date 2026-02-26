@@ -4,6 +4,7 @@ import { getRecommendationsData, type RecommendationsData } from "@/data/mockDat
 import { transformRecommendations } from "@/lib/dataTransformers";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
+import { format as fmtDate, parseISO, isValid } from "date-fns";
 import { ClipboardList, CheckCircle2, Loader2, Clock, AlertTriangle, LayoutList, LayoutGrid, TrendingUp, Plus } from "lucide-react";
 import { useMonth, MONTHS, type MonthName } from "@/contexts/MonthContext";
 import { useState, useMemo } from "react";
@@ -176,7 +177,20 @@ function CategoryBadge({ category }: { category: Category }) {
 
 function TimelinePill({ startDate, endDate }: { startDate: string; endDate: string }) {
   if (!startDate && !endDate) return <span className="text-xs text-muted-foreground">—</span>;
-  const display = startDate && endDate ? `${startDate} – ${endDate}` : startDate || endDate;
+  
+  const formatDate = (d: string) => {
+    if (!d) return "";
+    // Try ISO format first (yyyy-MM-dd)
+    try {
+      const parsed = parseISO(d);
+      if (isValid(parsed)) return fmtDate(parsed, "MMM d, yyyy");
+    } catch {}
+    return d; // fallback to raw string
+  };
+
+  const start = formatDate(startDate);
+  const end = formatDate(endDate);
+  const display = start && end ? `${start} – ${end}` : start || end;
   return (
     <span className="text-xs text-muted-foreground bg-[hsl(220,15%,95%)] px-2.5 py-1 rounded-full w-fit whitespace-nowrap">
       {display}
