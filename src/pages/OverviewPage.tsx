@@ -90,8 +90,11 @@ function GradientKPICard({ title, value, previousValue, formatter, icon, tooltip
             </TooltipProvider>
           )}
         </div>
-        <p className="text-2xl font-extrabold text-white tracking-tight leading-tight mb-2">
+        <p className="text-2xl font-extrabold text-white tracking-tight leading-tight mb-1">
           {formatter(value)}
+        </p>
+        <p className="text-[10px] text-white/50 mb-2">
+          Prev: {formatter(previousValue)}
         </p>
         <div className="flex items-center gap-1.5">
           {isNeutral ? (
