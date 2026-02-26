@@ -525,12 +525,13 @@ export default function OverviewPage() {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 13%, 91%)" />
                 <XAxis dataKey="name" tick={{ fontSize: 10, fill: "hsl(220, 9%, 46%)" }} interval="preserveStartEnd" />
-                <YAxis tick={{ fontSize: 10, fill: "hsl(220, 9%, 46%)" }} tickFormatter={(v) => formatNumber(v)} width={50} />
+                <YAxis yAxisId="left" tick={{ fontSize: 10, fill: "hsl(160, 84%, 39%)" }} tickFormatter={(v) => formatNumber(v)} width={55} />
+                <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10, fill: "hsl(217, 91%, 60%)" }} tickFormatter={(v) => formatNumber(v)} width={55} />
                 <RechartsTooltip content={<ChartTooltipContent />} />
                 <Legend iconType="circle" wrapperStyle={{ fontSize: 11 }} />
-                <Area type="monotone" dataKey="Revenue" stroke="hsl(160, 84%, 39%)" fill="url(#gradRevenue)" strokeWidth={2} dot={false} animationDuration={1200} />
-                <Area type="monotone" dataKey="Traffic" stroke="hsl(217, 91%, 60%)" fill="url(#gradTraffic)" strokeWidth={2} dot={false} animationDuration={1400} />
-                <Area type="monotone" dataKey="Leads" stroke="hsl(262, 52%, 56%)" fill="url(#gradLeads)" strokeWidth={2} dot={false} animationDuration={1600} />
+                <Area yAxisId="left" type="monotone" dataKey="Revenue" stroke="hsl(160, 84%, 39%)" fill="url(#gradRevenue)" strokeWidth={2} dot={false} animationDuration={1200} />
+                <Area yAxisId="right" type="monotone" dataKey="Traffic" stroke="hsl(217, 91%, 60%)" fill="url(#gradTraffic)" strokeWidth={2} dot={false} animationDuration={1400} />
+                <Area yAxisId="right" type="monotone" dataKey="Leads" stroke="hsl(262, 52%, 56%)" fill="url(#gradLeads)" strokeWidth={2} dot={false} animationDuration={1600} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
