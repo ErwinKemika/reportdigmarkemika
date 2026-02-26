@@ -180,19 +180,18 @@ function TimelinePill({ startDate, endDate }: { startDate: string; endDate: stri
   
   const formatDate = (d: string) => {
     if (!d) return "";
-    // Try ISO format first (yyyy-MM-dd)
     try {
       const parsed = parseISO(d);
-      if (isValid(parsed)) return fmtDate(parsed, "MMM d, yyyy");
+      if (isValid(parsed)) return fmtDate(parsed, "MMM d");
     } catch {}
-    return d; // fallback to raw string
+    return d;
   };
 
   const start = formatDate(startDate);
   const end = formatDate(endDate);
   const display = start && end ? `${start} – ${end}` : start || end;
   return (
-    <span className="text-xs text-muted-foreground bg-[hsl(220,15%,95%)] px-2.5 py-1 rounded-full w-fit whitespace-nowrap">
+    <span className="text-[11px] leading-tight text-muted-foreground bg-[hsl(220,15%,95%)] px-2 py-1 rounded-full inline-block max-w-[140px] truncate" title={display}>
       {display}
     </span>
   );
@@ -249,7 +248,7 @@ function TableView({ items }: { items: ActionItem[] }) {
   return (
     <div className="bg-card rounded-xl border border-border/40 shadow-card overflow-hidden">
       {/* Header */}
-      <div className="grid grid-cols-[1fr_2.5fr_100px_110px_140px_120px] gap-0 px-5 py-3.5 bg-[hsl(220,15%,96%)] border-b border-border/30 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+      <div className="grid grid-cols-[1fr_2.5fr_100px_110px_160px_130px] gap-2 px-5 py-3.5 bg-[hsl(220,15%,96%)] border-b border-border/30 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
         <span>Category</span>
         <span>Task</span>
         <span>Priority</span>
@@ -265,7 +264,7 @@ function TableView({ items }: { items: ActionItem[] }) {
         return (
           <div key={group.category}>
             {/* Category header row */}
-            <div className={`grid grid-cols-[1fr_2.5fr_100px_110px_140px_120px] gap-0 px-5 py-3 bg-[hsl(220,15%,97%)] border-b border-border/20 border-l-4 ${c.border}`}>
+            <div className={`grid grid-cols-[1fr_2.5fr_100px_110px_160px_130px] gap-2 px-5 py-3 bg-[hsl(220,15%,97%)] border-b border-border/20 border-l-4 ${c.border}`}>
               <div className="col-span-2 flex items-center gap-3">
                 <CategoryBadge category={group.category} />
                 <span className="text-xs text-muted-foreground">{group.items.length} actions</span>
@@ -288,7 +287,7 @@ function TableView({ items }: { items: ActionItem[] }) {
             {group.items.map((item, i) => (
               <div
                 key={i}
-                className="grid grid-cols-[1fr_2.5fr_100px_110px_140px_120px] gap-0 px-5 py-3 border-b border-border/15 hover:bg-[hsl(220,15%,97.5%)] transition-colors duration-150 items-center"
+                className="grid grid-cols-[1fr_2.5fr_100px_110px_160px_130px] gap-2 px-5 py-3 border-b border-border/15 hover:bg-[hsl(220,15%,97.5%)] transition-colors duration-150 items-center"
               >
                 <div className="flex items-center gap-2">
                   <span className="w-6 h-6 rounded-lg bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground">{i + 1}</span>
