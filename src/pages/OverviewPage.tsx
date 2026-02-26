@@ -303,22 +303,22 @@ export default function OverviewPage() {
     const ads = shopeeAds.data;
     const budget = adsBudget.data;
 
-    // 1) Total Traffic
+    // 1) Total Traffic — use embedded previous values from current period's data
     const webTraffic = web?.totalSessions?.value || 0;
     const tokVisitors = mp?.tokopedia?.visitors || 0;
     const shopVisitors = mp?.shopee?.visitors || 0;
     const totalTraffic = webTraffic + tokVisitors + shopVisitors;
-    const prevTotalTraffic = (pweb?.totalSessions?.value || 0) + (pmp?.tokopedia?.visitors || 0) + (pmp?.shopee?.visitors || 0);
+    const prevTotalTraffic = (web?.totalSessions?.previousValue || 0) + (mp?.tokopedia?.previousVisitors || 0) + (mp?.shopee?.previousVisitors || 0);
 
     // 2) Total Leads
     const totalLeads = (roiD?.b2bLeads?.value || 0) + (roiD?.b2gLeads?.value || 0);
     const prevTotalLeads = (proi?.b2bLeads?.value || 0) + (proi?.b2gLeads?.value || 0);
 
-    // 3) Total Revenue
+    // 3) Total Revenue — use embedded previous values from current period's data
     const webstoreRev = ws?.totalRevenue || 0;
     const mpRev = mp?.totalCombinedRevenue || 0;
     const totalRevenue = webstoreRev + mpRev;
-    const prevTotalRevenue = (pws?.totalRevenue || 0) + (pmp?.totalCombinedRevenue || 0);
+    const prevTotalRevenue = (ws?.previousRevenue || 0) + (mp?.previousCombinedRevenue || 0);
 
     // 4) Weighted CR
     const webOrders = web?.eventClickWA?.value || 0;
