@@ -422,66 +422,6 @@ export const recommendationsSchema: PageSchema = {
   ],
 };
 
-// ===== EXECUTION & REALIZATION =====
-export const executionSchema: PageSchema = {
-  pageKey: "execution",
-  pageTitle: "Execution Timeline",
-  groups: [
-    {
-      title: "Impact Notes",
-      fields: [
-        { key: "impactNotes", label: "Impact Notes", type: "textarea", placeholder: "Describe the impact of completed actions on KPI performance..." },
-      ],
-    },
-  ],
-  arrayFields: [
-    {
-      key: "immediateStatuses",
-      label: "Immediate Actions",
-      columns: [
-        { key: "action", label: "Action (Reference)", type: "text" },
-        { key: "status", label: "Status (Completed/Ongoing/Pending/Cancelled)", type: "text" },
-        { key: "startDay", label: "Start Day (1-31)", type: "number" },
-        { key: "endDay", label: "End Day (1-31)", type: "number" },
-        { key: "progress", label: "Progress (%)", type: "number" },
-      ],
-      maxRows: 10,
-    },
-    {
-      key: "tacticalStatuses",
-      label: "Tactical Actions",
-      columns: [
-        { key: "action", label: "Action (Reference)", type: "text" },
-        { key: "status", label: "Status (Completed/Ongoing/Pending/Cancelled)", type: "text" },
-        { key: "startDay", label: "Start Day (1-31)", type: "number" },
-        { key: "endDay", label: "End Day (1-31)", type: "number" },
-        { key: "progress", label: "Progress (%)", type: "number" },
-      ],
-      maxRows: 10,
-    },
-    {
-      key: "strategicStatuses",
-      label: "Strategic Actions",
-      columns: [
-        { key: "action", label: "Action (Reference)", type: "text" },
-        { key: "status", label: "Status (Completed/Ongoing/Pending/Cancelled)", type: "text" },
-        { key: "startDay", label: "Start Day (1-31)", type: "number" },
-        { key: "endDay", label: "End Day (1-31)", type: "number" },
-        { key: "progress", label: "Progress (%)", type: "number" },
-      ],
-      maxRows: 10,
-    },
-    {
-      key: "executionNotes",
-      label: "Execution Notes",
-      columns: [
-        { key: "text", label: "Note", type: "text" },
-        { key: "type", label: "Type (completed/delayed/info)", type: "text" },
-      ],
-      maxRows: 10,
-    },
-  ],
-};
 // ===== OVERVIEW (Manual fields only — rest is auto-aggregated) =====
 export const overviewManualSchema: PageSchema = {
   pageKey: "overview-manual",
@@ -522,5 +462,4 @@ export const PAGE_SCHEMA_MAP: Record<string, PageSchema> = {
   "/benchmark": benchmarkSchema,
   "/insights": insightsSchema,
   "/recommendations": recommendationsSchema,
-  "/execution": executionSchema,
 };

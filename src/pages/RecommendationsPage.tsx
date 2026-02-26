@@ -1,14 +1,13 @@
+import { usePageData } from "@/hooks/usePageData";
 import { useMergedPageData } from "@/hooks/useMergedPageData";
 import { getRecommendationsData, type RecommendationsData } from "@/data/mockData";
 import { transformRecommendations } from "@/lib/dataTransformers";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
 import { ClipboardList, CheckCircle2, Loader2, Clock, AlertTriangle, LayoutList, LayoutGrid, TrendingUp, Plus } from "lucide-react";
-import { useMonth } from "@/contexts/MonthContext";
+import { useMonth, MONTHS, type MonthName } from "@/contexts/MonthContext";
 import { useState, useMemo } from "react";
 import { Progress } from "@/components/ui/progress";
-import { PageEditDialog } from "@/components/dashboard/PageEditDialog";
-import { recommendationsSchema } from "@/components/dashboard/pageEditSchemas";
 
 type Priority = "High" | "Medium" | "Low";
 type Status = "Done" | "Ongoing" | "Pending" | "Blocked";
@@ -19,12 +18,13 @@ interface ActionItem {
   task: string;
   priority: Priority;
   status: Status;
-  timeline: string;
+  startDate: string;
+  endDate: string;
   progress: number;
   tag: string;
 }
 
-// Warm pastel color scheme matching reference image
+// Warm pastel color scheme
 const STATUS_STYLES: Record<Status, { bg: string; text: string; border: string; icon: React.ReactNode }> = {
   Done:    { bg: "bg-[hsl(145,60%,92%)]", text: "text-[hsl(145,55%,35%)]", border: "border-[hsl(145,50%,80%)]", icon: <CheckCircle2 className="w-3 h-3" /> },
   Ongoing: { bg: "bg-[hsl(210,70%,92%)]", text: "text-[hsl(210,60%,40%)]", border: "border-[hsl(210,60%,82%)]", icon: <Loader2 className="w-3 h-3" /> },
@@ -62,48 +62,89 @@ const CATEGORY_COLORS: Record<Category, { border: string; bg: string; text: stri
   },
 };
 
-function convertMockToActions(data: RecommendationsData, month: string): ActionItem[] {
+const VALID_PRIORITIES: Priority[] = ["High", "Medium", "Low"];
+const VALID_STATUSES: Status[] = ["Done", "Ongoing", "Pending", "Blocked"];
+
+function parsePriority(val?: string): Priority {
+  if (val && VALID_PRIORITIES.includes(val as Priority)) return val as Priority;
+  return "Medium";
+}
+
+function parseStatus(val?: string): Status {
+  if (val && VALID_STATUSES.includes(val as Status)) return val as Status;
+  return "Pending";
+}
+
+/** Convert saved DB data or mock data into ActionItems */
+function convertToActions(data: any, selectedMonth: string): ActionItem[] {
   const items: ActionItem[] = [];
-  const priorities: Priority[] = ["High", "Medium", "Low"];
-  const statuses: Status[] = ["Done", "Ongoing", "Pending"];
 
-  data.actionPlan30.forEach((item, i) => {
-    items.push({
-      category: "Immediate",
-      task: item.action,
-      priority: priorities[i % 3],
-      status: statuses[i % 3],
-      timeline: `${month.slice(0, 3)} 1–10`,
-      progress: statuses[i % 3] === "Done" ? 100 : statuses[i % 3] === "Ongoing" ? 60 : 0,
-      tag: item.tag,
-    });
-  });
+  const categoryMap: { key: string; category: Category }[] = [
+    { key: "actionPlan30", category: "Immediate" },
+    { key: "actionPlan60", category: "Tactical" },
+    { key: "actionPlan90", category: "Strategic" },
+  ];
 
-  data.actionPlan60.forEach((item, i) => {
-    items.push({
-      category: "Tactical",
-      task: item.action,
-      priority: priorities[(i + 1) % 3],
-      status: statuses[(i + 1) % 3],
-      timeline: `${month.slice(0, 3)} 5–20`,
-      progress: statuses[(i + 1) % 3] === "Done" ? 100 : statuses[(i + 1) % 3] === "Ongoing" ? 45 : 0,
-      tag: item.tag,
+  for (const { key, category } of categoryMap) {
+    const arr = data?.[key] || [];
+    arr.forEach((item: any) => {
+      items.push({
+        category,
+        task: item.action || item.task || "",
+        priority: parsePriority(item.priority),
+        status: parseStatus(item.status),
+        startDate: item.startDate || "",
+        endDate: item.endDate || "",
+        progress: Number(item.progress) || 0,
+        tag: item.tag || "",
+      });
     });
-  });
-
-  data.actionPlan90.forEach((item, i) => {
-    items.push({
-      category: "Strategic",
-      task: item.action,
-      priority: priorities[(i + 2) % 3],
-      status: statuses[(i + 2) % 3],
-      timeline: `${month.slice(0, 3)} 1–30`,
-      progress: statuses[(i + 2) % 3] === "Done" ? 100 : statuses[(i + 2) % 3] === "Ongoing" ? 30 : 0,
-      tag: item.tag,
-    });
-  });
+  }
 
   return items;
+}
+
+/** Check if an action's timeline overlaps with a given month/year */
+function actionVisibleInPeriod(item: ActionItem, month: MonthName, year: number): boolean {
+  // Always show if no dates set
+  if (!item.startDate && !item.endDate) return true;
+
+  const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const fullMonthNames = [...MONTHS];
+  const targetMonthIdx = fullMonthNames.indexOf(month);
+
+  // Try parsing dates like "Feb 1", "March 15", "2026-03-15", etc.
+  const parseDate = (dateStr: string): Date | null => {
+    if (!dateStr) return null;
+    // Try ISO format
+    const iso = new Date(dateStr);
+    if (!isNaN(iso.getTime())) return iso;
+    // Try "Mon DD" format
+    const parts = dateStr.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      const monthPart = parts[0];
+      const dayPart = parseInt(parts[1]);
+      if (isNaN(dayPart)) return null;
+      let mIdx = monthNames.findIndex(m => monthPart.toLowerCase().startsWith(m.toLowerCase()));
+      if (mIdx === -1) mIdx = fullMonthNames.findIndex(m => monthPart.toLowerCase().startsWith(m.toLowerCase()));
+      if (mIdx >= 0) return new Date(year, mIdx, dayPart);
+    }
+    return null;
+  };
+
+  const start = parseDate(item.startDate);
+  const end = parseDate(item.endDate);
+  
+  const periodStart = new Date(year, targetMonthIdx, 1);
+  const periodEnd = new Date(year, targetMonthIdx + 1, 0); // last day of month
+
+  if (start && end) {
+    // Action overlaps if start <= periodEnd AND end >= periodStart
+    return start <= periodEnd && end >= periodStart;
+  }
+  if (start) return start.getMonth() === targetMonthIdx;
+  if (end) return end.getMonth() === targetMonthIdx;
+  return true;
 }
 
 function StatusBadge({ status }: { status: Status }) {
@@ -133,6 +174,16 @@ function CategoryBadge({ category }: { category: Category }) {
   );
 }
 
+function TimelinePill({ startDate, endDate }: { startDate: string; endDate: string }) {
+  if (!startDate && !endDate) return <span className="text-xs text-muted-foreground">—</span>;
+  const display = startDate && endDate ? `${startDate} – ${endDate}` : startDate || endDate;
+  return (
+    <span className="text-xs text-muted-foreground bg-[hsl(220,15%,95%)] px-2.5 py-1 rounded-full w-fit whitespace-nowrap">
+      {display}
+    </span>
+  );
+}
+
 // ========== BOARD VIEW ==========
 function BoardView({ items }: { items: ActionItem[] }) {
   const categories: Category[] = ["Immediate", "Tactical", "Strategic"];
@@ -156,7 +207,7 @@ function BoardView({ items }: { items: ActionItem[] }) {
                     <StatusBadge status={item.status} />
                   </div>
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span className="bg-muted px-2 py-0.5 rounded-full">{item.timeline}</span>
+                    <TimelinePill startDate={item.startDate} endDate={item.endDate} />
                     <span className="font-semibold">{item.progress}%</span>
                   </div>
                   <Progress value={item.progress} className={`h-1.5 ${c.progressBar}`} />
@@ -184,7 +235,7 @@ function TableView({ items }: { items: ActionItem[] }) {
   return (
     <div className="bg-card rounded-xl border border-border/40 shadow-card overflow-hidden">
       {/* Header */}
-      <div className="grid grid-cols-[1fr_2.5fr_100px_110px_110px_120px] gap-0 px-5 py-3.5 bg-[hsl(220,15%,96%)] border-b border-border/30 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+      <div className="grid grid-cols-[1fr_2.5fr_100px_110px_140px_120px] gap-0 px-5 py-3.5 bg-[hsl(220,15%,96%)] border-b border-border/30 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
         <span>Category</span>
         <span>Task</span>
         <span>Priority</span>
@@ -196,26 +247,25 @@ function TableView({ items }: { items: ActionItem[] }) {
       {/* Rows grouped by category */}
       {grouped.map(group => {
         const c = CATEGORY_COLORS[group.category];
+        if (group.items.length === 0) return null;
         return (
           <div key={group.category}>
             {/* Category header row */}
-            <div className={`grid grid-cols-[1fr_2.5fr_100px_110px_110px_120px] gap-0 px-5 py-3 bg-[hsl(220,15%,97%)] border-b border-border/20 border-l-4 ${c.border}`}>
+            <div className={`grid grid-cols-[1fr_2.5fr_100px_110px_140px_120px] gap-0 px-5 py-3 bg-[hsl(220,15%,97%)] border-b border-border/20 border-l-4 ${c.border}`}>
               <div className="col-span-2 flex items-center gap-3">
                 <CategoryBadge category={group.category} />
                 <span className="text-xs text-muted-foreground">{group.items.length} actions</span>
               </div>
-              <div><PriorityBadge priority={group.items[0]?.priority || "Medium"} /></div>
-              <div><StatusBadge status={group.items[0]?.status || "Ongoing"} /></div>
-              <span className="text-xs text-muted-foreground bg-muted/60 px-2.5 py-1 rounded-full w-fit">
-                {group.items[0]?.timeline || ""}
-              </span>
+              <div />
+              <div />
+              <div />
               <div className="flex items-center gap-2 justify-end">
                 <Progress
-                  value={group.items.length > 0 ? Math.round(group.items.reduce((s, i) => s + i.progress, 0) / group.items.length) : 0}
+                  value={Math.round(group.items.reduce((s, i) => s + i.progress, 0) / group.items.length)}
                   className={`h-2 w-20 ${c.progressBar}`}
                 />
                 <span className="text-xs font-semibold text-card-foreground w-8 text-right">
-                  {group.items.length > 0 ? Math.round(group.items.reduce((s, i) => s + i.progress, 0) / group.items.length) : 0}%
+                  {Math.round(group.items.reduce((s, i) => s + i.progress, 0) / group.items.length)}%
                 </span>
               </div>
             </div>
@@ -224,7 +274,7 @@ function TableView({ items }: { items: ActionItem[] }) {
             {group.items.map((item, i) => (
               <div
                 key={i}
-                className="grid grid-cols-[1fr_2.5fr_100px_110px_110px_120px] gap-0 px-5 py-3 border-b border-border/15 hover:bg-[hsl(220,15%,97.5%)] transition-colors duration-150 items-center"
+                className="grid grid-cols-[1fr_2.5fr_100px_110px_140px_120px] gap-0 px-5 py-3 border-b border-border/15 hover:bg-[hsl(220,15%,97.5%)] transition-colors duration-150 items-center"
               >
                 <div className="flex items-center gap-2">
                   <span className="w-6 h-6 rounded-lg bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground">{i + 1}</span>
@@ -232,7 +282,7 @@ function TableView({ items }: { items: ActionItem[] }) {
                 <p className="text-sm text-card-foreground pr-3">{item.task}</p>
                 <div><PriorityBadge priority={item.priority} /></div>
                 <div><StatusBadge status={item.status} /></div>
-                <span className="text-xs text-muted-foreground bg-[hsl(220,15%,95%)] px-2.5 py-1 rounded-full w-fit">{item.timeline}</span>
+                <TimelinePill startDate={item.startDate} endDate={item.endDate} />
                 <div className="flex items-center gap-2 justify-end">
                   <Progress value={item.progress} className={`h-2 w-20 ${c.progressBar}`} />
                   <span className="text-xs font-semibold text-card-foreground w-8 text-right">{item.progress}%</span>
@@ -242,23 +292,15 @@ function TableView({ items }: { items: ActionItem[] }) {
           </div>
         );
       })}
-
-      {/* Add New Action footer */}
-      <div className="flex justify-center py-4 border-t border-border/20">
-        <span className="text-xs text-muted-foreground flex items-center gap-1.5 cursor-default">
-          <Plus className="w-3.5 h-3.5" /> Add New Action
-        </span>
-      </div>
     </div>
   );
 }
 
 // ========== COMPLETION RATE RING ==========
-function CompletionRing({ rate, prevRate }: { rate: number; prevRate?: number }) {
+function CompletionRing({ rate }: { rate: number }) {
   const r = 38;
   const circ = 2 * Math.PI * r;
   const offset = circ - (rate / 100) * circ;
-  const diff = prevRate !== undefined ? rate - prevRate : 0;
   return (
     <div className="flex items-center gap-3">
       <div className="relative w-16 h-16">
@@ -271,11 +313,6 @@ function CompletionRing({ rate, prevRate }: { rate: number; prevRate?: number })
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span className="text-sm font-bold text-foreground">{rate}%</span>
-          {diff !== 0 && (
-            <span className={`text-[9px] font-semibold ${diff >= 0 ? "text-success" : "text-destructive"}`}>
-              {diff >= 0 ? "+" : ""}{diff}%
-            </span>
-          )}
         </div>
       </div>
     </div>
@@ -284,17 +321,46 @@ function CompletionRing({ rate, prevRate }: { rate: number; prevRate?: number })
 
 // ========== MAIN PAGE ==========
 export default function RecommendationsPage() {
-  const { selectedMonth, selectedYear } = useMonth();
-  const { data, isLoading } = useMergedPageData("recommendations", getRecommendationsData, transformRecommendations);
+  const { selectedMonth, selectedYear, period } = useMonth();
+  const { data: dbData, isLoading: loadingDb } = usePageData(period, "recommendations");
+  const { data: mockFallback } = useMergedPageData("recommendations", getRecommendationsData, transformRecommendations);
   const [view, setView] = useState<"table" | "board">("table");
 
+  // Also load actions from adjacent months that may span into this month
+  const prevMonthIdx = MONTHS.indexOf(selectedMonth);
+  const prevPeriod = prevMonthIdx === 0 
+    ? `December ${selectedYear - 1}` 
+    : `${MONTHS[prevMonthIdx - 1]} ${selectedYear}`;
+  const { data: prevMonthData } = usePageData(prevPeriod, "recommendations");
+
+  const isLoading = loadingDb;
+
   const actions = useMemo(() => {
-    if (!data) return [];
-    return convertMockToActions(data, selectedMonth);
-  }, [data, selectedMonth]);
+    // Primary: current month's data from DB
+    const currentData = dbData || mockFallback;
+    const currentActions = convertToActions(currentData, selectedMonth);
+
+    // Cross-month: get actions from previous month that extend into this month
+    if (prevMonthData) {
+      const prevActions = convertToActions(prevMonthData, selectedMonth);
+      const crossMonthActions = prevActions.filter(a => {
+        if (a.status === "Done") return false; // Don't carry over completed
+        return actionVisibleInPeriod(a, selectedMonth, selectedYear);
+      });
+      // Add cross-month items that aren't already in current (by task name)
+      const currentTaskNames = new Set(currentActions.map(a => a.task));
+      for (const a of crossMonthActions) {
+        if (!currentTaskNames.has(a.task)) {
+          currentActions.push(a);
+        }
+      }
+    }
+
+    return currentActions;
+  }, [dbData, mockFallback, prevMonthData, selectedMonth, selectedYear]);
 
   if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
-  if (!data) return <NoData month={selectedMonth} />;
+  if (actions.length === 0) return <NoData month={selectedMonth} />;
 
   const completed = actions.filter(a => a.status === "Done").length;
   const ongoing = actions.filter(a => a.status === "Ongoing").length;
@@ -302,22 +368,19 @@ export default function RecommendationsPage() {
   const completionRate = actions.length > 0 ? Math.round((completed / actions.length) * 100) : 0;
 
   const kpis = [
-    { label: "Total Actions", value: actions.length, icon: <ClipboardList className="w-4 h-4" />, color: "text-foreground", sub: `${actions.length}` },
-    { label: "Completed", value: completed, icon: <CheckCircle2 className="w-4 h-4" />, color: "text-[hsl(145,55%,35%)]", sub: "100.0% vs prev" },
-    { label: "Ongoing", value: ongoing, icon: <Loader2 className="w-4 h-4" />, color: "text-[hsl(210,60%,40%)]", sub: "100.0% vs prev" },
-    { label: "Pending", value: pending, icon: <Clock className="w-4 h-4" />, color: "text-[hsl(30,80%,42%)]", sub: "100.0% vs prev" },
+    { label: "Total Actions", value: actions.length, icon: <ClipboardList className="w-4 h-4" />, color: "text-foreground" },
+    { label: "Completed", value: completed, icon: <CheckCircle2 className="w-4 h-4" />, color: "text-[hsl(145,55%,35%)]" },
+    { label: "Ongoing", value: ongoing, icon: <Loader2 className="w-4 h-4" />, color: "text-[hsl(210,60%,40%)]" },
+    { label: "Pending", value: pending, icon: <Clock className="w-4 h-4" />, color: "text-[hsl(30,80%,42%)]" },
   ];
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="flex items-center justify-between">
-        <SectionHeader
-          title={`Action Plan — ${selectedMonth} ${selectedYear}`}
-          subtitle=""
-          icon={<ClipboardList className="w-4 h-4" />}
-        />
-        <PageEditDialog schema={recommendationsSchema} />
-      </div>
+      <SectionHeader
+        title={`Action Plan — ${selectedMonth} ${selectedYear}`}
+        subtitle=""
+        icon={<ClipboardList className="w-4 h-4" />}
+      />
 
       {/* Summary KPI Row */}
       <div className="bg-card rounded-xl border border-border/40 shadow-card p-5">
@@ -328,16 +391,6 @@ export default function RecommendationsPage() {
               <div>
                 <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider leading-none mb-1.5">{kpi.label}</p>
                 <p className={`text-xl font-bold ${kpi.color} leading-none`}>{kpi.value}</p>
-                {i > 0 && (
-                  <p className="text-[9px] text-muted-foreground mt-1 flex items-center gap-0.5">
-                    <TrendingUp className="w-2.5 h-2.5" /> {kpi.sub}
-                  </p>
-                )}
-                {i === 0 && (
-                  <p className="text-[9px] text-muted-foreground mt-1 flex items-center gap-0.5">
-                    <ClipboardList className="w-2.5 h-2.5" /> {kpi.sub}
-                  </p>
-                )}
               </div>
             </div>
           ))}
@@ -347,10 +400,10 @@ export default function RecommendationsPage() {
             <div>
               <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider leading-none mb-1.5">Completion Rate</p>
               <p className="text-[9px] text-muted-foreground flex items-center gap-0.5">
-                <TrendingUp className="w-2.5 h-2.5" /> {completionRate}% MoM
+                <TrendingUp className="w-2.5 h-2.5" /> {completionRate}%
               </p>
             </div>
-            <CompletionRing rate={completionRate} prevRate={0} />
+            <CompletionRing rate={completionRate} />
           </div>
         </div>
       </div>
