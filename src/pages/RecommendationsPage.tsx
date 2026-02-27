@@ -191,7 +191,7 @@ function TimelinePill({ startDate, endDate }: {startDate: string;endDate: string
   const end = formatDate(endDate);
   const display = start && end ? `${start} – ${end}` : start || end;
   return (
-    <span className="text-[11px] leading-tight text-muted-foreground bg-[hsl(220,15%,95%)] px-2 py-1 rounded-full inline-block max-w-[140px] truncate text-center" title={display}>
+    <span className="text-[11px] leading-tight text-muted-foreground bg-[hsl(220,15%,95%)] dark:bg-white/10 px-2 py-1 rounded-full inline-block max-w-[140px] truncate text-center" title={display}>
       {display}
     </span>);
 
@@ -206,14 +206,14 @@ function BoardView({ items }: {items: ActionItem[];}) {
         const c = CATEGORY_COLORS[cat];
         const catItems = items.filter((i) => i.category === cat);
         return (
-          <div key={cat} className="rounded-xl border border-border/40 bg-card shadow-card overflow-hidden">
+          <div key={cat} className="rounded-xl border border-border/40 dark:border-white/[0.08] bg-card dark:bg-white/[0.06] dark:backdrop-blur-xl shadow-card overflow-hidden">
             <div className="px-4 py-3 border-b border-border/30 flex items-center gap-2">
               <CategoryBadge category={cat} />
               <span className="text-xs text-muted-foreground ml-auto">{catItems.length} items</span>
             </div>
             <div className="p-3 space-y-3">
               {catItems.map((item, i) =>
-              <div key={i} className={`rounded-lg border border-border/30 bg-background p-4 space-y-3 border-l-4 ${c.border} hover:shadow-md transition-shadow duration-200`}>
+              <div key={i} className={`rounded-lg border border-border/30 dark:border-white/[0.08] bg-background dark:bg-white/[0.04] p-4 space-y-3 border-l-4 ${c.border} hover:shadow-md transition-shadow duration-200`}>
                   <p className="text-sm font-medium text-card-foreground leading-relaxed">{item.task}</p>
                   <div className="flex items-center gap-2 flex-wrap">
                     <PriorityBadge priority={item.priority} />
@@ -246,9 +246,9 @@ function TableView({ items }: {items: ActionItem[];}) {
   }));
 
   return (
-    <div className="bg-card rounded-xl border border-border/40 shadow-card overflow-hidden">
+    <div className="bg-card dark:bg-white/[0.06] dark:backdrop-blur-xl rounded-xl border border-border/40 dark:border-white/[0.08] shadow-card overflow-hidden">
       {/* Header */}
-      <div className="grid grid-cols-[1fr_2.5fr_100px_110px_160px_130px] gap-2 px-5 py-3.5 bg-[hsl(220,15%,96%)] border-b border-border/30 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+      <div className="grid grid-cols-[1fr_2.5fr_100px_110px_160px_130px] gap-2 px-5 py-3.5 bg-[hsl(220,15%,96%)] dark:bg-white/[0.06] border-b border-border/30 dark:border-white/[0.08] text-xs font-semibold text-muted-foreground uppercase tracking-wider">
         <span>Category</span>
         <span>Task</span>
         <span>Priority</span>
@@ -264,7 +264,7 @@ function TableView({ items }: {items: ActionItem[];}) {
         return (
           <div key={group.category}>
             {/* Category header row */}
-            <div className={`grid grid-cols-[1fr_2.5fr_100px_110px_160px_130px] gap-2 px-5 py-3 bg-[hsl(220,15%,97%)] border-b border-border/20 border-l-4 ${c.border}`}>
+            <div className={`grid grid-cols-[1fr_2.5fr_100px_110px_160px_130px] gap-2 px-5 py-3 bg-[hsl(220,15%,97%)] dark:bg-white/[0.04] border-b border-border/20 dark:border-white/[0.06] border-l-4 ${c.border}`}>
               <div className="col-span-2 flex items-center gap-3">
                 <CategoryBadge category={group.category} />
                 <span className="text-xs text-muted-foreground">{group.items.length} actions</span>
@@ -287,7 +287,7 @@ function TableView({ items }: {items: ActionItem[];}) {
             {group.items.map((item, i) =>
             <div
               key={i}
-              className="grid grid-cols-[1fr_2.5fr_100px_110px_160px_130px] gap-2 px-5 py-3 border-b border-border/15 hover:bg-[hsl(220,15%,97.5%)] transition-colors duration-150 items-center">
+              className="grid grid-cols-[1fr_2.5fr_100px_110px_160px_130px] gap-2 px-5 py-3 border-b border-border/15 dark:border-white/[0.06] hover:bg-[hsl(220,15%,97.5%)] dark:hover:bg-white/[0.04] transition-colors duration-150 items-center">
 
                 <div className="flex items-center gap-2">
                   <span className="w-6 h-6 rounded-lg bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground">{i + 1}</span>
@@ -408,10 +408,10 @@ export default function RecommendationsPage() {
 
 
       {/* Summary KPI Row */}
-      <div className="bg-card rounded-xl border border-border/40 shadow-card p-5">
+      <div className="bg-card dark:bg-white/[0.06] dark:backdrop-blur-xl rounded-xl border border-border/40 dark:border-white/[0.08] shadow-card p-5">
         <div className="flex items-center gap-4 flex-wrap">
           {kpis.map((kpi, i) =>
-          <div key={i} className="flex items-center gap-3 bg-[hsl(220,15%,97%)] rounded-xl px-5 py-4 min-w-[150px]">
+          <div key={i} className="flex items-center gap-3 bg-[hsl(220,15%,97%)] dark:bg-white/[0.06] dark:border dark:border-white/[0.08] rounded-xl px-5 py-4 min-w-[150px]">
               <span className={`${kpi.color} opacity-70`}>{kpi.icon}</span>
               <div>
                 <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider leading-none mb-1.5">{kpi.label}</p>
@@ -421,7 +421,7 @@ export default function RecommendationsPage() {
           )}
 
           {/* Completion Rate Ring */}
-          <div className="flex items-center gap-3 bg-[hsl(220,15%,97%)] rounded-xl px-5 py-4 ml-auto">
+          <div className="flex items-center gap-3 bg-[hsl(220,15%,97%)] dark:bg-white/[0.06] dark:border dark:border-white/[0.08] rounded-xl px-5 py-4 ml-auto">
             <div>
               <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider leading-none mb-1.5">Completion Rate</p>
               <p className="text-[9px] text-muted-foreground flex items-center gap-0.5">
@@ -435,7 +435,7 @@ export default function RecommendationsPage() {
 
       {/* View Toggle */}
       <div className="flex justify-end">
-        <div className="inline-flex bg-[hsl(220,15%,95%)] rounded-lg p-1 gap-0.5 border border-border/30">
+        <div className="inline-flex bg-[hsl(220,15%,95%)] dark:bg-white/[0.06] rounded-lg p-1 gap-0.5 border border-border/30 dark:border-white/[0.08]">
           <button
             onClick={() => setView("table")}
             className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-semibold transition-all duration-200 ${
