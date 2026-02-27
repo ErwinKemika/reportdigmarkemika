@@ -94,25 +94,9 @@ export default function MarketplacePage() {
             })()}
           </div>
 
-          {/* GMV Banner */}
-          <div className="mx-5 mb-5 flex gap-4">
-            <div className="flex-1 rounded-xl p-4" style={{ background: "linear-gradient(135deg, hsl(38 80% 94%), hsl(38 60% 97%))" }}>
-              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">UNITS SOLD</p>
-              <p className="text-xl font-extrabold text-card-foreground">Rp {data.tokopedia.gmv.toLocaleString("id-ID")}</p>
-              {data.tokopedia.previousGmv !== undefined && (() => {
-                const g = growthPercent(data.tokopedia.gmv, data.tokopedia.previousGmv);
-                return (
-                  <div className="flex items-center gap-1 mt-1">
-                    <GrowthBadge value={g} />
-                    <span className="text-xs text-muted-foreground">{data.totalProductCount} produk</span>
-                  </div>
-                );
-              })()}
-            </div>
-          </div>
-
           {/* Metric Row */}
-          <div className="grid grid-cols-3 gap-0 mx-5 mb-6">
+          <div className="grid grid-cols-2 gap-3 mx-5 mb-6">
+            <MetricItem label="GMV" value={data.tokopedia.gmv} prevValue={data.tokopedia.previousGmv} isCurrency />
             <MetricItem label="UNITS SOLD" value={data.tokopedia.unitsSold} prevValue={data.tokopedia.previousUnitsSold} />
             <MetricItem label="VISITORS" value={data.tokopedia.visitors} prevValue={data.tokopedia.previousVisitors} />
             <MetricItem label="PAGE VIEWS" value={data.tokopedia.pageViews} prevValue={data.tokopedia.previousPageViews} />
@@ -174,10 +158,11 @@ export default function MarketplacePage() {
           </div>
 
           {/* Metric Row */}
-          <div className="grid grid-cols-3 gap-0 mx-5 mb-6">
-            <MetricItem label="UNITS SOLD" value={data.shopee.orders} prevValue={data.shopee.previousOrders} />
+          <div className="grid grid-cols-2 gap-3 mx-5 mb-6">
+            <MetricItem label="ORDERS" value={data.shopee.orders} prevValue={data.shopee.previousOrders} />
             <MetricItem label="VISITORS" value={data.shopee.visitors} prevValue={data.shopee.previousVisitors} />
-            <MetricItem label="PAGE VIEWS" value={data.shopee.productClick} prevValue={data.shopee.previousProductClick} />
+            <MetricItem label="PRODUCT CLICK" value={data.shopee.productClick} prevValue={data.shopee.previousProductClick} />
+            <MetricItem label="CANCELLED" value={data.shopee.cancelledOrders} prevValue={data.shopee.previousCancelledOrders} />
           </div>
 
           {/* Top Products */}
@@ -209,12 +194,17 @@ export default function MarketplacePage() {
 }
 
 /* Small inline metric */
-function MetricItem({ label, value, prevValue }: { label: string; value: number; prevValue?: number }) {
+function MetricItem({ label, value, prevValue, isCurrency }: { label: string; value: number; prevValue?: number; isCurrency?: boolean }) {
   const g = prevValue !== undefined ? growthPercent(value, prevValue) : null;
+  const displayVal = isCurrency
+    ? `Rp ${value.toLocaleString("id-ID")}`
+    : value >= 1000
+      ? `${(value / 1000).toFixed(value >= 10000 ? 0 : 1)}k`
+      : value.toLocaleString("id-ID");
   return (
-    <div className="text-center py-2">
+    <div className="text-center py-3 rounded-lg bg-muted/30">
       <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{label}</p>
-      <p className="text-lg font-bold text-card-foreground">{value >= 1000 ? `${(value / 1000).toFixed(value >= 10000 ? 0 : 1)}k` : value.toLocaleString("id-ID")}</p>
+      <p className="text-lg font-bold text-card-foreground">{displayVal}</p>
       {g !== null && (
         <span className={`text-xs font-semibold ${g >= 0 ? "text-success" : "text-destructive"}`}>
           {g >= 0 ? "↑" : "↓"} {Math.abs(g).toFixed(1)}%
