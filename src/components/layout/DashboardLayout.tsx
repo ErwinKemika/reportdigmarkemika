@@ -8,7 +8,7 @@ import {
   LayoutDashboard, Globe, ShoppingCart, Store, ShoppingBag,
   Megaphone, DollarSign, Lightbulb, ClipboardList,
   ChevronLeft, ChevronRight, Calendar, TrendingUp, BarChart3,
-  LogOut, Shield,
+  LogOut, Shield, FileSpreadsheet,
 } from "lucide-react";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -26,7 +26,7 @@ const navItems = [
   { label: "ROI & Revenue", path: "/roi-revenue", icon: TrendingUp },
   { label: "Insights", path: "/insights", icon: Lightbulb },
   { label: "Action Plan", path: "/recommendations", icon: ClipboardList },
-  
+  { label: "Sales Recap", path: "/sales-recap", icon: FileSpreadsheet },
 ];
 
 export function DashboardLayout({ children }: { children: ReactNode }) {

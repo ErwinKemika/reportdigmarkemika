@@ -17,6 +17,7 @@ import RecommendationsPage from "./pages/RecommendationsPage";
 
 import ROIRevenuePage from "./pages/ROIRevenuePage";
 import BenchmarkPage from "./pages/BenchmarkPage";
+import SalesRecapPage from "./pages/SalesRecapPage";
 import AuthPage from "./pages/AuthPage";
 import NotFound from "./pages/NotFound";
 
@@ -36,7 +37,7 @@ function AppRoutes() {
         <Route path="/roi-revenue" element={<ROIRevenuePage />} />
         <Route path="/insights" element={<InsightsPage />} />
         <Route path="/recommendations" element={<RecommendationsPage />} />
-        
+        <Route path="/sales-recap" element={<SalesRecapPage />} />
         <Route path="/admin-login" element={<AuthPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
