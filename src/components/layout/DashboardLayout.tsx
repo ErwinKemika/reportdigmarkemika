@@ -40,28 +40,47 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen w-full bg-background">
-      {/* Sidebar */}
+      {/* Sidebar - Glass iOS style */}
       <aside
-        className={`${collapsed ? "w-[68px]" : "w-[240px]"} bg-sidebar text-sidebar-foreground flex flex-col transition-all duration-300 ease-in-out shrink-0`}
+        className={`${collapsed ? "w-[68px]" : "w-[260px]"} flex flex-col transition-all duration-300 ease-in-out shrink-0 relative`}
+        style={{
+          background: "linear-gradient(180deg, hsla(160, 40%, 96%, 0.85) 0%, hsla(0, 0%, 100%, 0.92) 30%, hsla(0, 0%, 100%, 0.95) 70%, hsla(180, 30%, 96%, 0.85) 100%)",
+          backdropFilter: "blur(24px)",
+          WebkitBackdropFilter: "blur(24px)",
+          borderRight: "1px solid hsla(160, 20%, 88%, 0.6)",
+        }}
       >
-        <div className="flex items-center justify-between px-4 py-5 border-b border-sidebar-border">
+        {/* Subtle sparkle accents */}
+        <div className="absolute top-0 left-0 right-0 h-24 pointer-events-none overflow-hidden rounded-tr-2xl">
+          <div className="absolute top-4 right-8 w-20 h-20 rounded-full opacity-30" style={{ background: "radial-gradient(circle, hsla(160, 80%, 70%, 0.4), transparent 70%)" }} />
+          <div className="absolute top-2 left-12 w-12 h-12 rounded-full opacity-20" style={{ background: "radial-gradient(circle, hsla(200, 80%, 75%, 0.5), transparent 70%)" }} />
+        </div>
+        <div className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none overflow-hidden">
+          <div className="absolute bottom-3 right-6 w-16 h-16 rounded-full opacity-25" style={{ background: "radial-gradient(circle, hsla(160, 70%, 65%, 0.4), transparent 70%)" }} />
+          <div className="absolute bottom-5 left-8 w-10 h-10 rounded-full opacity-15" style={{ background: "radial-gradient(circle, hsla(40, 90%, 70%, 0.4), transparent 70%)" }} />
+        </div>
+
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-5 relative z-10">
           {!collapsed && (
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center shadow-card">
-                <Megaphone className="w-4 h-4 text-primary-foreground" />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm" style={{ background: "linear-gradient(135deg, hsla(160, 50%, 92%, 0.9), hsla(200, 50%, 94%, 0.9))" }}>
+                <Megaphone className="w-5 h-5" style={{ color: "hsl(160, 50%, 40%)" }} />
               </div>
-              <span className="font-bold text-[13px] text-sidebar-accent-foreground tracking-tight">DigiDash</span>
+              <span className="font-bold text-[15px] tracking-tight" style={{ color: "hsl(220, 20%, 18%)" }}>DigiDash</span>
             </div>
           )}
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="p-1.5 rounded-lg hover:bg-sidebar-accent transition-colors text-sidebar-foreground"
+            className="p-1.5 rounded-lg transition-colors hover:bg-white/60"
+            style={{ color: "hsl(220, 15%, 50%)" }}
           >
             {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
           </button>
         </div>
 
-        <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
+        {/* Navigation */}
+        <nav className="flex-1 py-2 px-3 space-y-0.5 overflow-y-auto relative z-10">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
@@ -69,43 +88,63 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
                 key={item.path}
                 to={item.path}
                 title={item.label}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] transition-all duration-150 ${
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] transition-all duration-200 relative ${
                   isActive
-                    ? "bg-sidebar-primary text-sidebar-primary-foreground font-semibold shadow-card"
-                    : "hover:bg-sidebar-accent text-sidebar-foreground hover:text-sidebar-accent-foreground"
+                    ? "font-semibold"
+                    : "hover:bg-white/50"
                 }`}
+                style={isActive ? {
+                  background: "linear-gradient(135deg, hsla(160, 50%, 90%, 0.7), hsla(180, 40%, 92%, 0.5))",
+                  color: "hsl(220, 20%, 15%)",
+                  boxShadow: "0 1px 4px hsla(160, 40%, 50%, 0.12)",
+                } : {
+                  color: "hsl(220, 12%, 45%)",
+                }}
               >
-                <item.icon className="w-[18px] h-[18px] shrink-0" />
+                <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${isActive ? "" : ""}`}
+                  style={isActive ? {
+                    background: "linear-gradient(135deg, hsla(160, 50%, 85%, 0.8), hsla(200, 50%, 90%, 0.6))",
+                  } : {}}
+                >
+                  <item.icon className="w-[16px] h-[16px]" />
+                </div>
                 {!collapsed && <span className="truncate">{item.label}</span>}
+                {isActive && !collapsed && (
+                  <div className="ml-auto w-2 h-2 rounded-full" style={{ background: "hsl(38, 90%, 55%)" }} />
+                )}
               </Link>
             );
           })}
         </nav>
 
+        {/* Footer */}
         {!collapsed && (
-          <div className="px-4 py-4 border-t border-sidebar-border space-y-3">
+          <div className="px-5 py-4 relative z-10" style={{ borderTop: "1px solid hsla(160, 20%, 88%, 0.5)" }}>
             {user ? (
-              <>
+              <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  {isAdmin && <Shield className="w-3.5 h-3.5 text-sidebar-primary" />}
-                  <span className="text-[11px] text-sidebar-foreground/60 truncate">{user.email}</span>
-                  <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-sidebar-border text-sidebar-foreground/50">
+                  {isAdmin && <Shield className="w-3.5 h-3.5" style={{ color: "hsl(160, 50%, 40%)" }} />}
+                  <span className="text-[11px] truncate" style={{ color: "hsl(220, 12%, 55%)" }}>{user.email}</span>
+                  <Badge variant="outline" className="text-[9px] px-1.5 py-0" style={{ borderColor: "hsla(160, 20%, 85%, 0.6)", color: "hsl(220, 12%, 55%)" }}>
                     {role}
                   </Badge>
                 </div>
                 <button
                   onClick={signOut}
-                  className="flex items-center gap-2 text-[11px] text-sidebar-foreground/40 hover:text-sidebar-foreground transition-colors"
+                  className="flex items-center gap-2 text-[11px] transition-colors hover:opacity-80"
+                  style={{ color: "hsl(220, 12%, 60%)" }}
                 >
                   <LogOut className="w-3.5 h-3.5" /> Sign Out
                 </button>
-              </>
+              </div>
             ) : (
               <Link
                 to="/admin-login"
-                className="flex items-center gap-2 text-[11px] text-sidebar-foreground/40 hover:text-sidebar-foreground transition-colors"
+                className="flex items-center gap-2 text-[11px] transition-colors hover:opacity-80"
+                style={{ color: "hsl(220, 12%, 55%)" }}
               >
-                <Shield className="w-3.5 h-3.5" /> Admin Login
+                <Shield className="w-3.5 h-3.5" style={{ color: "hsl(160, 50%, 40%)" }} /> Admin Login
+                <div className="ml-auto w-2 h-2 rounded-full" style={{ background: "hsl(38, 90%, 55%)" }} />
               </Link>
             )}
           </div>
