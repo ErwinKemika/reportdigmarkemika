@@ -7,11 +7,16 @@ import { NoData } from "@/components/dashboard/NoData";
 import { Globe, Search, Share2 } from "lucide-react";
 import { useMonth } from "@/contexts/MonthContext";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
+import { useTheme } from "next-themes";
 
-const CHART_COLORS = ["hsl(222,47%,25%)", "hsl(217,91%,60%)", "hsl(160,84%,39%)", "hsl(25,95%,53%)"];
+const CHART_COLORS_LIGHT = ["hsl(222,47%,25%)", "hsl(217,91%,60%)", "hsl(160,84%,39%)", "hsl(25,95%,53%)"];
+const CHART_COLORS_DARK = ["hsl(199,89%,68%)", "hsl(262,83%,68%)", "hsl(160,84%,55%)", "hsl(25,95%,65%)"];
 
 export default function WebsitePerformancePage() {
   const { selectedMonth } = useMonth();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+  const CHART_COLORS = isDark ? CHART_COLORS_DARK : CHART_COLORS_LIGHT;
   const { data, isLoading } = useMergedPageData("website-performance", getWebsitePerformanceData, transformWebsitePerformance);
 
   if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
@@ -35,11 +40,11 @@ export default function WebsitePerformancePage() {
           <SectionHeader title="Top 5 Keyword Trend" icon={<Search className="w-4 h-4" />} />
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={data.topKeywords} layout="vertical" margin={{ left: 20, right: 20 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,13%,91%)" />
-              <XAxis type="number" tick={{ fontSize: 11, fill: "hsl(220,9%,46%)" }} />
-              <YAxis dataKey="keyword" type="category" tick={{ fontSize: 11, fill: "hsl(220,9%,46%)" }} width={140} />
-              <Tooltip contentStyle={{ backgroundColor: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 12, boxShadow: "0 4px 12px hsl(222,47%,11%,0.08)" }} />
-              <Bar dataKey="sessions" fill="hsl(222,47%,25%)" radius={[0, 6, 6, 0]} />
+              <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "hsl(220,13%,25%)" : "hsl(220,13%,91%)"} />
+              <XAxis type="number" tick={{ fontSize: 11, fill: isDark ? "hsl(220,9%,70%)" : "hsl(220,9%,46%)" }} />
+              <YAxis dataKey="keyword" type="category" tick={{ fontSize: 11, fill: isDark ? "hsl(220,9%,70%)" : "hsl(220,9%,46%)" }} width={140} />
+              <Tooltip contentStyle={{ backgroundColor: isDark ? "hsl(222,47%,11%)" : "hsl(0,0%,100%)", border: `1px solid ${isDark ? "hsl(220,13%,25%)" : "hsl(220,13%,91%)"}`, borderRadius: 12, fontSize: 12, color: isDark ? "hsl(0,0%,90%)" : "inherit", boxShadow: "0 4px 12px hsl(222,47%,11%,0.08)" }} />
+              <Bar dataKey="sessions" fill={CHART_COLORS[0]} radius={[0, 6, 6, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </section>
@@ -53,8 +58,8 @@ export default function WebsitePerformancePage() {
                   <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip contentStyle={{ backgroundColor: "hsl(0,0%,100%)", border: "1px solid hsl(220,13%,91%)", borderRadius: 12, fontSize: 12, boxShadow: "0 4px 12px hsl(222,47%,11%,0.08)" }} />
-              <Legend wrapperStyle={{ fontSize: 12 }} />
+              <Tooltip contentStyle={{ backgroundColor: isDark ? "hsl(222,47%,11%)" : "hsl(0,0%,100%)", border: `1px solid ${isDark ? "hsl(220,13%,25%)" : "hsl(220,13%,91%)"}`, borderRadius: 12, fontSize: 12, color: isDark ? "hsl(0,0%,90%)" : "inherit", boxShadow: "0 4px 12px hsl(222,47%,11%,0.08)" }} />
+              <Legend wrapperStyle={{ fontSize: 12, color: isDark ? "hsl(0,0%,80%)" : undefined }} />
             </PieChart>
           </ResponsiveContainer>
         </section>
