@@ -1,14 +1,12 @@
 import { useMergedPageData } from "@/hooks/useMergedPageData";
 import { getMarketplaceData, formatCurrency, formatNumber, growthPercent } from "@/data/mockData";
 import { transformMarketplace } from "@/lib/dataTransformers";
-import { SectionHeader } from "@/components/dashboard/SectionHeader";
-import { MetricCard } from "@/components/dashboard/MetricCard";
 import { NoData } from "@/components/dashboard/NoData";
 import { Store, TrendingUp, TrendingDown, ShoppingBag } from "lucide-react";
 import { useMonth } from "@/contexts/MonthContext";
 
 export default function MarketplacePage() {
-  const { selectedMonth } = useMonth();
+  const { selectedMonth, selectedYear } = useMonth();
   const { data, isLoading } = useMergedPageData("marketplace", getMarketplaceData, transformMarketplace);
 
   if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
@@ -17,121 +15,211 @@ export default function MarketplacePage() {
   const revenueGrowth = growthPercent(data.totalCombinedRevenue, data.previousCombinedRevenue);
   const unitsGrowth = growthPercent(data.totalUnitsSold, data.previousUnitsSold);
 
+  const GrowthBadge = ({ value, size = "sm" }: { value: number; size?: "sm" | "lg" }) => {
+    const isUp = value >= 0;
+    const Icon = isUp ? TrendingUp : TrendingDown;
+    const textClass = size === "lg" ? "text-base font-bold" : "text-xs font-semibold";
+    const iconClass = size === "lg" ? "w-4 h-4" : "w-3.5 h-3.5";
+    return (
+      <span className={`inline-flex items-center gap-1 ${isUp ? "text-success" : "text-destructive"}`}>
+        <Icon className={iconClass} />
+        <span className={textClass}>{isUp ? "+" : ""}{value.toFixed(1)}%</span>
+      </span>
+    );
+  };
+
   return (
-    <div className="space-y-10 animate-fade-in">
-      {/* Hero Summary Row */}
+    <div className="space-y-8 animate-fade-in">
+      {/* Hero Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div className="bg-card rounded-xl border border-border/40 p-6 shadow-hero border-l-[4px] border-l-success">
-          <p className="text-label text-muted-foreground uppercase tracking-wider mb-2">Total Combined Revenue</p>
-          <p className="text-kpi font-extrabold text-card-foreground tracking-tight">Rp {data.totalCombinedRevenue.toLocaleString("id-ID")}</p>
-          <div className="flex items-center gap-1.5 mt-2">
-            <span className="text-xs text-muted-foreground">vs Prev Month: Rp {data.previousCombinedRevenue.toLocaleString("id-ID")}</span>
-            {revenueGrowth >= 0 ? <TrendingUp className="w-3.5 h-3.5 text-success" /> : <TrendingDown className="w-3.5 h-3.5 text-destructive" />}
-            <span className={`text-xs font-semibold ${revenueGrowth >= 0 ? "text-success" : "text-destructive"}`}>{revenueGrowth >= 0 ? "+" : ""}{revenueGrowth.toFixed(1)}%</span>
+        {/* Total Combined Revenue */}
+        <div className="rounded-2xl border border-border/40 bg-card p-6 shadow-card">
+          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Total Combined Revenue</p>
+          <p className="text-2xl font-extrabold text-card-foreground tracking-tight">Rp {data.totalCombinedRevenue.toLocaleString("id-ID")}</p>
+          <div className="flex items-center gap-2 mt-2 flex-wrap">
+            <GrowthBadge value={revenueGrowth} />
+            <span className="text-xs text-muted-foreground">{data.totalProductCount} product</span>
           </div>
         </div>
-        <div className="bg-card rounded-xl border border-border/40 p-6 shadow-card">
-          <p className="text-label text-muted-foreground uppercase tracking-wider mb-2">Total Units Sold</p>
-          <p className="text-kpi font-extrabold text-card-foreground tracking-tight">{data.totalUnitsSold.toLocaleString("id-ID")}</p>
-          <p className="text-xs text-muted-foreground mt-1">{data.totalProductCount} produk terjual</p>
-          <div className="flex items-center gap-1.5 mt-2">
-            {unitsGrowth >= 0 ? <TrendingUp className="w-3.5 h-3.5 text-success" /> : <TrendingDown className="w-3.5 h-3.5 text-destructive" />}
-            <span className={`text-xs font-semibold ${unitsGrowth >= 0 ? "text-success" : "text-destructive"}`}>{unitsGrowth >= 0 ? "+" : ""}{unitsGrowth.toFixed(1)}%</span>
+
+        {/* Total Units Sold */}
+        <div className="rounded-2xl border border-border/40 bg-card p-6 shadow-card">
+          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Total Units Sold</p>
+          <p className="text-2xl font-extrabold text-card-foreground tracking-tight">{data.totalUnitsSold.toLocaleString("id-ID")}</p>
+          <div className="flex items-center gap-2 mt-2">
+            <GrowthBadge value={unitsGrowth} />
+            <span className="text-xs text-muted-foreground">{data.totalProductCount} produk terjual</span>
           </div>
         </div>
-        <div className="bg-card rounded-xl border border-border/40 p-6 shadow-card">
-          <p className="text-label text-muted-foreground uppercase tracking-wider mb-2">Growth vs Prev Month</p>
-          <p className={`text-kpi font-extrabold tracking-tight ${revenueGrowth >= 0 ? "text-success" : "text-destructive"}`}>{revenueGrowth >= 0 ? "+" : ""}{revenueGrowth.toFixed(1)}%</p>
+
+        {/* Growth Card */}
+        <div className="rounded-2xl border border-border/40 bg-card p-6 shadow-card flex flex-col justify-center items-center">
+          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Growth vs Prev Month</p>
+          <div className={`text-4xl font-extrabold tracking-tight ${revenueGrowth >= 0 ? "text-success" : "text-destructive"}`}>
+            {revenueGrowth >= 0 ? "" : ""}{revenueGrowth.toFixed(1)}%
+          </div>
         </div>
       </div>
 
+      {/* Channel Sections */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Tokopedia */}
-        <section className="bg-card rounded-xl border border-border/40 p-6 shadow-card hover:shadow-card-hover transition-all duration-300 border-t-[3px] border-t-channel-tokopedia">
-          <SectionHeader title="Tokopedia" icon={<Store className="w-4 h-4 text-channel-tokopedia" />} />
-          {/* Tokopedia Total Revenue */}
-          <div className="mb-4 p-4 bg-muted/30 rounded-lg">
-            <p className="text-label text-muted-foreground uppercase tracking-wider mb-1">Total Revenue</p>
-            <p className="text-lg font-extrabold text-card-foreground">Rp {data.tokopedia.revenue.toLocaleString("id-ID")}</p>
+        {/* ===== Tokopedia ===== */}
+        <div className="rounded-2xl border border-border/30 overflow-hidden shadow-card bg-card">
+          {/* Channel Header */}
+          <div className="flex items-center justify-between px-6 py-4">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-sm" style={{ background: "linear-gradient(135deg, #00b894, #55efc4)" }}>
+                <Store className="w-5 h-5" />
+              </div>
+              <h3 className="text-xl font-bold text-card-foreground">Tokopedia</h3>
+            </div>
+            <div className="flex items-center gap-1.5 text-xs">
+              <span className="px-3 py-1 rounded-md border border-border/50 bg-muted/50 font-medium text-card-foreground">{selectedMonth}</span>
+              <span className="px-3 py-1 rounded-md bg-success text-success-foreground font-bold">{selectedYear}</span>
+            </div>
+          </div>
+
+          {/* Revenue Banner - Green gradient */}
+          <div className="mx-5 mb-4 rounded-xl p-5" style={{ background: "linear-gradient(135deg, hsl(160 60% 94%), hsl(160 40% 97%))" }}>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Total Revenue</p>
+            <p className="text-2xl font-extrabold text-card-foreground">Rp {data.tokopedia.revenue.toLocaleString("id-ID")}</p>
             {data.tokopedia.previousRevenue !== undefined && (() => {
               const g = growthPercent(data.tokopedia.revenue, data.tokopedia.previousRevenue);
               return (
-                <div className="flex items-center gap-1.5 mt-1">
-                  <span className="text-xs text-muted-foreground">vs Prev Month: Rp {data.tokopedia.previousRevenue.toLocaleString("id-ID")}</span>
-                  {g >= 0 ? <TrendingUp className="w-3.5 h-3.5 text-success" /> : <TrendingDown className="w-3.5 h-3.5 text-destructive" />}
-                  <span className={`text-xs font-semibold ${g >= 0 ? "text-success" : "text-destructive"}`}>{g >= 0 ? "+" : ""}{g.toFixed(1)}%</span>
+                <div className="flex items-center gap-2 mt-1.5">
+                  <span className="text-xs text-muted-foreground">PV Bulan terkait</span>
+                  <GrowthBadge value={g} />
                 </div>
               );
             })()}
           </div>
-          <div className="grid grid-cols-2 gap-2 mb-4">
-            <MetricCard title="GMV" value={data.tokopedia.gmv} previousValue={data.tokopedia.previousGmv} format="currency" />
-            <MetricCard title="Units Sold" value={data.tokopedia.unitsSold} previousValue={data.tokopedia.previousUnitsSold} />
-          </div>
-          <div className="grid grid-cols-2 gap-2 mb-6">
-            <MetricCard title="Visitors" value={data.tokopedia.visitors} previousValue={data.tokopedia.previousVisitors} />
-            <MetricCard title="Page Views" value={data.tokopedia.pageViews} previousValue={data.tokopedia.previousPageViews} />
-          </div>
-          <p className="text-label text-muted-foreground uppercase tracking-wider mb-3">Top 3 Best Selling</p>
-          <div className="space-y-1">
-            {data.tokopedia.topProducts.map((p, i) => (
-              <div key={i} className="flex justify-between items-center py-2.5 border-b border-border/20 last:border-0">
-                 <div className="flex items-center gap-2.5">
-                   <span className="w-6 h-6 rounded-lg bg-channel-tokopedia text-primary-foreground flex items-center justify-center text-xs font-bold">{i + 1}</span>
-                  <div>
-                    <span className="text-sm font-medium">{p.name}</span>
-                    <p className="text-xs text-muted-foreground">{p.units.toLocaleString("id-ID")} unit terjual</p>
-                  </div>
-                </div>
-                <span className="text-sm font-semibold">{formatCurrency(p.revenue)}</span>
-              </div>
-            ))}
-          </div>
-        </section>
 
-        {/* Shopee */}
-        <section className="bg-card rounded-xl border border-border/40 p-6 shadow-card hover:shadow-card-hover transition-all duration-300 border-t-[3px] border-t-channel-shopee">
-          <SectionHeader title="Shopee" icon={<ShoppingBag className="w-4 h-4 text-channel-shopee" />} />
-          {/* Shopee Total Revenue */}
-          <div className="mb-4 p-4 bg-muted/30 rounded-lg">
-            <p className="text-label text-muted-foreground uppercase tracking-wider mb-1">Total Revenue</p>
-            <p className="text-lg font-extrabold text-card-foreground">Rp {data.shopee.revenue.toLocaleString("id-ID")}</p>
+          {/* GMV Banner */}
+          <div className="mx-5 mb-5 flex gap-4">
+            <div className="flex-1 rounded-xl p-4" style={{ background: "linear-gradient(135deg, hsl(38 80% 94%), hsl(38 60% 97%))" }}>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">UNITS SOLD</p>
+              <p className="text-xl font-extrabold text-card-foreground">Rp {data.tokopedia.gmv.toLocaleString("id-ID")}</p>
+              {data.tokopedia.previousGmv !== undefined && (() => {
+                const g = growthPercent(data.tokopedia.gmv, data.tokopedia.previousGmv);
+                return (
+                  <div className="flex items-center gap-1 mt-1">
+                    <GrowthBadge value={g} />
+                    <span className="text-xs text-muted-foreground">{data.totalProductCount} produk</span>
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+
+          {/* Metric Row */}
+          <div className="grid grid-cols-3 gap-0 mx-5 mb-6">
+            <MetricItem label="UNITS SOLD" value={data.tokopedia.unitsSold} prevValue={data.tokopedia.previousUnitsSold} />
+            <MetricItem label="VISITORS" value={data.tokopedia.visitors} prevValue={data.tokopedia.previousVisitors} />
+            <MetricItem label="PAGE VIEWS" value={data.tokopedia.pageViews} prevValue={data.tokopedia.previousPageViews} />
+          </div>
+
+          {/* Top Products */}
+          <div className="px-6 pb-6">
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-4">Top {data.tokopedia.topProducts.length} Best Selling</p>
+            <div className="rounded-xl overflow-hidden border border-border/30">
+              <div className="px-4 py-2.5 text-white font-semibold text-sm flex items-center gap-2" style={{ background: "linear-gradient(135deg, #00b894, #55efc4)" }}>
+                <Store className="w-4 h-4" />
+                Tokopedia
+              </div>
+              {data.tokopedia.topProducts.map((p, i) => (
+                <div key={i} className="flex justify-between items-center px-4 py-3 border-b border-border/15 last:border-0 bg-card">
+                  <div className="flex items-center gap-3">
+                    <span className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold text-white" style={{ background: i === 0 ? "linear-gradient(135deg, #00b894, #55efc4)" : "hsl(160 30% 70%)" }}>{i + 1}</span>
+                    <div>
+                      <span className="text-sm font-medium text-card-foreground">{p.name}</span>
+                      <p className="text-xs text-muted-foreground">{p.units.toLocaleString("id-ID")} unit sold</p>
+                    </div>
+                  </div>
+                  <span className="text-sm font-semibold text-card-foreground">{formatCurrency(p.revenue)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ===== Shopee ===== */}
+        <div className="rounded-2xl border border-border/30 overflow-hidden shadow-card bg-card">
+          {/* Channel Header */}
+          <div className="flex items-center justify-between px-6 py-4">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-sm" style={{ background: "linear-gradient(135deg, #e17055, #fab1a0)" }}>
+                <ShoppingBag className="w-5 h-5" />
+              </div>
+              <h3 className="text-xl font-bold text-card-foreground">Shopee</h3>
+            </div>
+            <div className="flex items-center gap-1.5 text-xs">
+              <span className="px-3 py-1 rounded-md border border-border/50 bg-muted/50 font-medium text-card-foreground">{selectedMonth}</span>
+              <span className="px-3 py-1 rounded-md border border-border/50 bg-muted/50 font-medium text-card-foreground">{selectedYear}</span>
+            </div>
+          </div>
+
+          {/* Revenue Banner - Orange/Peach gradient */}
+          <div className="mx-5 mb-5 rounded-xl p-5" style={{ background: "linear-gradient(135deg, hsl(15 80% 94%), hsl(15 60% 97%))" }}>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Total Revenue</p>
+            <p className="text-2xl font-extrabold text-card-foreground">Rp {data.shopee.revenue.toLocaleString("id-ID")}</p>
             {data.shopee.previousRevenue !== undefined && (() => {
               const g = growthPercent(data.shopee.revenue, data.shopee.previousRevenue);
               return (
-                <div className="flex items-center gap-1.5 mt-1">
-                  <span className="text-xs text-muted-foreground">vs Prev Month: Rp {data.shopee.previousRevenue.toLocaleString("id-ID")}</span>
-                  {g >= 0 ? <TrendingUp className="w-3.5 h-3.5 text-success" /> : <TrendingDown className="w-3.5 h-3.5 text-destructive" />}
-                  <span className={`text-xs font-semibold ${g >= 0 ? "text-success" : "text-destructive"}`}>{g >= 0 ? "+" : ""}{g.toFixed(1)}%</span>
+                <div className="flex items-center gap-2 mt-1.5">
+                  <span className="text-xs text-muted-foreground">PV Bulan terkait</span>
+                  <GrowthBadge value={g} />
                 </div>
               );
             })()}
           </div>
-          <div className="grid grid-cols-2 gap-2 mb-4">
-            <MetricCard title="Orders" value={data.shopee.orders} previousValue={data.shopee.previousOrders} />
-            <MetricCard title="Visitors" value={data.shopee.visitors} previousValue={data.shopee.previousVisitors} />
+
+          {/* Metric Row */}
+          <div className="grid grid-cols-3 gap-0 mx-5 mb-6">
+            <MetricItem label="UNITS SOLD" value={data.shopee.orders} prevValue={data.shopee.previousOrders} />
+            <MetricItem label="VISITORS" value={data.shopee.visitors} prevValue={data.shopee.previousVisitors} />
+            <MetricItem label="PAGE VIEWS" value={data.shopee.productClick} prevValue={data.shopee.previousProductClick} />
           </div>
-          <div className="grid grid-cols-2 gap-2 mb-6">
-            <MetricCard title="Product Click" value={data.shopee.productClick} previousValue={data.shopee.previousProductClick} />
-            <MetricCard title="Cancelled" value={data.shopee.cancelledOrders} previousValue={data.shopee.previousCancelledOrders} />
-          </div>
-          <p className="text-label text-muted-foreground uppercase tracking-wider mb-3">Top 3 Best Selling</p>
-          <div className="space-y-1">
-            {data.shopee.topProducts.map((p, i) => (
-              <div key={i} className="flex justify-between items-center py-2.5 border-b border-border/20 last:border-0">
-                 <div className="flex items-center gap-2.5">
-                   <span className="w-6 h-6 rounded-lg bg-channel-shopee text-primary-foreground flex items-center justify-center text-xs font-bold">{i + 1}</span>
-                  <div>
-                    <span className="text-sm font-medium">{p.name}</span>
-                    <p className="text-xs text-muted-foreground">{p.units.toLocaleString("id-ID")} unit terjual</p>
-                  </div>
-                </div>
-                <span className="text-sm font-semibold">{formatCurrency(p.revenue)}</span>
+
+          {/* Top Products */}
+          <div className="px-6 pb-6">
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-4">Top {data.shopee.topProducts.length} Best Selling</p>
+            <div className="rounded-xl overflow-hidden border border-border/30">
+              <div className="px-4 py-2.5 text-white font-semibold text-sm flex items-center gap-2" style={{ background: "linear-gradient(135deg, #e17055, #fab1a0)" }}>
+                <ShoppingBag className="w-4 h-4" />
+                Shopee
               </div>
-            ))}
+              {data.shopee.topProducts.map((p, i) => (
+                <div key={i} className="flex justify-between items-center px-4 py-3 border-b border-border/15 last:border-0 bg-card">
+                  <div className="flex items-center gap-3">
+                    <span className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold text-white" style={{ background: i === 0 ? "linear-gradient(135deg, #e17055, #fab1a0)" : "hsl(15 40% 75%)" }}>{i + 1}</span>
+                    <div>
+                      <span className="text-sm font-medium text-card-foreground">{p.name}</span>
+                      <p className="text-xs text-muted-foreground">{p.units.toLocaleString("id-ID")} unit sold</p>
+                    </div>
+                  </div>
+                  <span className="text-sm font-semibold text-card-foreground">{formatCurrency(p.revenue)}</span>
+                </div>
+              ))}
+            </div>
           </div>
-        </section>
+        </div>
       </div>
+    </div>
+  );
+}
+
+/* Small inline metric */
+function MetricItem({ label, value, prevValue }: { label: string; value: number; prevValue?: number }) {
+  const g = prevValue !== undefined ? growthPercent(value, prevValue) : null;
+  return (
+    <div className="text-center py-2">
+      <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{label}</p>
+      <p className="text-lg font-bold text-card-foreground">{value >= 1000 ? `${(value / 1000).toFixed(value >= 10000 ? 0 : 1)}k` : value.toLocaleString("id-ID")}</p>
+      {g !== null && (
+        <span className={`text-xs font-semibold ${g >= 0 ? "text-success" : "text-destructive"}`}>
+          {g >= 0 ? "↑" : "↓"} {Math.abs(g).toFixed(1)}%
+        </span>
+      )}
     </div>
   );
 }
