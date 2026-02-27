@@ -8,7 +8,7 @@ export function SectionHeader({ title, subtitle, icon }: SectionHeaderProps) {
   return (
     <div className="flex items-center gap-3 mb-8">
       {icon && (
-        <div className="gradient-primary text-primary-foreground p-2.5 rounded-xl shadow-card">
+        <div className="bg-emerald-50/80 text-emerald-500 p-2.5 rounded-xl backdrop-blur-sm border border-emerald-100/60">
           {icon}
         </div>
       )}
