@@ -84,37 +84,60 @@
   }
 
   .dark {
-    --background: 222 47% 6%;
-    --foreground: 210 40% 98%;
-    --card: 222 47% 9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 47% 9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 100% 60%;
-    --primary-foreground: 222 47% 6%;
-    --secondary: 222 40% 14%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 222 35% 14%;
-    --muted-foreground: 220 9% 55%;
-    --accent: 222 35% 14%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --background: 222 47% 7%;
+    --foreground: 210 20% 92%;
+    --card: 222 40% 10%;
+    --card-foreground: 210 20% 92%;
+    --popover: 222 40% 10%;
+    --popover-foreground: 210 20% 92%;
+    --primary: 160 60% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 222 30% 15%;
+    --secondary-foreground: 210 20% 90%;
+    --muted: 222 25% 16%;
+    --muted-foreground: 220 10% 55%;
+    --accent: 222 25% 16%;
+    --accent-foreground: 210 20% 90%;
+    --destructive: 0 72% 50%;
     --destructive-foreground: 0 0% 100%;
     --success: 160 84% 39%;
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
-    --border: 222 35% 18%;
-    --input: 222 35% 18%;
-    --ring: 210 100% 60%;
-    --sidebar-background: 222 47% 6%;
-    --sidebar-foreground: 220 14% 75%;
-    --sidebar-primary: 210 100% 60%;
+    --border: 222 25% 20%;
+    --input: 222 25% 20%;
+    --ring: 160 60% 45%;
+    --radius: 0.875rem;
+
+    --sidebar-background: 222 47% 7%;
+    --sidebar-foreground: 220 14% 70%;
+    --sidebar-primary: 160 60% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 222 40% 12%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 222 35% 12%;
-    --sidebar-ring: 210 100% 60%;
+    --sidebar-accent: 222 30% 14%;
+    --sidebar-accent-foreground: 210 20% 90%;
+    --sidebar-border: 222 25% 15%;
+    --sidebar-ring: 160 60% 45%;
+
+    --chart-1: 160 60% 45%;
+    --chart-2: 210 80% 60%;
+    --chart-3: 160 84% 45%;
+    --chart-4: 38 80% 55%;
+    --chart-5: 262 52% 60%;
+
+    --channel-website: 222 40% 55%;
+    --channel-google: 217 80% 65%;
+    --channel-meta: 245 50% 60%;
+    --channel-shopee: 25 85% 58%;
+    --channel-tokopedia: 160 70% 45%;
+
+    --tint-blue: 216 50% 14%;
+    --tint-green: 160 30% 13%;
+    --tint-red: 0 40% 14%;
+    --tint-orange: 33 40% 14%;
+    --tint-purple: 262 35% 15%;
+
+    --hero-from: 222 47% 7%;
+    --hero-to: 222 40% 10%;
   }
 }
 

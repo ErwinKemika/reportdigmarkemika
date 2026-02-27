@@ -1,5 +1,6 @@
 import { ReactNode, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useTheme } from "next-themes";
 import { useMonth, MONTHS, YEARS } from "@/contexts/MonthContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { PageEditDialog } from "@/components/dashboard/PageEditDialog";
@@ -14,6 +15,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const navItems = [
   { label: "Overview", path: "/", icon: LayoutDashboard },
@@ -34,6 +36,8 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
   const { selectedMonth, selectedYear, setSelectedMonth, setSelectedYear } = useMonth();
   const { user, role, isAdmin, signOut } = useAuth();
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
 
   // Get schema for current page
   const currentSchema = PAGE_SCHEMA_MAP[location.pathname];
@@ -44,30 +48,32 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
       <aside
         className={`${collapsed ? "w-[68px]" : "w-[260px]"} flex flex-col transition-all duration-300 ease-in-out shrink-0 relative`}
         style={{
-          background: "linear-gradient(180deg, hsla(160, 40%, 96%, 0.85) 0%, hsla(0, 0%, 100%, 0.92) 30%, hsla(0, 0%, 100%, 0.95) 70%, hsla(180, 30%, 96%, 0.85) 100%)",
+          background: isDark
+            ? "linear-gradient(180deg, hsla(222, 40%, 10%, 0.92) 0%, hsla(222, 45%, 8%, 0.95) 50%, hsla(222, 40%, 10%, 0.92) 100%)"
+            : "linear-gradient(180deg, hsla(160, 40%, 96%, 0.85) 0%, hsla(0, 0%, 100%, 0.92) 30%, hsla(0, 0%, 100%, 0.95) 70%, hsla(180, 30%, 96%, 0.85) 100%)",
           backdropFilter: "blur(24px)",
           WebkitBackdropFilter: "blur(24px)",
-          borderRight: "1px solid hsla(160, 20%, 88%, 0.6)",
+          borderRight: isDark ? "1px solid hsla(222, 25%, 20%, 0.6)" : "1px solid hsla(160, 20%, 88%, 0.6)",
         }}
       >
         {/* Subtle sparkle accents */}
         <div className="absolute top-0 left-0 right-0 h-24 pointer-events-none overflow-hidden rounded-tr-2xl">
-          <div className="absolute top-4 right-8 w-20 h-20 rounded-full opacity-30" style={{ background: "radial-gradient(circle, hsla(160, 80%, 70%, 0.4), transparent 70%)" }} />
-          <div className="absolute top-2 left-12 w-12 h-12 rounded-full opacity-20" style={{ background: "radial-gradient(circle, hsla(200, 80%, 75%, 0.5), transparent 70%)" }} />
+          <div className="absolute top-4 right-8 w-20 h-20 rounded-full opacity-30" style={{ background: isDark ? "radial-gradient(circle, hsla(160, 60%, 40%, 0.3), transparent 70%)" : "radial-gradient(circle, hsla(160, 80%, 70%, 0.4), transparent 70%)" }} />
+          <div className="absolute top-2 left-12 w-12 h-12 rounded-full opacity-20" style={{ background: isDark ? "radial-gradient(circle, hsla(200, 60%, 50%, 0.3), transparent 70%)" : "radial-gradient(circle, hsla(200, 80%, 75%, 0.5), transparent 70%)" }} />
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none overflow-hidden">
-          <div className="absolute bottom-3 right-6 w-16 h-16 rounded-full opacity-25" style={{ background: "radial-gradient(circle, hsla(160, 70%, 65%, 0.4), transparent 70%)" }} />
-          <div className="absolute bottom-5 left-8 w-10 h-10 rounded-full opacity-15" style={{ background: "radial-gradient(circle, hsla(40, 90%, 70%, 0.4), transparent 70%)" }} />
+          <div className="absolute bottom-3 right-6 w-16 h-16 rounded-full opacity-25" style={{ background: isDark ? "radial-gradient(circle, hsla(160, 50%, 35%, 0.3), transparent 70%)" : "radial-gradient(circle, hsla(160, 70%, 65%, 0.4), transparent 70%)" }} />
+          <div className="absolute bottom-5 left-8 w-10 h-10 rounded-full opacity-15" style={{ background: isDark ? "radial-gradient(circle, hsla(40, 70%, 45%, 0.3), transparent 70%)" : "radial-gradient(circle, hsla(40, 90%, 70%, 0.4), transparent 70%)" }} />
         </div>
 
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-5 relative z-10">
           {!collapsed && (
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm" style={{ background: "linear-gradient(135deg, hsla(160, 50%, 92%, 0.9), hsla(200, 50%, 94%, 0.9))" }}>
-                <Megaphone className="w-5 h-5" style={{ color: "hsl(160, 50%, 40%)" }} />
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm" style={{ background: isDark ? "linear-gradient(135deg, hsla(160, 40%, 20%, 0.6), hsla(200, 40%, 22%, 0.6))" : "linear-gradient(135deg, hsla(160, 50%, 92%, 0.9), hsla(200, 50%, 94%, 0.9))" }}>
+                <Megaphone className="w-5 h-5" style={{ color: isDark ? "hsl(160, 50%, 60%)" : "hsl(160, 50%, 40%)" }} />
               </div>
-              <span className="font-bold text-[15px] tracking-tight" style={{ color: "hsl(220, 20%, 18%)" }}>DigiDash</span>
+              <span className="font-bold text-[15px] tracking-tight" style={{ color: isDark ? "hsl(210, 20%, 88%)" : "hsl(220, 20%, 18%)" }}>DigiDash</span>
             </div>
           )}
           <button
@@ -91,14 +97,16 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] transition-all duration-200 relative ${
                   isActive
                     ? "font-semibold"
-                    : "hover:bg-white/50"
+                    : "hover:bg-white/50 dark:hover:bg-white/10"
                 }`}
                 style={isActive ? {
-                  background: "linear-gradient(135deg, hsla(160, 50%, 90%, 0.7), hsla(180, 40%, 92%, 0.5))",
-                  color: "hsl(220, 20%, 15%)",
-                  boxShadow: "0 1px 4px hsla(160, 40%, 50%, 0.12)",
+                  background: isDark
+                    ? "linear-gradient(135deg, hsla(160, 40%, 25%, 0.4), hsla(180, 30%, 20%, 0.3))"
+                    : "linear-gradient(135deg, hsla(160, 50%, 90%, 0.7), hsla(180, 40%, 92%, 0.5))",
+                  color: isDark ? "hsl(160, 40%, 80%)" : "hsl(220, 20%, 15%)",
+                  boxShadow: isDark ? "0 1px 4px hsla(160, 40%, 30%, 0.15)" : "0 1px 4px hsla(160, 40%, 50%, 0.12)",
                 } : {
-                  color: "hsl(220, 12%, 45%)",
+                  color: isDark ? "hsl(220, 12%, 60%)" : "hsl(220, 12%, 45%)",
                 }}
               >
                 <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${isActive ? "" : ""}`}
@@ -117,9 +125,14 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
           })}
         </nav>
 
+        {/* Theme Toggle */}
+        <div className="px-3 py-1 relative z-10">
+          <ThemeToggle collapsed={collapsed} />
+        </div>
+
         {/* Footer */}
         {!collapsed && (
-          <div className="px-5 py-4 relative z-10" style={{ borderTop: "1px solid hsla(160, 20%, 88%, 0.5)" }}>
+          <div className="px-5 py-4 relative z-10" style={{ borderTop: isDark ? "1px solid hsla(222, 25%, 20%, 0.5)" : "1px solid hsla(160, 20%, 88%, 0.5)" }}>
             {user ? (
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
