@@ -125,10 +125,6 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
           })}
         </nav>
 
-        {/* Theme Toggle */}
-        <div className="px-3 py-1 relative z-10">
-          <ThemeToggle collapsed={collapsed} />
-        </div>
 
         {/* Footer */}
         {!collapsed && (
@@ -173,6 +169,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
           </h1>
           <div className="flex items-center gap-3">
             {currentSchema && <PageEditDialog schema={currentSchema} />}
+            <ThemeToggle />
             <Calendar className="w-4 h-4 text-muted-foreground" />
             <Select value={selectedMonth} onValueChange={(v) => setSelectedMonth(v as any)}>
               <SelectTrigger className="w-32 h-9 text-sm rounded-lg border-border/60 bg-background">
