@@ -18,12 +18,18 @@ function GrowthBadge({ current, previous, invert = false }: { current: number; p
   );
 }
 
-function FunnelLayer({ label, value, growth, color, width }: { label: string; value: string; growth: React.ReactNode; color: string; width: string }) {
+function FunnelLayer({ label, value, growth, color, widthTop, widthBottom }: { label: string; value: string; growth: React.ReactNode; color: string; widthTop: string; widthBottom: string }) {
   return (
-    <div className="flex flex-col items-center">
-      <div className={`${color} rounded-2xl flex flex-col items-center justify-center py-4 transition-all`} style={{ width }}>
-        <span className="text-xs font-medium text-white/80 uppercase tracking-wider">{label}</span>
-        <span className="text-xl font-extrabold text-white">{value}</span>
+    <div className="relative flex flex-col items-center w-full" style={{ minHeight: 80 }}>
+      <svg viewBox="0 0 400 80" preserveAspectRatio="none" className="w-full h-full absolute inset-0">
+        <path
+          d={`M${(400 - parseFloat(widthTop) * 4) / 2},0 L${(400 + parseFloat(widthTop) * 4) / 2},0 L${(400 + parseFloat(widthBottom) * 4) / 2},80 L${(400 - parseFloat(widthBottom) * 4) / 2},80 Z`}
+          fill={color}
+        />
+      </svg>
+      <div className="relative z-10 flex flex-col items-center justify-center h-full py-3">
+        <span className="text-[11px] font-semibold text-white/80 uppercase tracking-wider">{label}</span>
+        <span className="text-xl md:text-2xl font-extrabold text-white">{value}</span>
         <div className="mt-0.5">{growth}</div>
       </div>
     </div>
@@ -47,45 +53,82 @@ export function AdsFunnelView({ data, accentColor }: Props) {
     <div className="space-y-10">
       {/* Funnel Section */}
       <div className="bg-card rounded-2xl border border-border/40 p-6 md:p-8 shadow-card">
-        {/* Cost header */}
-        <div className="text-center mb-6">
+        {/* Cost header with arrow */}
+        <div className="text-center mb-2">
           <span className="text-xs uppercase tracking-wider text-muted-foreground font-medium">Cost</span>
           <div className="text-2xl font-extrabold text-card-foreground">{formatCurrencyFull(d.cost)}</div>
           <GrowthBadge current={d.cost} previous={d.previousCost} invert />
+          <div className="flex justify-center mt-2">
+            <svg width="20" height="30" viewBox="0 0 20 30"><path d="M10 0 L10 22 M4 16 L10 24 L16 16" stroke="currentColor" strokeWidth="2" fill="none" className="text-destructive"/></svg>
+          </div>
         </div>
 
-        <div className="grid grid-cols-[1fr_2fr_1fr] gap-4 items-center">
-          {/* Left side metrics */}
-          <div className="flex flex-col gap-6 items-end pr-2">
-            <SideMetric label="Avg. CPM" value={formatCurrencyFull(d.avgCpm)} growth={<GrowthBadge current={d.avgCpm} previous={d.previousAvgCpm} invert />} />
-            <SideMetric label="Avg. CPC" value={formatCurrencyFull(d.avgCpc)} growth={<GrowthBadge current={d.avgCpc} previous={d.previousAvgCpc} invert />} />
-            <SideMetric label="Cost / conv." value={formatCurrencyFull(d.costPerConv)} growth={<GrowthBadge current={d.costPerConv} previous={d.previousCostPerConv} invert />} />
+        <div className="grid grid-cols-[1fr_2fr_1fr] gap-2 items-center">
+          {/* Left side metrics with connector dots */}
+          <div className="flex flex-col gap-0 items-end">
+            <div className="flex items-center gap-2 h-[80px]">
+              <SideMetric label="Avg. CPM" value={formatCurrencyFull(d.avgCpm)} growth={<GrowthBadge current={d.avgCpm} previous={d.previousAvgCpm} invert />} />
+              <div className="flex items-center">
+                <div className="w-6 h-px bg-blue-400/60" />
+                <div className="w-2 h-2 rounded-full border-2 border-blue-400/60 bg-card" />
+              </div>
+            </div>
+            <div className="flex items-center gap-2 h-[80px]">
+              <SideMetric label="Avg. CPC" value={formatCurrencyFull(d.avgCpc)} growth={<GrowthBadge current={d.avgCpc} previous={d.previousAvgCpc} invert />} />
+              <div className="flex items-center">
+                <div className="w-6 h-px bg-blue-400/60" />
+                <div className="w-2 h-2 rounded-full border-2 border-blue-400/60 bg-card" />
+              </div>
+            </div>
+            <div className="flex items-center gap-2 h-[80px]">
+              <SideMetric label="Cost / conv." value={formatCurrencyFull(d.costPerConv)} growth={<GrowthBadge current={d.costPerConv} previous={d.previousCostPerConv} invert />} />
+              <div className="flex items-center">
+                <div className="w-6 h-px bg-blue-400/60" />
+                <div className="w-2 h-2 rounded-full border-2 border-blue-400/60 bg-card" />
+              </div>
+            </div>
           </div>
 
-          {/* Center funnel */}
-          <div className="flex flex-col items-center gap-2">
+          {/* Center funnel - tapered shape */}
+          <div className="flex flex-col items-center -space-y-[1px]">
             <FunnelLayer
               label="Impressions" value={formatNumber(d.impressions)}
               growth={<GrowthBadge current={d.impressions} previous={d.previousImpressions} />}
-              color={accentColor === "blue" ? "bg-blue-800" : "bg-indigo-800"} width="100%"
+              color={accentColor === "blue" ? "#1e3a5f" : "#2d2b6b"} widthTop="100" widthBottom="82"
             />
             <FunnelLayer
               label="Clicks" value={formatNumber(d.clicks)}
               growth={<GrowthBadge current={d.clicks} previous={d.previousClicks} />}
-              color={accentColor === "blue" ? "bg-teal-600" : "bg-teal-600"} width="75%"
+              color={accentColor === "blue" ? "#0d9488" : "#0d9488"} widthTop="82" widthBottom="64"
             />
             <FunnelLayer
               label="Conversions" value={formatNumber(d.conversions)}
               growth={<GrowthBadge current={d.conversions} previous={d.previousConversions} />}
-              color={accentColor === "blue" ? "bg-amber-500" : "bg-amber-500"} width="55%"
+              color="#e9a030" widthTop="64" widthBottom="50"
             />
+            {/* Bottom tail */}
+            <div className="relative w-full" style={{ minHeight: 40 }}>
+              <svg viewBox="0 0 400 40" preserveAspectRatio="none" className="w-full h-full">
+                <path d="M100,0 L300,0 L260,40 L140,40 Z" fill="#e07070" />
+              </svg>
+            </div>
           </div>
 
-          {/* Right side metrics */}
-          <div className="flex flex-col gap-6 items-start pl-2">
-            <div className="h-[68px]" /> {/* spacer to align with impressions */}
-            <SideMetric label="CTR" value={d.ctr.toFixed(2) + "%"} growth={<GrowthBadge current={d.ctr} previous={d.previousCtr} />} />
-            <SideMetric label="Conv. rate" value={d.convRate.toFixed(2) + "%"} growth={<GrowthBadge current={d.convRate} previous={d.previousConvRate} />} />
+          {/* Right side metrics with connector curves */}
+          <div className="flex flex-col gap-0 items-start">
+            <div className="h-[80px]" /> {/* spacer for impressions row */}
+            <div className="flex items-center gap-2 h-[80px]">
+              <div className="flex items-center">
+                <svg width="30" height="40" viewBox="0 0 30 40"><path d="M0 20 Q15 20 25 5" stroke="hsl(var(--destructive))" strokeWidth="1.5" fill="none" /><polygon points="23,2 28,5 23,8" fill="hsl(var(--destructive))" /></svg>
+              </div>
+              <SideMetric label="CTR" value={d.ctr.toFixed(2) + "%"} growth={<GrowthBadge current={d.ctr} previous={d.previousCtr} />} />
+            </div>
+            <div className="flex items-center gap-2 h-[80px]">
+              <div className="flex items-center">
+                <svg width="30" height="40" viewBox="0 0 30 40"><path d="M0 20 Q15 20 25 5" stroke="hsl(var(--destructive))" strokeWidth="1.5" fill="none" /><polygon points="23,2 28,5 23,8" fill="hsl(var(--destructive))" /></svg>
+              </div>
+              <SideMetric label="Conv. rate" value={d.convRate.toFixed(2) + "%"} growth={<GrowthBadge current={d.convRate} previous={d.previousConvRate} />} />
+            </div>
           </div>
         </div>
       </div>
