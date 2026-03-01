@@ -219,6 +219,118 @@ export const shopeeAdsSchema: PageSchema = {
   ],
 };
 
+// ===== GOOGLE ADS =====
+export const googleAdsSchema: PageSchema = {
+  pageKey: "google-ads",
+  pageTitle: "Google Ads",
+  groups: [
+    {
+      title: "Funnel Metrics (Current)",
+      fields: [
+        { key: "cost", label: "Cost (Rp)", type: "currency" },
+        { key: "impressions", label: "Impressions", type: "number" },
+        { key: "clicks", label: "Clicks", type: "number" },
+        { key: "conversions", label: "Conversions", type: "number" },
+        { key: "ctr", label: "CTR (%)", type: "percent" },
+        { key: "convRate", label: "Conv. Rate (%)", type: "percent" },
+        { key: "avgCpm", label: "Avg. CPM (Rp)", type: "currency" },
+        { key: "avgCpc", label: "Avg. CPC (Rp)", type: "currency" },
+        { key: "costPerConv", label: "Cost / Conv (Rp)", type: "currency" },
+      ],
+    },
+    {
+      title: "Funnel Metrics (Previous)",
+      fields: [
+        { key: "previousCost", label: "Previous Cost (Rp)", type: "currency" },
+        { key: "previousImpressions", label: "Previous Impressions", type: "number" },
+        { key: "previousClicks", label: "Previous Clicks", type: "number" },
+        { key: "previousConversions", label: "Previous Conversions", type: "number" },
+        { key: "previousCtr", label: "Previous CTR (%)", type: "percent" },
+        { key: "previousConvRate", label: "Previous Conv. Rate (%)", type: "percent" },
+        { key: "previousAvgCpm", label: "Previous Avg. CPM (Rp)", type: "currency" },
+        { key: "previousAvgCpc", label: "Previous Avg. CPC (Rp)", type: "currency" },
+        { key: "previousCostPerConv", label: "Previous Cost / Conv (Rp)", type: "currency" },
+      ],
+    },
+    {
+      title: "Insight",
+      fields: [
+        { key: "insight", label: "Insight", type: "textarea", placeholder: "Analisis performa Google Ads bulan ini..." },
+      ],
+    },
+  ],
+  arrayFields: [
+    {
+      key: "campaigns",
+      label: "Campaign Breakdown",
+      columns: [
+        { key: "name", label: "Campaign Name", type: "text" },
+        { key: "cost", label: "Cost (Rp)", type: "currency" },
+        { key: "convRate", label: "Conv. Rate (%)", type: "percent" },
+        { key: "conversions", label: "Conversions", type: "number" },
+        { key: "costPerConv", label: "Cost/Conv (Rp)", type: "currency" },
+      ],
+      maxRows: 10,
+    },
+  ],
+};
+
+// ===== META ADS =====
+export const metaAdsSchema: PageSchema = {
+  pageKey: "meta-ads",
+  pageTitle: "Meta Ads",
+  groups: [
+    {
+      title: "Funnel Metrics (Current)",
+      fields: [
+        { key: "cost", label: "Cost (Rp)", type: "currency" },
+        { key: "impressions", label: "Impressions", type: "number" },
+        { key: "clicks", label: "Clicks", type: "number" },
+        { key: "conversions", label: "Conversions", type: "number" },
+        { key: "ctr", label: "CTR (%)", type: "percent" },
+        { key: "convRate", label: "Conv. Rate (%)", type: "percent" },
+        { key: "avgCpm", label: "Avg. CPM (Rp)", type: "currency" },
+        { key: "avgCpc", label: "Avg. CPC (Rp)", type: "currency" },
+        { key: "costPerConv", label: "Cost / Conv (Rp)", type: "currency" },
+      ],
+    },
+    {
+      title: "Funnel Metrics (Previous)",
+      fields: [
+        { key: "previousCost", label: "Previous Cost (Rp)", type: "currency" },
+        { key: "previousImpressions", label: "Previous Impressions", type: "number" },
+        { key: "previousClicks", label: "Previous Clicks", type: "number" },
+        { key: "previousConversions", label: "Previous Conversions", type: "number" },
+        { key: "previousCtr", label: "Previous CTR (%)", type: "percent" },
+        { key: "previousConvRate", label: "Previous Conv. Rate (%)", type: "percent" },
+        { key: "previousAvgCpm", label: "Previous Avg. CPM (Rp)", type: "currency" },
+        { key: "previousAvgCpc", label: "Previous Avg. CPC (Rp)", type: "currency" },
+        { key: "previousCostPerConv", label: "Previous Cost / Conv (Rp)", type: "currency" },
+      ],
+    },
+    {
+      title: "Insight",
+      fields: [
+        { key: "insight", label: "Insight", type: "textarea", placeholder: "Analisis performa Meta Ads bulan ini..." },
+      ],
+    },
+  ],
+  arrayFields: [
+    {
+      key: "campaigns",
+      label: "Campaign Breakdown",
+      columns: [
+        { key: "name", label: "Campaign Name", type: "text" },
+        { key: "cost", label: "Cost (Rp)", type: "currency" },
+        { key: "convRate", label: "Conv. Rate (%)", type: "percent" },
+        { key: "conversions", label: "Conversions", type: "number" },
+        { key: "costPerConv", label: "Cost/Conv (Rp)", type: "currency" },
+      ],
+      maxRows: 10,
+    },
+  ],
+};
+
 // ===== ADS BUDGET PERFORMANCE =====
 export const adsBudgetSchema: PageSchema = {
   pageKey: "ads-budget",
@@ -458,6 +570,9 @@ export const PAGE_SCHEMA_MAP: Record<string, PageSchema> = {
   "/marketplace": marketplaceSchema,
   "/shopee-ads": shopeeAdsSchema,
   "/ads-budget": adsBudgetSchema,
+  "/ads-budget/google": googleAdsSchema,
+  "/ads-budget/meta": metaAdsSchema,
+  "/ads-budget/shopee": shopeeAdsSchema,
   "/roi-revenue": roiRevenueSchema,
   "/benchmark": benchmarkSchema,
   "/insights": insightsSchema,

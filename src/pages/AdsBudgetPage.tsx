@@ -1,10 +1,10 @@
-import { useMergedPageData } from "@/hooks/useMergedPageData";
-import { getAdsBudgetData, formatCurrency, formatNumber } from "@/data/mockData";
-import { transformAdsBudget } from "@/lib/dataTransformers";
+import { useMonth } from "@/contexts/MonthContext";
+import { usePageData } from "@/hooks/usePageData";
+import { getGoogleAdsData, getMetaAdsData, getShopeeAdsData, getAdsBudgetData, formatCurrency, formatNumber } from "@/data/mockData";
+import { transformPlatformAdsDetail, transformShopeeAds } from "@/lib/dataTransformers";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
 import { DollarSign } from "lucide-react";
-import { useMonth } from "@/contexts/MonthContext";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
 const CHANNEL_COLORS: Record<string, string> = {
@@ -20,30 +20,107 @@ const CHANNEL_BORDER: Record<string, string> = {
 };
 
 export default function AdsBudgetPage() {
-  const { selectedMonth } = useMonth();
-  const { data, isLoading } = useMergedPageData("ads-budget", getAdsBudgetData, transformAdsBudget);
+  const { selectedMonth, period } = useMonth();
+
+  // Fetch from each child page's data
+  const { data: googleDbData, isLoading: gLoading } = usePageData(period, "google-ads");
+  const { data: metaDbData, isLoading: mLoading } = usePageData(period, "meta-ads");
+  const { data: shopeeDbData, isLoading: sLoading } = usePageData(period, "shopee-ads");
+
+  const isLoading = gLoading || mLoading || sLoading;
 
   if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
-  if (!data) return <NoData month={selectedMonth} />;
 
+  // Transform DB data or fallback to mock
+  const googleRaw = googleDbData
+    ? transformPlatformAdsDetail(googleDbData as Record<string, any>)
+    : getGoogleAdsData(selectedMonth);
+  const metaRaw = metaDbData
+    ? transformPlatformAdsDetail(metaDbData as Record<string, any>)
+    : getMetaAdsData(selectedMonth);
+  const shopeeRaw = shopeeDbData
+    ? transformShopeeAds(shopeeDbData as Record<string, any>)
+    : getShopeeAdsData(selectedMonth);
+
+  // If all are empty, show no data
+  if (!googleRaw && !metaRaw && !shopeeRaw) return <NoData month={selectedMonth} />;
+
+  // Build aggregated channel data
   const channels = [
-    { name: "Google Ads", ...data.google, roas: data.google.revenue / (data.google.budget || 1) },
-    { name: "Meta Ads", ...data.meta, roas: data.meta.revenue / (data.meta.budget || 1) },
-    { name: "Shopee Ads", ...data.shopee, roas: data.shopee.revenue / (data.shopee.budget || 1) },
+    {
+      name: "Google Ads",
+      budget: googleRaw?.cost ?? 0,
+      clicks: googleRaw?.clicks ?? 0,
+      conversions: googleRaw?.conversions ?? 0,
+      revenue: 0, // Google Ads doesn't have direct revenue in funnel data, use cost * some logic or fallback
+    },
+    {
+      name: "Meta Ads",
+      budget: metaRaw?.cost ?? 0,
+      clicks: metaRaw?.clicks ?? 0,
+      conversions: metaRaw?.conversions ?? 0,
+      revenue: 0,
+    },
+    {
+      name: "Shopee Ads",
+      budget: shopeeRaw?.adSpend?.value ?? 0,
+      clicks: shopeeRaw?.clicks?.value ?? 0,
+      conversions: shopeeRaw?.orders?.value ?? 0,
+      revenue: shopeeRaw?.revenueFromAds?.value ?? 0,
+    },
   ];
 
-  const totalBudget = channels.reduce((s, c) => s + c.budget, 0);
-  const totalRevenue = channels.reduce((s, c) => s + c.revenue, 0);
-  const totalROI = totalBudget > 0 ? ((totalRevenue - totalBudget) / totalBudget) * 100 : 0;
+  // For Google/Meta, try to get revenue from the ads-budget mock as fallback
+  const adsBudgetMock = getAdsBudgetData(selectedMonth);
+  if (channels[0].revenue === 0 && adsBudgetMock) channels[0].revenue = adsBudgetMock.google.revenue;
+  if (channels[1].revenue === 0 && adsBudgetMock) channels[1].revenue = adsBudgetMock.meta.revenue;
+  if (channels[2].revenue === 0 && adsBudgetMock) channels[2].revenue = adsBudgetMock.shopee.revenue;
 
-  const roasChartData = channels.map((c) => ({ name: c.name, ROAS: parseFloat(c.roas.toFixed(2)) }));
+  const channelsWithRoas = channels.map(c => ({
+    ...c,
+    roas: c.budget > 0 ? c.revenue / c.budget : 0,
+  }));
+
+  const totalBudget = channelsWithRoas.reduce((s, c) => s + c.budget, 0);
+  const totalRevenue = channelsWithRoas.reduce((s, c) => s + c.revenue, 0);
+  const totalClicks = channelsWithRoas.reduce((s, c) => s + c.clicks, 0);
+  const totalConversions = channelsWithRoas.reduce((s, c) => s + c.conversions, 0);
+  const totalROI = totalBudget > 0 ? ((totalRevenue - totalBudget) / totalBudget) * 100 : 0;
+  const blendedRoas = totalBudget > 0 ? totalRevenue / totalBudget : 0;
+
+  const roasChartData = channelsWithRoas.map((c) => ({ name: c.name, ROAS: parseFloat(c.roas.toFixed(2)) }));
 
   return (
     <div className="space-y-10 animate-fade-in">
-      <SectionHeader title="Ads Budget Performance" subtitle={selectedMonth} icon={<DollarSign className="w-4 h-4" />} />
+      <SectionHeader title="Ads Budget Performance" subtitle={`${selectedMonth} — Auto-aggregated from platform pages`} icon={<DollarSign className="w-4 h-4" />} />
 
+      {/* Summary KPI Row */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="bg-card rounded-xl border border-border/40 p-5 shadow-card">
+          <p className="text-label text-muted-foreground uppercase tracking-wider">Total Spend</p>
+          <p className="text-lg font-extrabold text-card-foreground mt-2">{formatCurrency(totalBudget)}</p>
+        </div>
+        <div className="bg-card rounded-xl border border-border/40 p-5 shadow-card">
+          <p className="text-label text-muted-foreground uppercase tracking-wider">Total Clicks</p>
+          <p className="text-lg font-extrabold text-card-foreground mt-2">{formatNumber(totalClicks)}</p>
+        </div>
+        <div className="bg-card rounded-xl border border-border/40 p-5 shadow-card">
+          <p className="text-label text-muted-foreground uppercase tracking-wider">Total Conversions</p>
+          <p className="text-lg font-extrabold text-card-foreground mt-2">{formatNumber(totalConversions)}</p>
+        </div>
+        <div className="bg-card rounded-xl border border-border/40 p-5 shadow-card">
+          <p className="text-label text-muted-foreground uppercase tracking-wider">Blended ROAS</p>
+          <p className="text-lg font-extrabold text-card-foreground mt-2">{blendedRoas.toFixed(2)}x</p>
+        </div>
+        <div className="bg-card rounded-xl border border-border/40 p-5 shadow-card">
+          <p className="text-label text-muted-foreground uppercase tracking-wider">Total Ad Revenue</p>
+          <p className="text-lg font-extrabold text-success mt-2">{formatCurrency(totalRevenue)}</p>
+        </div>
+      </div>
+
+      {/* Per-channel cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {channels.map((c) => (
+        {channelsWithRoas.map((c) => (
           <div key={c.name} className={`bg-card rounded-xl border border-border/40 p-6 shadow-card hover:shadow-card-hover transition-all duration-300 ${CHANNEL_BORDER[c.name] || ""}`}>
             <h3 className="font-semibold text-sm text-card-foreground mb-5">{c.name}</h3>
             <div className="space-y-3.5 text-sm">

@@ -4,6 +4,8 @@ import { transformPlatformAdsDetail } from "@/lib/dataTransformers";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
 import { AdsFunnelView } from "@/components/dashboard/AdsFunnelView";
+import { PageEditDialog } from "@/components/dashboard/PageEditDialog";
+import { metaAdsSchema } from "@/components/dashboard/pageEditSchemas";
 import { Target } from "lucide-react";
 import { useMonth } from "@/contexts/MonthContext";
 
@@ -16,7 +18,10 @@ export default function MetaAdsPage() {
 
   return (
     <div className="space-y-10 animate-fade-in">
-      <SectionHeader title="Meta Ads Performance" subtitle={selectedMonth} icon={<Target className="w-4 h-4 text-purple-500" />} />
+      <div className="flex items-center justify-between">
+        <SectionHeader title="Meta Ads Performance" subtitle={selectedMonth} icon={<Target className="w-4 h-4 text-purple-500" />} />
+        <PageEditDialog schema={metaAdsSchema} />
+      </div>
       <AdsFunnelView data={data} accentColor="purple" />
     </div>
   );
