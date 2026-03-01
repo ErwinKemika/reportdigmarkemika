@@ -13,9 +13,10 @@ import WebstoreSalesPage from "./pages/WebstoreSalesPage";
 import MarketplacePage from "./pages/MarketplacePage";
 import ShopeeAdsPage from "./pages/ShopeeAdsPage";
 import AdsBudgetPage from "./pages/AdsBudgetPage";
+import GoogleAdsPage from "./pages/GoogleAdsPage";
+import MetaAdsPage from "./pages/MetaAdsPage";
 import InsightsPage from "./pages/InsightsPage";
 import RecommendationsPage from "./pages/RecommendationsPage";
-
 import ROIRevenuePage from "./pages/ROIRevenuePage";
 import BenchmarkPage from "./pages/BenchmarkPage";
 import SalesRecapPage from "./pages/SalesRecapPage";
@@ -33,8 +34,10 @@ function AppRoutes() {
         <Route path="/webstore" element={<WebstoreSalesPage />} />
         <Route path="/marketplace" element={<MarketplacePage />} />
         <Route path="/benchmark" element={<BenchmarkPage />} />
-        <Route path="/shopee-ads" element={<ShopeeAdsPage />} />
         <Route path="/ads-budget" element={<AdsBudgetPage />} />
+        <Route path="/ads-budget/google" element={<GoogleAdsPage />} />
+        <Route path="/ads-budget/meta" element={<MetaAdsPage />} />
+        <Route path="/ads-budget/shopee" element={<ShopeeAdsPage />} />
         <Route path="/roi-revenue" element={<ROIRevenuePage />} />
         <Route path="/insights" element={<InsightsPage />} />
         <Route path="/recommendations" element={<RecommendationsPage />} />
