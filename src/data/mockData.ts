@@ -157,6 +157,38 @@ export interface AdsBudgetData {
   shopee: { budget: number; clicks: number; conversions: number; revenue: number };
 }
 
+// ==================== PLATFORM ADS DETAIL (Google/Meta) ====================
+export interface CampaignRow {
+  name: string;
+  cost: number;
+  convRate: number;
+  conversions: number;
+  costPerConv: number;
+}
+
+export interface PlatformAdsDetailData {
+  cost: number;
+  previousCost: number;
+  impressions: number;
+  previousImpressions: number;
+  clicks: number;
+  previousClicks: number;
+  conversions: number;
+  previousConversions: number;
+  ctr: number;
+  previousCtr: number;
+  convRate: number;
+  previousConvRate: number;
+  avgCpm: number;
+  previousAvgCpm: number;
+  avgCpc: number;
+  previousAvgCpc: number;
+  costPerConv: number;
+  previousCostPerConv: number;
+  campaigns: CampaignRow[];
+  insight: string;
+}
+
 // ==================== PAGE 7 — INSIGHTS ====================
 export interface InsightsData {
   keyInsights: string[];
@@ -639,6 +671,87 @@ const benchmarkFeb: BenchmarkData = {
 
 const benchmarkMap: MonthlyDataMap<BenchmarkData> = { January: benchmarkJan, February: benchmarkFeb };
 
+// ==================== GOOGLE ADS DETAIL ====================
+const googleAdsJan: PlatformAdsDetailData = {
+  cost: 35000000, previousCost: 32000000,
+  impressions: 125000, previousImpressions: 108000,
+  clicks: 22400, previousClicks: 19800,
+  conversions: 680, previousConversions: 610,
+  ctr: 17.92, previousCtr: 18.33,
+  convRate: 3.04, previousConvRate: 3.08,
+  avgCpm: 280000, previousAvgCpm: 296296,
+  avgCpc: 1563, previousAvgCpc: 1616,
+  costPerConv: 51471, previousCostPerConv: 52459,
+  campaigns: [
+    { name: "K/Kemicraft - Industry", cost: 22500000, convRate: 3.2, conversions: 480, costPerConv: 46875 },
+    { name: "K/Kemicraft - Tools", cost: 7200000, convRate: 2.8, conversions: 120, costPerConv: 60000 },
+    { name: "K/Kemicraft - Hama", cost: 3800000, convRate: 2.9, conversions: 55, costPerConv: 69091 },
+    { name: "K/Kemicraft - Malaria", cost: 1500000, convRate: 4.0, conversions: 25, costPerConv: 60000 },
+  ],
+  insight: "Di bulan Januari dengan peningkatan budget +9%, campaign Google Ads berhasil meningkatkan jangkauan secara signifikan.\n\nImpressions naik +16% dan clicks naik +13%, meskipun CTR sedikit menurun -2%. Hal ini menunjukkan bahwa ads menjangkau audiens lebih luas.\n\nKonversi meningkat +11% dengan cost per conversion turun -2%, membuktikan campaign tetap cost-effective dan optimal.",
+};
+
+const googleAdsFeb: PlatformAdsDetailData = {
+  cost: 38000000, previousCost: 35000000,
+  impressions: 142000, previousImpressions: 125000,
+  clicks: 25800, previousClicks: 22400,
+  conversions: 780, previousConversions: 680,
+  ctr: 18.17, previousCtr: 17.92,
+  convRate: 3.02, previousConvRate: 3.04,
+  avgCpm: 267606, previousAvgCpm: 280000,
+  avgCpc: 1473, previousAvgCpc: 1563,
+  costPerConv: 48718, previousCostPerConv: 51471,
+  campaigns: [
+    { name: "K/Kemicraft - Industry", cost: 24000000, convRate: 3.3, conversions: 540, costPerConv: 44444 },
+    { name: "K/Kemicraft - Tools", cost: 8200000, convRate: 2.9, conversions: 145, costPerConv: 56552 },
+    { name: "K/Kemicraft - Hama", cost: 4100000, convRate: 2.7, conversions: 65, costPerConv: 63077 },
+    { name: "K/Kemicraft - Malaria", cost: 1700000, convRate: 5.0, conversions: 30, costPerConv: 56667 },
+  ],
+  insight: "Februari menunjukkan peningkatan efisiensi campaign Google Ads secara keseluruhan.\n\nDengan budget naik +9%, impressions meningkat +14% dan clicks naik +15%. CTR membaik ke 18.17% dari 17.92%.\n\nCost per conversion turun -5% ke Rp48,718 yang membuktikan optimalisasi bidding strategy berhasil. Campaign Industry tetap menjadi kontributor terbesar dengan 69% total conversions.",
+};
+
+// ==================== META ADS DETAIL ====================
+const metaAdsJan: PlatformAdsDetailData = {
+  cost: 25000000, previousCost: 23000000,
+  impressions: 95000, previousImpressions: 81000,
+  clicks: 18600, previousClicks: 16700,
+  conversions: 520, previousConversions: 480,
+  ctr: 19.58, previousCtr: 20.62,
+  convRate: 2.80, previousConvRate: 2.87,
+  avgCpm: 263158, previousAvgCpm: 283951,
+  avgCpc: 1344, previousAvgCpc: 1377,
+  costPerConv: 48077, previousCostPerConv: 47917,
+  campaigns: [
+    { name: "K/Kemicraft - Industry", cost: 16500000, convRate: 3.0, conversions: 370, costPerConv: 44595 },
+    { name: "K/Kemicraft - Brand Awareness", cost: 5200000, convRate: 2.4, conversions: 95, costPerConv: 54737 },
+    { name: "K/Kemicraft - Retargeting", cost: 2300000, convRate: 3.5, conversions: 40, costPerConv: 57500 },
+    { name: "K/Kemicraft - Lookalike", cost: 1000000, convRate: 2.0, conversions: 15, costPerConv: 66667 },
+  ],
+  insight: "Di bulan Januari, campaign Meta Ads mencatatkan peningkatan jangkauan yang solid.\n\nImpressions naik +17% dan clicks naik +11%, meskipun CTR menurun -5%. Penurunan CTR mengindikasikan ads menjangkau audiens lebih luas namun relevansinya sedikit berkurang.\n\nMeskipun demikian, jumlah konversi meningkat +8% dengan biaya per konversi relatif stabil, membuktikan campaign tetap memberikan hasil yang optimal.",
+};
+
+const metaAdsFeb: PlatformAdsDetailData = {
+  cost: 28000000, previousCost: 25000000,
+  impressions: 112000, previousImpressions: 95000,
+  clicks: 21200, previousClicks: 18600,
+  conversions: 610, previousConversions: 520,
+  ctr: 18.93, previousCtr: 19.58,
+  convRate: 2.88, previousConvRate: 2.80,
+  avgCpm: 250000, previousAvgCpm: 263158,
+  avgCpc: 1321, previousAvgCpc: 1344,
+  costPerConv: 45902, previousCostPerConv: 48077,
+  campaigns: [
+    { name: "K/Kemicraft - Industry", cost: 18000000, convRate: 3.1, conversions: 420, costPerConv: 42857 },
+    { name: "K/Kemicraft - Brand Awareness", cost: 5800000, convRate: 2.5, conversions: 110, costPerConv: 52727 },
+    { name: "K/Kemicraft - Retargeting", cost: 2800000, convRate: 3.8, conversions: 55, costPerConv: 50909 },
+    { name: "K/Kemicraft - Lookalike", cost: 1400000, convRate: 2.3, conversions: 25, costPerConv: 56000 },
+  ],
+  insight: "Februari menunjukkan peningkatan signifikan pada efisiensi Meta Ads campaign.\n\nDengan budget naik +12%, impressions meningkat +18% dan clicks naik +14%. Cost per conversion turun -5% ke Rp45,902.\n\nCampaign Retargeting mencatat conversion rate tertinggi (3.8%) meskipun budget-nya kecil. Rekomendasi untuk alokasi budget lebih besar ke retargeting di bulan selanjutnya.",
+};
+
+const googleAdsMap: MonthlyDataMap<PlatformAdsDetailData> = { January: googleAdsJan, February: googleAdsFeb };
+const metaAdsMap: MonthlyDataMap<PlatformAdsDetailData> = { January: metaAdsJan, February: metaAdsFeb };
+
 // ==================== DATA ACCESS ====================
 type MonthlyDataMap<T> = Partial<Record<Month, T>>;
 
@@ -664,3 +777,5 @@ export function getRecommendationsData(month: Month): RecommendationsData | unde
 export function getClosingData(month: Month): ClosingData | undefined { return closingMap[month]; }
 export function getROIRevenueData(month: Month): ROIRevenueData | undefined { return roiRevenueMap[month]; }
 export function getBenchmarkData(month: Month): BenchmarkData | undefined { return benchmarkMap[month]; }
+export function getGoogleAdsData(month: Month): PlatformAdsDetailData | undefined { return googleAdsMap[month]; }
+export function getMetaAdsData(month: Month): PlatformAdsDetailData | undefined { return metaAdsMap[month]; }
