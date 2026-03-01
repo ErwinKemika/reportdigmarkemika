@@ -3,6 +3,7 @@ import type {
   OverviewData, WebsitePerformanceData, WebstoreSalesData,
   MarketplaceData, ShopeeAdsData, AdsBudgetData, InsightsData,
   RecommendationsData, ClosingData, ROIRevenueData, BenchmarkData, KPIValue,
+  PlatformAdsDetailData,
 } from "@/data/mockData";
 
 function kpi(value: number, previousValue: number): KPIValue {
@@ -254,5 +255,36 @@ export function transformBenchmark(d: Record<string, any>): BenchmarkData {
         achievement: (d.webstoreTargetTraffic || 0) > 0 ? ((d.webstoreTraffic || 0) / (d.webstoreTargetTraffic || 1)) * 100 : 0,
       },
     ],
+  };
+}
+
+export function transformPlatformAdsDetail(d: Record<string, any>): PlatformAdsDetailData {
+  return {
+    cost: d.cost || 0,
+    previousCost: d.previousCost || 0,
+    impressions: d.impressions || 0,
+    previousImpressions: d.previousImpressions || 0,
+    clicks: d.clicks || 0,
+    previousClicks: d.previousClicks || 0,
+    conversions: d.conversions || 0,
+    previousConversions: d.previousConversions || 0,
+    ctr: d.ctr || 0,
+    previousCtr: d.previousCtr || 0,
+    convRate: d.convRate || 0,
+    previousConvRate: d.previousConvRate || 0,
+    avgCpm: d.avgCpm || 0,
+    previousAvgCpm: d.previousAvgCpm || 0,
+    avgCpc: d.avgCpc || 0,
+    previousAvgCpc: d.previousAvgCpc || 0,
+    costPerConv: d.costPerConv || 0,
+    previousCostPerConv: d.previousCostPerConv || 0,
+    campaigns: (d.campaigns || []).map((c: any) => ({
+      name: c.name || "",
+      cost: c.cost || 0,
+      convRate: c.convRate || 0,
+      conversions: c.conversions || 0,
+      costPerConv: c.costPerConv || 0,
+    })),
+    insight: d.insight || "",
   };
 }
