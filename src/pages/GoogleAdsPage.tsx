@@ -4,6 +4,8 @@ import { transformPlatformAdsDetail } from "@/lib/dataTransformers";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
 import { AdsFunnelView } from "@/components/dashboard/AdsFunnelView";
+import { PageEditDialog } from "@/components/dashboard/PageEditDialog";
+import { googleAdsSchema } from "@/components/dashboard/pageEditSchemas";
 import { Search } from "lucide-react";
 import { useMonth } from "@/contexts/MonthContext";
 
@@ -16,7 +18,10 @@ export default function GoogleAdsPage() {
 
   return (
     <div className="space-y-10 animate-fade-in">
-      <SectionHeader title="Google Ads Performance" subtitle={selectedMonth} icon={<Search className="w-4 h-4 text-blue-500" />} />
+      <div className="flex items-center justify-between">
+        <SectionHeader title="Google Ads Performance" subtitle={selectedMonth} icon={<Search className="w-4 h-4 text-blue-500" />} />
+        <PageEditDialog schema={googleAdsSchema} />
+      </div>
       <AdsFunnelView data={data} accentColor="blue" />
     </div>
   );

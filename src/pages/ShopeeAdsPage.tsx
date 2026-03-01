@@ -4,6 +4,8 @@ import { transformShopeeAds } from "@/lib/dataTransformers";
 import { KPICard } from "@/components/dashboard/KPICard";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
+import { PageEditDialog } from "@/components/dashboard/PageEditDialog";
+import { shopeeAdsSchema } from "@/components/dashboard/pageEditSchemas";
 import { ShoppingBag, TrendingUp, TrendingDown } from "lucide-react";
 import { useMonth } from "@/contexts/MonthContext";
 
@@ -19,7 +21,10 @@ export default function ShopeeAdsPage() {
   return (
     <div className="space-y-10 animate-fade-in">
       <section className="bg-tint-orange/50 rounded-2xl p-8">
-        <SectionHeader title="Shopee Ads KPIs" subtitle={selectedMonth} icon={<ShoppingBag className="w-4 h-4 text-channel-shopee" />} />
+        <div className="flex items-center justify-between mb-4">
+          <SectionHeader title="Shopee Ads KPIs" subtitle={selectedMonth} icon={<ShoppingBag className="w-4 h-4 text-channel-shopee" />} />
+          <PageEditDialog schema={shopeeAdsSchema} />
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <KPICard title="Iklan Dilihat" data={data.impressions} accentColor="orange" />
           <KPICard title="Jumlah Klik" data={data.clicks} accentColor="orange" />
