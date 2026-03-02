@@ -29,9 +29,9 @@ const PLATFORM_CONFIG: Record<string, {borderColor: string;iconBg: string;icon: 
     icon: <Store className="w-5 h-5 text-white" />
   },
   "Inaproc (B2B)": {
-    borderColor: "border-t-[hsl(var(--primary))]",
-    iconBg: "bg-primary",
-    icon: <Briefcase className="w-5 h-5 text-primary-foreground" />
+    borderColor: "border-t-blue-500",
+    iconBg: "bg-blue-500",
+    icon: <Briefcase className="w-5 h-5 text-white" />
   }
 };
 
