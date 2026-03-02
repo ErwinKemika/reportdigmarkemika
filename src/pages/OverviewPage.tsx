@@ -505,9 +505,6 @@ export default function OverviewPage() {
             tooltip="ROMI = (Grand Total Revenue - Marketing Expense) / Marketing Expense × 100 — dari Sales Recap"
             gradientKey="roi"
           />
-          <p className="text-[10px] text-muted-foreground mt-1.5 px-1 italic">
-            Source: Sales Recap
-          </p>
         </div>
       </div>
 
