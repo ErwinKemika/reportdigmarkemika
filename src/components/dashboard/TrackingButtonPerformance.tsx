@@ -17,27 +17,27 @@ interface TrackingButtonPerformanceProps {
   platforms: PlatformData[];
 }
 
-const PLATFORM_CONFIG: Record<string, { borderColor: string; iconBg: string; icon: React.ReactNode }> = {
+const PLATFORM_CONFIG: Record<string, {borderColor: string;iconBg: string;icon: React.ReactNode;}> = {
   "Shopee Official": {
     borderColor: "border-t-orange-500",
     iconBg: "bg-orange-500",
-    icon: <ShoppingBag className="w-5 h-5 text-white" />,
+    icon: <ShoppingBag className="w-5 h-5 text-white" />
   },
   "Tokopedia Store": {
     borderColor: "border-t-emerald-500",
     iconBg: "bg-emerald-500",
-    icon: <Store className="w-5 h-5 text-white" />,
+    icon: <Store className="w-5 h-5 text-white" />
   },
   "Inaproc (B2B)": {
     borderColor: "border-t-[hsl(var(--primary))]",
     iconBg: "bg-primary",
-    icon: <Briefcase className="w-5 h-5 text-primary-foreground" />,
-  },
+    icon: <Briefcase className="w-5 h-5 text-primary-foreground" />
+  }
 };
 
 function getGrowth(current: number, previous: number) {
   if (previous === 0) return current > 0 ? 100 : 0;
-  return ((current - previous) / previous) * 100;
+  return (current - previous) / previous * 100;
 }
 
 export function TrackingButtonPerformance({ platforms }: TrackingButtonPerformanceProps) {
@@ -46,8 +46,8 @@ export function TrackingButtonPerformance({ platforms }: TrackingButtonPerforman
   return (
     <div className="space-y-6">
       <div className="text-center space-y-1">
-        <h2 className="text-2xl font-bold text-primary tracking-tight">Tracking Button Performance</h2>
-        <p className="text-sm text-muted-foreground">
+        <h2 className="text-2xl font-bold text-primary tracking-tight text-left">Tracking Button Performance</h2>
+        <p className="text-sm text-muted-foreground text-left">
           Analisis detail trafik tombol CTA, dipecah berdasarkan platform tujuan dan perbandingan performa antar periode.
         </p>
       </div>
@@ -60,8 +60,8 @@ export function TrackingButtonPerformance({ platforms }: TrackingButtonPerforman
           return (
             <div
               key={platform.name}
-              className={`bg-card rounded-2xl border border-border/40 border-t-[3px] ${config.borderColor} shadow-card hover:shadow-card-hover transition-all duration-300 flex flex-col`}
-            >
+              className={`bg-card rounded-2xl border border-border/40 border-t-[3px] ${config.borderColor} shadow-card hover:shadow-card-hover transition-all duration-300 flex flex-col`}>
+
               {/* Header */}
               <div className="p-6 text-center space-y-3">
                 <div className={`w-12 h-12 ${config.iconBg} rounded-xl flex items-center justify-center mx-auto`}>
@@ -93,28 +93,28 @@ export function TrackingButtonPerformance({ platforms }: TrackingButtonPerforman
                   </span>
                   <span className="text-xs font-semibold text-muted-foreground uppercase">Sessions</span>
                 </div>
-                {platform.topProducts && platform.topProducts.length > 0 ? (
-                  <div className="space-y-0">
-                    {platform.topProducts.map((product, i) => (
-                      <div key={i} className="flex items-center justify-between py-2.5 border-b border-border/20 last:border-0">
+                {platform.topProducts && platform.topProducts.length > 0 ?
+                <div className="space-y-0">
+                    {platform.topProducts.map((product, i) =>
+                  <div key={i} className="flex items-center justify-between py-2.5 border-b border-border/20 last:border-0">
                         <span className="text-sm text-card-foreground">{product.name}</span>
                         <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded">
                           {product.sessions}
                         </span>
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
+                  )}
+                  </div> :
+
+                <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
                     <Store className="w-8 h-8 mb-2 opacity-30" />
                     <span className="text-sm italic">Data belum tersedia</span>
                   </div>
-                )}
+                }
               </div>
-            </div>
-          );
+            </div>);
+
         })}
       </div>
-    </div>
-  );
+    </div>);
+
 }
