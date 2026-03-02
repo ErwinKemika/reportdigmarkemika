@@ -1,6 +1,6 @@
 import { useMergedPageData } from "@/hooks/useMergedPageData";
 import { getMetaAdsData } from "@/data/mockData";
-import { transformPlatformAdsDetail } from "@/lib/dataTransformers";
+import { transformPlatformAdsDetail, platformAdsPrevMapper } from "@/lib/dataTransformers";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
 import { AdsFunnelView } from "@/components/dashboard/AdsFunnelView";
@@ -11,7 +11,7 @@ import { useMonth } from "@/contexts/MonthContext";
 
 export default function MetaAdsPage() {
   const { selectedMonth } = useMonth();
-  const { data, isLoading } = useMergedPageData("meta-ads", getMetaAdsData, transformPlatformAdsDetail);
+  const { data, isLoading } = useMergedPageData("meta-ads", getMetaAdsData, transformPlatformAdsDetail, platformAdsPrevMapper);
 
   if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
   if (!data) return <NoData month={selectedMonth} />;

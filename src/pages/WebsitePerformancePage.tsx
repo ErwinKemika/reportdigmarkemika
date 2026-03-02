@@ -1,6 +1,6 @@
 import { useMergedPageData } from "@/hooks/useMergedPageData";
 import { getWebsitePerformanceData } from "@/data/mockData";
-import { transformWebsitePerformance } from "@/lib/dataTransformers";
+import { transformWebsitePerformance, websitePerformancePrevMapper } from "@/lib/dataTransformers";
 import { KPICard } from "@/components/dashboard/KPICard";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
@@ -17,7 +17,7 @@ export default function WebsitePerformancePage() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const CHART_COLORS = isDark ? CHART_COLORS_DARK : CHART_COLORS_LIGHT;
-  const { data, isLoading } = useMergedPageData("website-performance", getWebsitePerformanceData, transformWebsitePerformance);
+  const { data, isLoading } = useMergedPageData("website-performance", getWebsitePerformanceData, transformWebsitePerformance, websitePerformancePrevMapper);
 
   if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
   if (!data) return <NoData month={selectedMonth} />;

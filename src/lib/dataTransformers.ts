@@ -258,6 +258,78 @@ export function transformBenchmark(d: Record<string, any>): BenchmarkData {
   };
 }
 
+// ===== Previous-month field mappers =====
+// These extract current-month values and return them as "previous*" fields
+
+export const websitePerformancePrevMapper = (prev: Record<string, any>) => ({
+  previousSessions: prev.sessions,
+  previousUsers: prev.users,
+  previousEngagedSessions: prev.engagedSessions,
+  previousWaClicks: prev.waClicks,
+  previousAvgSessionDuration: prev.avgSessionDuration,
+});
+
+export const marketplacePrevMapper = (prev: Record<string, any>) => {
+  const tokProducts = prev.tokopediaTopProducts || [];
+  const shopProducts = prev.shopeeTopProducts || [];
+  const prevTotalUnits =
+    tokProducts.reduce((s: number, p: any) => s + (p.units || 0), 0) +
+    shopProducts.reduce((s: number, p: any) => s + (p.units || 0), 0);
+  return {
+    previousTokopediaRevenue: prev.tokopediaRevenue,
+    previousShopeeRevenue: prev.shopeeRevenue,
+    previousTokopediaGmv: prev.tokopediaGmv,
+    previousTokopediaUnitsSold: prev.tokopediaUnitsSold,
+    previousTokopediaVisitors: prev.tokopediaVisitors,
+    previousTokopediaPageViews: prev.tokopediaPageViews,
+    previousShopeeOrders: prev.shopeeOrders,
+    previousShopeeVisitors: prev.shopeeVisitors,
+    previousShopeeProductClick: prev.shopeeProductClick,
+    previousShopeeCancelledOrders: prev.shopeeCancelledOrders,
+    previousUnitsSold: prevTotalUnits,
+  };
+};
+
+export const webstoreSalesPrevMapper = (prev: Record<string, any>) => {
+  const products = prev.topProductsSold || [];
+  const totalRev =
+    prev.totalRevenue ||
+    products.reduce((s: number, p: any) => s + (p.units || 0) * (p.pricePerUnit || p.price || 0), 0);
+  return { previousRevenue: totalRev };
+};
+
+export const shopeeAdsPrevMapper = (prev: Record<string, any>) => ({
+  previousImpressions: prev.impressions,
+  previousClicks: prev.clicks,
+  previousCtr: prev.ctr,
+  previousOrders: prev.orders,
+  previousAdRevenue: prev.adRevenue,
+  previousSpend: prev.spend,
+});
+
+export const platformAdsPrevMapper = (prev: Record<string, any>) => ({
+  previousCost: prev.cost,
+  previousImpressions: prev.impressions,
+  previousClicks: prev.clicks,
+  previousConversions: prev.conversions,
+  previousCtr: prev.ctr,
+  previousConvRate: prev.convRate,
+  previousAvgCpm: prev.avgCpm,
+  previousAvgCpc: prev.avgCpc,
+  previousCostPerConv: prev.costPerConv,
+  previousRevenue: prev.revenue,
+});
+
+export const roiRevenuePrevMapper = (prev: Record<string, any>) => {
+  const pipeline = prev.leadPipeline || [];
+  const prevEstRevenue = pipeline.reduce((s: number, l: any) => s + (l.estimatedRevenue || 0), 0);
+  return {
+    previousB2bLeads: prev.b2bLeads,
+    previousB2gLeads: prev.b2gLeads,
+    previousEstimatedRevenue: prevEstRevenue || prev.estimatedRevenue,
+  };
+};
+
 export function transformPlatformAdsDetail(d: Record<string, any>): PlatformAdsDetailData {
   return {
     cost: d.cost || 0,

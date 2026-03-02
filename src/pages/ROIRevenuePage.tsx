@@ -1,6 +1,6 @@
 import { useMergedPageData } from "@/hooks/useMergedPageData";
 import { getROIRevenueData, formatCurrencyFull } from "@/data/mockData";
-import { transformROIRevenue } from "@/lib/dataTransformers";
+import { transformROIRevenue, roiRevenuePrevMapper } from "@/lib/dataTransformers";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { KPICard } from "@/components/dashboard/KPICard";
 import { NoData } from "@/components/dashboard/NoData";
@@ -20,7 +20,7 @@ const STAGE_STYLES: Record<string, string> = {
 
 export default function ROIRevenuePage() {
   const { selectedMonth } = useMonth();
-  const { data, isLoading } = useMergedPageData("roi-revenue", getROIRevenueData, transformROIRevenue);
+  const { data, isLoading } = useMergedPageData("roi-revenue", getROIRevenueData, transformROIRevenue, roiRevenuePrevMapper);
   const [aiInsight, setAiInsight] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
