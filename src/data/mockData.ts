@@ -84,11 +84,19 @@ export interface WebsitePerformanceData {
 }
 
 // ==================== PAGE 3 — WEBSTORE SALES ====================
+export interface TrackingPlatform {
+  name: string;
+  totalClicks: number;
+  previousClicks: number;
+  topProducts: { name: string; sessions: number }[];
+}
+
 export interface WebstoreSalesData {
   totalRevenue: number;
   previousRevenue: number;
   topProductsViewed: { name: string; sessions: number }[];
   topProductsSold: { name: string; units: number; price: number; revenue: number }[];
+  trackingPlatforms?: TrackingPlatform[];
 }
 
 // ==================== PAGE 4 — MARKETPLACE OVERVIEW ====================
