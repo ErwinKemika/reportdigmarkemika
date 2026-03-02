@@ -1,6 +1,6 @@
 import { useMonth } from "@/contexts/MonthContext";
 import { usePageData } from "@/hooks/usePageData";
-import { getGoogleAdsData, getMetaAdsData, getShopeeAdsData, formatCurrency, formatNumber } from "@/data/mockData";
+import { getGoogleAdsData, getMetaAdsData, getShopeeAdsData, formatCurrencyFull, formatNumber } from "@/data/mockData";
 import { transformPlatformAdsDetail, transformShopeeAds } from "@/lib/dataTransformers";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
@@ -106,7 +106,7 @@ export default function AdsBudgetPage() {
           <div className="relative flex items-start justify-between">
             <div>
               <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">Total Spend</p>
-              <p className="text-2xl font-extrabold text-card-foreground mt-1.5">{formatCurrency(totalBudget)}</p>
+              <p className="text-2xl font-extrabold text-card-foreground mt-1.5">{formatCurrencyFull(totalBudget)}</p>
               <p className="text-[10px] text-muted-foreground mt-1">{selectedMonth} — Auto-aggregated</p>
             </div>
             <div className="w-24 h-12">
@@ -178,7 +178,7 @@ export default function AdsBudgetPage() {
             <div className="space-y-3 text-sm">
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">Budget</span>
-                <span className="font-bold text-card-foreground">{formatCurrency(c.budget)}</span>
+                <span className="font-bold text-card-foreground">{formatCurrencyFull(c.budget)}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">Clicks</span>
@@ -246,7 +246,7 @@ export default function AdsBudgetPage() {
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#34A853]" />
                 <span className="text-xs text-muted-foreground">Total Budget</span>
-                <span className="text-sm font-bold text-card-foreground ml-auto">{formatCurrency(totalBudget)}</span>
+                <span className="text-sm font-bold text-card-foreground ml-auto">{formatCurrencyFull(totalBudget)}</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#6B9BF7]" />
@@ -270,7 +270,7 @@ export default function AdsBudgetPage() {
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Budget</span>
-                <span className="font-bold text-card-foreground">{formatCurrency(topChannel.budget)}</span>
+                <span className="font-bold text-card-foreground">{formatCurrencyFull(topChannel.budget)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Clicks</span>
