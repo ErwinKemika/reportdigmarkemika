@@ -1,23 +1,50 @@
 import { usePageData } from "@/hooks/usePageData";
-import { useMonth } from "@/contexts/MonthContext";
+import { useMonth, MONTHS, MonthName } from "@/contexts/MonthContext";
+
+function getPreviousPeriod(month: MonthName, year: number): string {
+  const idx = MONTHS.indexOf(month);
+  if (idx === 0) return `December ${year - 1}`;
+  return `${MONTHS[idx - 1]} ${year}`;
+}
 
 /**
  * Fetches page data from DB. If DB has data, transforms it via transformer.
  * Falls back to mockData getter if DB is empty.
+ * 
+ * If previousMapper is provided, it auto-fetches data from the previous month
+ * and merges "previous" fields so admin doesn't need to input them manually.
  */
 export function useMergedPageData<T>(
   pageKey: string,
   mockGetter: (month: string) => T | undefined,
-  transformer?: (dbData: Record<string, any>) => T
+  transformer?: (dbData: Record<string, any>) => T,
+  previousMapper?: (prevData: Record<string, any>) => Record<string, any>
 ): { data: T | undefined; isLoading: boolean } {
-  const { period, selectedMonth } = useMonth();
-  const { data: dbData, isLoading } = usePageData(period, pageKey);
-  const mockData = mockGetter(selectedMonth);
+  const { period, selectedMonth, selectedYear } = useMonth();
+  const prevPeriod = getPreviousPeriod(selectedMonth, selectedYear);
 
-  if (isLoading) return { data: undefined, isLoading: true };
+  const { data: dbData, isLoading } = usePageData(period, pageKey);
+  const { data: prevDbData, isLoading: prevLoading } = usePageData(prevPeriod, pageKey);
+
+  const mockData = mockGetter(selectedMonth);
+  const loading = isLoading || prevLoading;
+
+  if (loading) return { data: undefined, isLoading: true };
 
   if (dbData && transformer) {
-    return { data: transformer(dbData as Record<string, any>), isLoading: false };
+    const merged = { ...(dbData as Record<string, any>) };
+
+    // Auto-fill "previous" fields from previous month's data
+    if (previousMapper && prevDbData) {
+      const prevFields = previousMapper(prevDbData as Record<string, any>);
+      for (const [key, value] of Object.entries(prevFields)) {
+        if (value !== undefined && value !== null) {
+          merged[key] = value;
+        }
+      }
+    }
+
+    return { data: transformer(merged), isLoading: false };
   }
 
   return { data: mockData, isLoading: false };

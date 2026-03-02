@@ -1,6 +1,6 @@
 import { useMergedPageData } from "@/hooks/useMergedPageData";
 import { getShopeeAdsData, formatCurrency, formatNumber, growthPercent } from "@/data/mockData";
-import { transformShopeeAds } from "@/lib/dataTransformers";
+import { transformShopeeAds, shopeeAdsPrevMapper } from "@/lib/dataTransformers";
 import { KPICard } from "@/components/dashboard/KPICard";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
@@ -11,7 +11,7 @@ import { useMonth } from "@/contexts/MonthContext";
 
 export default function ShopeeAdsPage() {
   const { selectedMonth } = useMonth();
-  const { data, isLoading } = useMergedPageData("shopee-ads", getShopeeAdsData, transformShopeeAds);
+  const { data, isLoading } = useMergedPageData("shopee-ads", getShopeeAdsData, transformShopeeAds, shopeeAdsPrevMapper);
 
   if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
   if (!data) return <NoData month={selectedMonth} />;

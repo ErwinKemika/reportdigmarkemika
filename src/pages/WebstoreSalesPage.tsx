@@ -1,6 +1,6 @@
 import { useMergedPageData } from "@/hooks/useMergedPageData";
 import { getWebstoreSalesData, formatCurrency, formatNumber, growthPercent } from "@/data/mockData";
-import { transformWebstoreSales } from "@/lib/dataTransformers";
+import { transformWebstoreSales, webstoreSalesPrevMapper } from "@/lib/dataTransformers";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
 import { ShoppingCart, Eye, Package, TrendingUp, TrendingDown } from "lucide-react";
@@ -8,7 +8,7 @@ import { useMonth } from "@/contexts/MonthContext";
 
 export default function WebstoreSalesPage() {
   const { selectedMonth } = useMonth();
-  const { data, isLoading } = useMergedPageData("webstore-sales", getWebstoreSalesData, transformWebstoreSales);
+  const { data, isLoading } = useMergedPageData("webstore-sales", getWebstoreSalesData, transformWebstoreSales, webstoreSalesPrevMapper);
 
   if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
   if (!data) return <NoData month={selectedMonth} />;
