@@ -288,8 +288,10 @@ export default function OverviewPage() {
   const adsBudget = useSourceData(period, "ads-budget", selectedMonth, getAdsBudgetData, transformAdsBudget);
 
   const { data: manualData, isLoading: manualLoading } = usePageData(period, "overview-manual");
+  const { data: salesRecapData, isLoading: salesRecapLoading } = usePageData(period, "sales_recap_classified_by_channel");
+  const { data: prevSalesRecapData } = usePageData(prev.period, "sales_recap_classified_by_channel");
 
-  const isLoading = webstore.isLoading || marketplace.isLoading || roi.isLoading || website.isLoading || manualLoading;
+  const isLoading = webstore.isLoading || marketplace.isLoading || roi.isLoading || website.isLoading || manualLoading || salesRecapLoading;
 
   const agg = useMemo(() => {
     const ws = webstore.data;
@@ -335,11 +337,16 @@ export default function OverviewPage() {
     const totalBudget = manual?.totalBudgetAds || 0;
     const prevBudget = manual?.previousBudgetAds || 0;
 
-    // 6) Campaign ROI
-    const totalAdSpend = totalBudget || ((budget?.google?.budget || 0) + (budget?.meta?.budget || 0) + (budget?.shopee?.budget || 0));
-    const campaignROI = totalAdSpend > 0 ? ((totalRevenue - totalAdSpend) / totalAdSpend) * 100 : 0;
-    const prevAdSpend = prevBudget || 0;
-    const prevCampaignROI = prevAdSpend > 0 ? ((prevTotalRevenue - prevAdSpend) / prevAdSpend) * 100 : 0;
+    // 6) ROMI from Sales Recap
+    const sr = salesRecapData as Record<string, any> | null;
+    const srGrandTotal = (sr?.tokopedia || 0) + (sr?.webstore || 0) + (sr?.shopee || 0) + (sr?.kommo || 0) + (sr?.direct_selling_nongov || 0) + (sr?.inaproc || 0) + (sr?.e_catalogue || 0) + (sr?.direct_selling_gov || 0);
+    const srMarketingExpense = sr?.marketing_expense || 0;
+    const romi = srMarketingExpense > 0 ? ((srGrandTotal - srMarketingExpense) / srMarketingExpense) * 100 : 0;
+
+    const psr = prevSalesRecapData as Record<string, any> | null;
+    const psrGrandTotal = (psr?.tokopedia || 0) + (psr?.webstore || 0) + (psr?.shopee || 0) + (psr?.kommo || 0) + (psr?.direct_selling_nongov || 0) + (psr?.inaproc || 0) + (psr?.e_catalogue || 0) + (psr?.direct_selling_gov || 0);
+    const psrMarketingExpense = psr?.marketing_expense || 0;
+    const prevRomi = psrMarketingExpense > 0 ? ((psrGrandTotal - psrMarketingExpense) / psrMarketingExpense) * 100 : 0;
 
     // Top products
     const allProducts: { name: string; channel: string; revenue: number; units: number }[] = [];
@@ -396,7 +403,7 @@ export default function OverviewPage() {
       totalRevenue, prevTotalRevenue,
       weightedCR, prevWeightedCR,
       totalBudget, prevBudget,
-      campaignROI, prevCampaignROI,
+      romi, prevRomi,
       topByRevenue, topByUnits,
       prevTopByRevenue, prevTopByUnits,
       impressions, clicks, leads, orders,
@@ -413,7 +420,7 @@ export default function OverviewPage() {
       topChannel, topChannelNotes,
       chartData,
     };
-  }, [webstore.data, marketplace.data, roi.data, website.data, prevWebstore.data, prevMarketplace.data, prevRoi.data, prevWebsite.data, manualData, shopeeAds.data, adsBudget.data, selectedMonth, selectedYear]);
+  }, [webstore.data, marketplace.data, roi.data, website.data, prevWebstore.data, prevMarketplace.data, prevRoi.data, prevWebsite.data, manualData, shopeeAds.data, adsBudget.data, salesRecapData, prevSalesRecapData, selectedMonth, selectedYear]);
 
   if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
   const hasAnyData = webstore.data || marketplace.data || roi.data || website.data;
@@ -490,16 +497,16 @@ export default function OverviewPage() {
         />
         <div className="flex flex-col">
           <GradientKPICard
-            title="Campaign ROI"
-            value={agg.campaignROI}
-            previousValue={agg.prevCampaignROI}
-            formatter={(n) => n.toFixed(0) + "%"}
+            title="ROMI"
+            value={agg.romi}
+            previousValue={agg.prevRomi}
+            formatter={(n) => n.toFixed(1) + "%"}
             icon={<TrendingUp className="w-4 h-4" />}
-            tooltip="ROI = (Revenue - Ad Spend) / Ad Spend × 100"
+            tooltip="ROMI = (Grand Total Revenue - Marketing Expense) / Marketing Expense × 100 — dari Sales Recap"
             gradientKey="roi"
           />
           <p className="text-[10px] text-muted-foreground mt-1.5 px-1 italic">
-            Formula: (Total Revenue - Total Ad Spend) / Total Ad Spend × 100
+            Source: Sales Recap
           </p>
         </div>
       </div>
