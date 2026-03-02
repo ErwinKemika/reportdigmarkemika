@@ -1,6 +1,6 @@
 import { useMonth } from "@/contexts/MonthContext";
 import { usePageData } from "@/hooks/usePageData";
-import { getGoogleAdsData, getMetaAdsData, getShopeeAdsData, getAdsBudgetData, formatCurrency, formatNumber } from "@/data/mockData";
+import { getGoogleAdsData, getMetaAdsData, getShopeeAdsData, formatCurrency, formatNumber } from "@/data/mockData";
 import { transformPlatformAdsDetail, transformShopeeAds } from "@/lib/dataTransformers";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
@@ -52,14 +52,14 @@ export default function AdsBudgetPage() {
       budget: googleRaw?.cost ?? 0,
       clicks: googleRaw?.clicks ?? 0,
       conversions: googleRaw?.conversions ?? 0,
-      revenue: 0, // Google Ads doesn't have direct revenue in funnel data, use cost * some logic or fallback
+      revenue: googleRaw?.revenue ?? 0,
     },
     {
       name: "Meta Ads",
       budget: metaRaw?.cost ?? 0,
       clicks: metaRaw?.clicks ?? 0,
       conversions: metaRaw?.conversions ?? 0,
-      revenue: 0,
+      revenue: metaRaw?.revenue ?? 0,
     },
     {
       name: "Shopee Ads",
@@ -69,12 +69,6 @@ export default function AdsBudgetPage() {
       revenue: shopeeRaw?.revenueFromAds?.value ?? 0,
     },
   ];
-
-  // For Google/Meta, try to get revenue from the ads-budget mock as fallback
-  const adsBudgetMock = getAdsBudgetData(selectedMonth);
-  if (channels[0].revenue === 0 && adsBudgetMock) channels[0].revenue = adsBudgetMock.google.revenue;
-  if (channels[1].revenue === 0 && adsBudgetMock) channels[1].revenue = adsBudgetMock.meta.revenue;
-  if (channels[2].revenue === 0 && adsBudgetMock) channels[2].revenue = adsBudgetMock.shopee.revenue;
 
   const channelsWithRoas = channels.map(c => ({
     ...c,

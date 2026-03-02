@@ -278,6 +278,8 @@ export function transformPlatformAdsDetail(d: Record<string, any>): PlatformAdsD
     previousAvgCpc: d.previousAvgCpc || 0,
     costPerConv: d.costPerConv || 0,
     previousCostPerConv: d.previousCostPerConv || 0,
+    revenue: d.revenue || 0,
+    previousRevenue: d.previousRevenue || 0,
     campaigns: (d.campaigns || []).map((c: any) => ({
       name: c.name || "",
       cost: c.cost || 0,

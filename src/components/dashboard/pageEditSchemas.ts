@@ -236,6 +236,7 @@ export const googleAdsSchema: PageSchema = {
         { key: "avgCpm", label: "Avg. CPM (Rp)", type: "currency" },
         { key: "avgCpc", label: "Avg. CPC (Rp)", type: "currency" },
         { key: "costPerConv", label: "Cost / Conv (Rp)", type: "currency" },
+        { key: "revenue", label: "Revenue (Rp)", type: "currency" },
       ],
     },
     {
@@ -250,6 +251,7 @@ export const googleAdsSchema: PageSchema = {
         { key: "previousAvgCpm", label: "Previous Avg. CPM (Rp)", type: "currency" },
         { key: "previousAvgCpc", label: "Previous Avg. CPC (Rp)", type: "currency" },
         { key: "previousCostPerConv", label: "Previous Cost / Conv (Rp)", type: "currency" },
+        { key: "previousRevenue", label: "Previous Revenue (Rp)", type: "currency" },
       ],
     },
     {
@@ -292,6 +294,7 @@ export const metaAdsSchema: PageSchema = {
         { key: "avgCpm", label: "Avg. CPM (Rp)", type: "currency" },
         { key: "avgCpc", label: "Avg. CPC (Rp)", type: "currency" },
         { key: "costPerConv", label: "Cost / Conv (Rp)", type: "currency" },
+        { key: "revenue", label: "Revenue (Rp)", type: "currency" },
       ],
     },
     {
@@ -306,6 +309,7 @@ export const metaAdsSchema: PageSchema = {
         { key: "previousAvgCpm", label: "Previous Avg. CPM (Rp)", type: "currency" },
         { key: "previousAvgCpc", label: "Previous Avg. CPC (Rp)", type: "currency" },
         { key: "previousCostPerConv", label: "Previous Cost / Conv (Rp)", type: "currency" },
+        { key: "previousRevenue", label: "Previous Revenue (Rp)", type: "currency" },
       ],
     },
     {

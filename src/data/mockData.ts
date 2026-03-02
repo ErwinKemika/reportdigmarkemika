@@ -185,6 +185,8 @@ export interface PlatformAdsDetailData {
   previousAvgCpc: number;
   costPerConv: number;
   previousCostPerConv: number;
+  revenue: number;
+  previousRevenue: number;
   campaigns: CampaignRow[];
   insight: string;
 }
@@ -682,6 +684,7 @@ const googleAdsJan: PlatformAdsDetailData = {
   avgCpm: 280000, previousAvgCpm: 296296,
   avgCpc: 1563, previousAvgCpc: 1616,
   costPerConv: 51471, previousCostPerConv: 52459,
+  revenue: 0, previousRevenue: 0,
   campaigns: [
     { name: "K/Kemicraft - Industry", cost: 22500000, convRate: 3.2, conversions: 480, costPerConv: 46875 },
     { name: "K/Kemicraft - Tools", cost: 7200000, convRate: 2.8, conversions: 120, costPerConv: 60000 },
@@ -701,6 +704,7 @@ const googleAdsFeb: PlatformAdsDetailData = {
   avgCpm: 267606, previousAvgCpm: 280000,
   avgCpc: 1473, previousAvgCpc: 1563,
   costPerConv: 48718, previousCostPerConv: 51471,
+  revenue: 0, previousRevenue: 0,
   campaigns: [
     { name: "K/Kemicraft - Industry", cost: 24000000, convRate: 3.3, conversions: 540, costPerConv: 44444 },
     { name: "K/Kemicraft - Tools", cost: 8200000, convRate: 2.9, conversions: 145, costPerConv: 56552 },
@@ -721,6 +725,7 @@ const metaAdsJan: PlatformAdsDetailData = {
   avgCpm: 263158, previousAvgCpm: 283951,
   avgCpc: 1344, previousAvgCpc: 1377,
   costPerConv: 48077, previousCostPerConv: 47917,
+  revenue: 0, previousRevenue: 0,
   campaigns: [
     { name: "K/Kemicraft - Industry", cost: 16500000, convRate: 3.0, conversions: 370, costPerConv: 44595 },
     { name: "K/Kemicraft - Brand Awareness", cost: 5200000, convRate: 2.4, conversions: 95, costPerConv: 54737 },
@@ -740,6 +745,7 @@ const metaAdsFeb: PlatformAdsDetailData = {
   avgCpm: 250000, previousAvgCpm: 263158,
   avgCpc: 1321, previousAvgCpc: 1344,
   costPerConv: 45902, previousCostPerConv: 48077,
+  revenue: 0, previousRevenue: 0,
   campaigns: [
     { name: "K/Kemicraft - Industry", cost: 18000000, convRate: 3.1, conversions: 420, costPerConv: 42857 },
     { name: "K/Kemicraft - Brand Awareness", cost: 5800000, convRate: 2.5, conversions: 110, costPerConv: 52727 },
