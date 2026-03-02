@@ -85,6 +85,27 @@ export const webstoreSalesSchema: PageSchema = {
         { key: "conversionRate", label: "Conversion Rate (%)", type: "percent" },
       ],
     },
+    {
+      title: "Tracking - Shopee Official",
+      fields: [
+        { key: "trackingShopeeClicks", label: "Total Clicks", type: "number" },
+        { key: "trackingShopeePrevClicks", label: "Previous Clicks", type: "number" },
+      ],
+    },
+    {
+      title: "Tracking - Tokopedia Store",
+      fields: [
+        { key: "trackingTokopediaClicks", label: "Total Clicks", type: "number" },
+        { key: "trackingTokopediaPrevClicks", label: "Previous Clicks", type: "number" },
+      ],
+    },
+    {
+      title: "Tracking - Inaproc (B2B)",
+      fields: [
+        { key: "trackingInaprocClicks", label: "Total Clicks", type: "number" },
+        { key: "trackingInaprocPrevClicks", label: "Previous Clicks", type: "number" },
+      ],
+    },
   ],
   arrayFields: [
     {
@@ -103,6 +124,33 @@ export const webstoreSalesSchema: PageSchema = {
         { key: "name", label: "Product Name", type: "text" },
         { key: "units", label: "Units Sold", type: "number" },
         { key: "pricePerUnit", label: "Price/Unit (Rp)", type: "currency" },
+      ],
+      maxRows: 5,
+    },
+    {
+      key: "trackingShopee",
+      label: "Tracking - Shopee Official",
+      columns: [
+        { key: "name", label: "Product Name", type: "text" },
+        { key: "sessions", label: "Sessions", type: "number" },
+      ],
+      maxRows: 5,
+    },
+    {
+      key: "trackingTokopedia",
+      label: "Tracking - Tokopedia Store",
+      columns: [
+        { key: "name", label: "Product Name", type: "text" },
+        { key: "sessions", label: "Sessions", type: "number" },
+      ],
+      maxRows: 5,
+    },
+    {
+      key: "trackingInaproc",
+      label: "Tracking - Inaproc (B2B)",
+      columns: [
+        { key: "name", label: "Product Name", type: "text" },
+        { key: "sessions", label: "Sessions", type: "number" },
       ],
       maxRows: 5,
     },

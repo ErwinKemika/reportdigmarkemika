@@ -72,6 +72,26 @@ export function transformWebstoreSales(d: Record<string, any>): WebstoreSalesDat
     previousRevenue: d.previousRevenue || 0,
     topProductsViewed: (d.topProductsViewed || []).map((p: any) => ({ name: p.name || "", sessions: p.sessions || 0 })),
     topProductsSold: products,
+    trackingPlatforms: [
+      {
+        name: "Shopee Official",
+        totalClicks: d.trackingShopeeClicks || 0,
+        previousClicks: d.trackingShopeePrevClicks || 0,
+        topProducts: (d.trackingShopee || []).map((p: any) => ({ name: p.name || "", sessions: p.sessions || 0 })),
+      },
+      {
+        name: "Tokopedia Store",
+        totalClicks: d.trackingTokopediaClicks || 0,
+        previousClicks: d.trackingTokopediaPrevClicks || 0,
+        topProducts: (d.trackingTokopedia || []).map((p: any) => ({ name: p.name || "", sessions: p.sessions || 0 })),
+      },
+      {
+        name: "Inaproc (B2B)",
+        totalClicks: d.trackingInaprocClicks || 0,
+        previousClicks: d.trackingInaprocPrevClicks || 0,
+        topProducts: (d.trackingInaproc || []).map((p: any) => ({ name: p.name || "", sessions: p.sessions || 0 })),
+      },
+    ],
   };
 }
 
@@ -295,7 +315,12 @@ export const webstoreSalesPrevMapper = (prev: Record<string, any>) => {
   const totalRev =
     prev.totalRevenue ||
     products.reduce((s: number, p: any) => s + (p.units || 0) * (p.pricePerUnit || p.price || 0), 0);
-  return { previousRevenue: totalRev };
+  return {
+    previousRevenue: totalRev,
+    trackingShopeePrevClicks: prev.trackingShopeeClicks,
+    trackingTokopediaPrevClicks: prev.trackingTokopediaClicks,
+    trackingInaprocPrevClicks: prev.trackingInaprocClicks,
+  };
 };
 
 export const shopeeAdsPrevMapper = (prev: Record<string, any>) => ({
