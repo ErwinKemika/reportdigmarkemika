@@ -30,7 +30,7 @@ export default function WebsitePerformancePage() {
           <KPICard title="Total Sessions" data={data.totalSessions} accentColor="navy" hero />
           <KPICard title="Total Users" data={data.totalUsers} accentColor="navy" />
           <KPICard title="Engaged Sessions" data={data.engagedSessions} accentColor="blue" />
-          <KPICard title="Event Click WA" data={data.eventClickWA} accentColor="green" />
+          <KPICard title="Conversion" data={data.eventClickWA} accentColor="green" />
           <KPICard title="Avg Duration" data={data.avgDuration} format="duration" accentColor="navy" />
         </div>
       </section>
