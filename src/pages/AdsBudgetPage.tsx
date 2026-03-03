@@ -142,7 +142,7 @@ export default function AdsBudgetPage() {
           <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/40 to-transparent dark:from-emerald-500/5 dark:to-transparent pointer-events-none" />
           <div className="relative flex items-start justify-between">
             <div>
-              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">Total Click WA</p>
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">TOTAL CONVERSIONS</p>
               <p className="text-2xl font-extrabold text-card-foreground mt-1.5">{formatNumber(totalConversions)}</p>
             </div>
             <div className="flex items-start gap-3">
