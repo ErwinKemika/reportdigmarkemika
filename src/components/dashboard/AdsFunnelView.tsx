@@ -10,43 +10,43 @@ interface Props {
   showLpv?: boolean;
 }
 
-function GrowthBadge({ current, previous, invert = false }: { current: number; previous: number; invert?: boolean }) {
+function GrowthBadge({ current, previous, invert = false }: {current: number;previous: number;invert?: boolean;}) {
   const g = growthPercent(current, previous);
   const isPositive = invert ? g <= 0 : g >= 0;
   return (
     <span className={`inline-flex items-center gap-0.5 text-xs font-semibold ${isPositive ? "text-success" : "text-destructive"}`}>
       {g >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
       {g >= 0 ? "+" : ""}{g.toFixed(0)}%
-    </span>
-  );
+    </span>);
+
 }
 
-function FunnelLayer({ label, value, growth, color, widthTop, widthBottom }: { label: string; value: string; growth: React.ReactNode; color: string; widthTop: string; widthBottom: string }) {
+function FunnelLayer({ label, value, growth, color, widthTop, widthBottom }: {label: string;value: string;growth: React.ReactNode;color: string;widthTop: string;widthBottom: string;}) {
   return (
     <div className="relative flex flex-col items-center w-full" style={{ minHeight: 80 }}>
       <svg viewBox="0 0 400 80" preserveAspectRatio="none" className="w-full h-full absolute inset-0">
         <path
           d={`M${(400 - parseFloat(widthTop) * 4) / 2},0 L${(400 + parseFloat(widthTop) * 4) / 2},0 L${(400 + parseFloat(widthBottom) * 4) / 2},80 L${(400 - parseFloat(widthBottom) * 4) / 2},80 Z`}
-          fill={color}
-        />
+          fill={color} />
+        
       </svg>
       <div className="relative z-10 flex flex-col items-center justify-center h-full py-3">
         <span className="text-[11px] font-semibold text-white/80 uppercase tracking-wider">{label}</span>
         <span className="text-xl md:text-2xl font-extrabold text-white">{value}</span>
         <div className="mt-0.5">{growth}</div>
       </div>
-    </div>
-  );
+    </div>);
+
 }
 
-function SideMetric({ label, value, growth }: { label: string; value: string; growth: React.ReactNode }) {
+function SideMetric({ label, value, growth }: {label: string;value: string;growth: React.ReactNode;}) {
   return (
     <div className="text-center">
       <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">{label}</p>
       <p className="text-base font-bold text-card-foreground">{value}</p>
       <div className="mt-0.5">{growth}</div>
-    </div>
-  );
+    </div>);
+
 }
 
 function ConnectorDot() {
@@ -54,16 +54,16 @@ function ConnectorDot() {
     <div className="flex items-center">
       <div className="w-6 h-px bg-blue-400/60" />
       <div className="w-2 h-2 rounded-full border-2 border-blue-400/60 bg-card" />
-    </div>
-  );
+    </div>);
+
 }
 
 function ConnectorCurve() {
   return (
     <div className="flex items-center">
       <svg width="30" height="40" viewBox="0 0 30 40"><path d="M0 20 Q15 20 25 5" stroke="hsl(var(--destructive))" strokeWidth="1.5" fill="none" /><polygon points="23,2 28,5 23,8" fill="hsl(var(--destructive))" /></svg>
-    </div>
-  );
+    </div>);
+
 }
 
 export function AdsFunnelView({ data, accentColor, conversionLabel = "Conversions", showLpv = false }: Props) {
@@ -82,13 +82,13 @@ export function AdsFunnelView({ data, accentColor, conversionLabel = "Conversion
           <div className="text-2xl font-extrabold text-card-foreground">{formatCurrencyFull(d.cost)}</div>
           <GrowthBadge current={d.cost} previous={d.previousCost} invert />
           <div className="flex justify-center mt-2">
-            <svg width="20" height="30" viewBox="0 0 20 30"><path d="M10 0 L10 22 M4 16 L10 24 L16 16" stroke="currentColor" strokeWidth="2" fill="none" className="text-destructive"/></svg>
+            <svg width="20" height="30" viewBox="0 0 20 30"><path d="M10 0 L10 22 M4 16 L10 24 L16 16" stroke="currentColor" strokeWidth="2" fill="none" className="text-destructive" /></svg>
           </div>
         </div>
 
         {hasLpv ? (
-          /* ===== 5-STEP FUNNEL (Meta Ads) ===== */
-          <div className="grid grid-cols-[1fr_2fr_1fr] gap-2 items-center">
+        /* ===== 5-STEP FUNNEL (Meta Ads) ===== */
+        <div className="grid grid-cols-[1fr_2fr_1fr] gap-2 items-center">
             {/* Left side metrics */}
             <div className="flex flex-col gap-0 items-end">
               <div className="flex items-center gap-2 h-[80px]">
@@ -112,25 +112,25 @@ export function AdsFunnelView({ data, accentColor, conversionLabel = "Conversion
             {/* Center funnel - 5 layers */}
             <div className="flex flex-col items-center -space-y-[1px]">
               <FunnelLayer
-                label="Impressions" value={formatNumber(d.impressions)}
-                growth={<GrowthBadge current={d.impressions} previous={d.previousImpressions} />}
-                color="#1a3a5c" widthTop="100" widthBottom="85"
-              />
+              label="Impressions" value={formatNumber(d.impressions)}
+              growth={<GrowthBadge current={d.impressions} previous={d.previousImpressions} />}
+              color="#1a3a5c" widthTop="100" widthBottom="85" />
+            
               <FunnelLayer
-                label="Link Clicks" value={formatNumber(d.clicks)}
-                growth={<GrowthBadge current={d.clicks} previous={d.previousClicks} />}
-                color="#0d9488" widthTop="85" widthBottom="70"
-              />
+              label="Link Clicks" value={formatNumber(d.clicks)}
+              growth={<GrowthBadge current={d.clicks} previous={d.previousClicks} />}
+              color="#0d9488" widthTop="85" widthBottom="70" />
+            
               <FunnelLayer
-                label="Landing Page View" value={formatNumber(d.landingPageView || 0)}
-                growth={<GrowthBadge current={d.landingPageView || 0} previous={d.previousLandingPageView || 0} />}
-                color="#e9a030" widthTop="70" widthBottom="58"
-              />
+              label="Landing Page View" value={formatNumber(d.landingPageView || 0)}
+              growth={<GrowthBadge current={d.landingPageView || 0} previous={d.previousLandingPageView || 0} />}
+              color="#e9a030" widthTop="70" widthBottom="58" />
+            
               <FunnelLayer
-                label={conversionLabel} value={formatNumber(d.conversions)}
-                growth={<GrowthBadge current={d.conversions} previous={d.previousConversions} />}
-                color="#e07070" widthTop="58" widthBottom="46"
-              />
+              label={conversionLabel} value={formatNumber(d.conversions)}
+              growth={<GrowthBadge current={d.conversions} previous={d.previousConversions} />}
+              color="#e07070" widthTop="58" widthBottom="46" />
+            
               {/* Bottom tail */}
               <div className="relative w-full" style={{ minHeight: 30 }}>
                 <svg viewBox="0 0 400 30" preserveAspectRatio="none" className="w-full h-full">
@@ -155,10 +155,10 @@ export function AdsFunnelView({ data, accentColor, conversionLabel = "Conversion
                 <SideMetric label="CVR" value={d.convRate.toFixed(2) + "%"} growth={<GrowthBadge current={d.convRate} previous={d.previousConvRate} />} />
               </div>
             </div>
-          </div>
-        ) : (
-          /* ===== 4-STEP FUNNEL (Google Ads) ===== */
-          <div className="grid grid-cols-[1fr_2fr_1fr] gap-2 items-center">
+          </div>) : (
+
+        /* ===== 4-STEP FUNNEL (Google Ads) ===== */
+        <div className="grid grid-cols-[1fr_2fr_1fr] gap-2 items-center">
             {/* Left side metrics with connector dots */}
             <div className="flex flex-col gap-0 items-end">
               <div className="flex items-center gap-2 h-[80px]">
@@ -178,20 +178,20 @@ export function AdsFunnelView({ data, accentColor, conversionLabel = "Conversion
             {/* Center funnel - tapered shape */}
             <div className="flex flex-col items-center -space-y-[1px]">
               <FunnelLayer
-                label="Impressions" value={formatNumber(d.impressions)}
-                growth={<GrowthBadge current={d.impressions} previous={d.previousImpressions} />}
-                color={accentColor === "blue" ? "#1e3a5f" : "#2d2b6b"} widthTop="100" widthBottom="82"
-              />
+              label="Impressions" value={formatNumber(d.impressions)}
+              growth={<GrowthBadge current={d.impressions} previous={d.previousImpressions} />}
+              color={accentColor === "blue" ? "#1e3a5f" : "#2d2b6b"} widthTop="100" widthBottom="82" />
+            
               <FunnelLayer
-                label="Clicks" value={formatNumber(d.clicks)}
-                growth={<GrowthBadge current={d.clicks} previous={d.previousClicks} />}
-                color={accentColor === "blue" ? "#0d9488" : "#0d9488"} widthTop="82" widthBottom="64"
-              />
+              label="Clicks" value={formatNumber(d.clicks)}
+              growth={<GrowthBadge current={d.clicks} previous={d.previousClicks} />}
+              color={accentColor === "blue" ? "#0d9488" : "#0d9488"} widthTop="82" widthBottom="64" />
+            
               <FunnelLayer
-                label={conversionLabel} value={formatNumber(d.conversions)}
-                growth={<GrowthBadge current={d.conversions} previous={d.previousConversions} />}
-                color="#e9a030" widthTop="64" widthBottom="50"
-              />
+              label={conversionLabel} value={formatNumber(d.conversions)}
+              growth={<GrowthBadge current={d.conversions} previous={d.previousConversions} />}
+              color="#e9a030" widthTop="64" widthBottom="50" />
+            
               {/* Bottom tail */}
               <div className="relative w-full" style={{ minHeight: 40 }}>
                 <svg viewBox="0 0 400 40" preserveAspectRatio="none" className="w-full h-full">
@@ -212,8 +212,8 @@ export function AdsFunnelView({ data, accentColor, conversionLabel = "Conversion
                 <SideMetric label={`${conversionLabel} rate`} value={d.convRate.toFixed(2) + "%"} growth={<GrowthBadge current={d.convRate} previous={d.previousConvRate} />} />
               </div>
             </div>
-          </div>
-        )}
+          </div>)
+        }
       </div>
 
       {/* Insight Box */}
@@ -224,7 +224,7 @@ export function AdsFunnelView({ data, accentColor, conversionLabel = "Conversion
 
       {/* Campaign Breakdown Table */}
       <div className="bg-card rounded-2xl border border-border/40 p-6 md:p-8 shadow-card">
-        <h3 className="text-xl font-extrabold text-card-foreground mb-6 uppercase tracking-wide">Campaign Breakdown</h3>
+        <h3 className="text-xl font-extrabold text-card-foreground mb-6 uppercase tracking-wide">AUDIENCE BREAKDOWN</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -237,8 +237,8 @@ export function AdsFunnelView({ data, accentColor, conversionLabel = "Conversion
               </tr>
             </thead>
             <tbody>
-              {d.campaigns.map((c: CampaignRow, i: number) => (
-                <tr key={c.name} className="border-b border-border/30 hover:bg-muted/30 transition-colors">
+              {d.campaigns.map((c: CampaignRow, i: number) =>
+              <tr key={c.name} className="border-b border-border/30 hover:bg-muted/30 transition-colors">
                   <td className="py-3 px-4 text-card-foreground">
                     <span className="text-muted-foreground mr-2">{i + 1}.</span>
                     {c.name}
@@ -248,7 +248,7 @@ export function AdsFunnelView({ data, accentColor, conversionLabel = "Conversion
                   <td className="py-3 px-4 text-right text-card-foreground">{c.conversions}</td>
                   <td className="py-3 px-4 text-right text-card-foreground">{formatCurrencyFull(c.costPerConv)}</td>
                 </tr>
-              ))}
+              )}
             </tbody>
             <tfoot>
               <tr className="font-bold">
@@ -262,6 +262,6 @@ export function AdsFunnelView({ data, accentColor, conversionLabel = "Conversion
           </table>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 }
