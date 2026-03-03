@@ -473,27 +473,21 @@ export const benchmarkSchema: PageSchema = {
       title: "Tokopedia",
       fields: [
         { key: "tokopediaTraffic", label: "Traffic Actual", type: "number" },
-        { key: "tokopediaTargetTraffic", label: "Traffic Target", type: "number" },
         { key: "tokopediaCR", label: "Conversion Rate (%)", type: "percent" },
-        { key: "tokopediaTargetCR", label: "Target CR (%)", type: "percent" },
       ],
     },
     {
       title: "Shopee",
       fields: [
         { key: "shopeeTraffic", label: "Traffic Actual", type: "number" },
-        { key: "shopeeTargetTraffic", label: "Traffic Target", type: "number" },
         { key: "shopeeCR", label: "Conversion Rate (%)", type: "percent" },
-        { key: "shopeeTargetCR", label: "Target CR (%)", type: "percent" },
       ],
     },
     {
       title: "Webstore",
       fields: [
         { key: "webstoreTraffic", label: "Traffic Actual", type: "number" },
-        { key: "webstoreTargetTraffic", label: "Traffic Target", type: "number" },
         { key: "webstoreCR", label: "Conversion Rate (%)", type: "percent" },
-        { key: "webstoreTargetCR", label: "Target CR (%)", type: "percent" },
       ],
     },
   ],

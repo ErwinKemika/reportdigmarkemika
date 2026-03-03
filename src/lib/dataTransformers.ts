@@ -247,32 +247,36 @@ export function transformROIRevenue(d: Record<string, any>): ROIRevenueData {
   };
 }
 
+// Fixed benchmark targets
+const BENCHMARK_TARGET_TRAFFIC = 1250;
+const BENCHMARK_TARGET_CR = 0.17;
+
 export function transformBenchmark(d: Record<string, any>): BenchmarkData {
   return {
     channels: [
       {
         channel: "Tokopedia",
         traffic: d.tokopediaTraffic || 0,
-        targetTraffic: d.tokopediaTargetTraffic || 0,
+        targetTraffic: BENCHMARK_TARGET_TRAFFIC,
         conversionRate: d.tokopediaCR || 0,
-        targetCR: d.tokopediaTargetCR || 0,
-        achievement: (d.tokopediaTargetTraffic || 0) > 0 ? ((d.tokopediaTraffic || 0) / (d.tokopediaTargetTraffic || 1)) * 100 : 0,
+        targetCR: BENCHMARK_TARGET_CR,
+        achievement: BENCHMARK_TARGET_TRAFFIC > 0 ? ((d.tokopediaTraffic || 0) / BENCHMARK_TARGET_TRAFFIC) * 100 : 0,
       },
       {
         channel: "Shopee",
         traffic: d.shopeeTraffic || 0,
-        targetTraffic: d.shopeeTargetTraffic || 0,
+        targetTraffic: BENCHMARK_TARGET_TRAFFIC,
         conversionRate: d.shopeeCR || 0,
-        targetCR: d.shopeeTargetCR || 0,
-        achievement: (d.shopeeTargetTraffic || 0) > 0 ? ((d.shopeeTraffic || 0) / (d.shopeeTargetTraffic || 1)) * 100 : 0,
+        targetCR: BENCHMARK_TARGET_CR,
+        achievement: BENCHMARK_TARGET_TRAFFIC > 0 ? ((d.shopeeTraffic || 0) / BENCHMARK_TARGET_TRAFFIC) * 100 : 0,
       },
       {
         channel: "Webstore",
         traffic: d.webstoreTraffic || 0,
-        targetTraffic: d.webstoreTargetTraffic || 0,
+        targetTraffic: BENCHMARK_TARGET_TRAFFIC,
         conversionRate: d.webstoreCR || 0,
-        targetCR: d.webstoreTargetCR || 0,
-        achievement: (d.webstoreTargetTraffic || 0) > 0 ? ((d.webstoreTraffic || 0) / (d.webstoreTargetTraffic || 1)) * 100 : 0,
+        targetCR: BENCHMARK_TARGET_CR,
+        achievement: BENCHMARK_TARGET_TRAFFIC > 0 ? ((d.webstoreTraffic || 0) / BENCHMARK_TARGET_TRAFFIC) * 100 : 0,
       },
     ],
   };
