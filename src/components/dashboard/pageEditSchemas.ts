@@ -44,8 +44,8 @@ export const websitePerformanceSchema: PageSchema = {
         { key: "previousEngagedSessions", label: "Previous Engaged Sessions", type: "number" },
         { key: "avgSessionDuration", label: "Avg Session Duration (sec)", type: "number" },
         { key: "previousAvgSessionDuration", label: "Previous Duration (sec)", type: "number" },
-        { key: "waClicks", label: "WA Clicks", type: "number" },
-        { key: "previousWaClicks", label: "Previous WA Clicks", type: "number" },
+        { key: "waClicks", label: "Conversion", type: "number" },
+        { key: "previousWaClicks", label: "Previous Conversion", type: "number" },
       ],
     },
     {
