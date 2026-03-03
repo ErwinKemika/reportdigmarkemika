@@ -277,7 +277,7 @@ export default function AdsBudgetPage() {
                 <span className="font-bold text-card-foreground">{formatNumber(topChannel.clicks)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Click WA</span>
+                <span className="text-muted-foreground">Conversions</span>
                 <span className="font-bold text-card-foreground">{formatNumber(topChannel.conversions)}</span>
               </div>
             </div>
