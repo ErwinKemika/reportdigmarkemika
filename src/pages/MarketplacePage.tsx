@@ -36,6 +36,9 @@ export default function MarketplacePage() {
         <div className="rounded-2xl border border-border/40 bg-card p-6 shadow-card">
           <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Total Combined Revenue</p>
           <p className="text-2xl font-extrabold text-card-foreground tracking-tight">Rp {data.totalCombinedRevenue.toLocaleString("id-ID")}</p>
+          {data.previousCombinedRevenue !== undefined && (
+            <p className="text-xs text-muted-foreground mt-1">Prev: Rp {data.previousCombinedRevenue.toLocaleString("id-ID")}</p>
+          )}
           <div className="flex items-center gap-2 mt-2 flex-wrap">
             <GrowthBadge value={revenueGrowth} />
             <span className="text-xs text-muted-foreground">{data.totalProductCount} product</span>
@@ -83,6 +86,9 @@ export default function MarketplacePage() {
           <div className="mx-5 mb-4 rounded-xl p-5" style={{ background: "linear-gradient(135deg, hsl(160 60% 94%), hsl(160 40% 97%))" }}>
             <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Total Revenue</p>
             <p className="text-2xl font-extrabold tracking-tight" style={{ color: "#0F1524" }}>Rp {data.tokopedia.revenue.toLocaleString("id-ID")}</p>
+            {data.tokopedia.previousRevenue !== undefined && (
+              <p className="text-xs text-muted-foreground mt-1">Prev: Rp {data.tokopedia.previousRevenue.toLocaleString("id-ID")}</p>
+            )}
             {data.tokopedia.previousRevenue !== undefined && (() => {
               const g = growthPercent(data.tokopedia.revenue, data.tokopedia.previousRevenue);
               return (
@@ -146,6 +152,9 @@ export default function MarketplacePage() {
           <div className="mx-5 mb-5 rounded-xl p-5" style={{ background: "linear-gradient(135deg, hsl(15 80% 94%), hsl(15 60% 97%))" }}>
             <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Total Revenue</p>
             <p className="text-2xl font-extrabold tracking-tight" style={{ color: "#0F1524" }}>Rp {data.shopee.revenue.toLocaleString("id-ID")}</p>
+            {data.shopee.previousRevenue !== undefined && (
+              <p className="text-xs text-muted-foreground mt-1">Prev: Rp {data.shopee.previousRevenue.toLocaleString("id-ID")}</p>
+            )}
             {data.shopee.previousRevenue !== undefined && (() => {
               const g = growthPercent(data.shopee.revenue, data.shopee.previousRevenue);
               return (
