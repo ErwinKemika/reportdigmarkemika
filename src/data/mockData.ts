@@ -195,6 +195,13 @@ export interface PlatformAdsDetailData {
   previousCostPerConv: number;
   revenue: number;
   previousRevenue: number;
+  // Optional: Landing Page View (Meta Ads 5-step funnel)
+  landingPageView?: number;
+  previousLandingPageView?: number;
+  lpvRate?: number;
+  previousLpvRate?: number;
+  costPerLpv?: number;
+  previousCostPerLpv?: number;
   campaigns: CampaignRow[];
   insight: string;
 }
