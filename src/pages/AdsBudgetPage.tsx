@@ -220,7 +220,7 @@ export default function AdsBudgetPage() {
             <div className="space-y-4 text-sm text-muted-foreground shrink-0">
               <p>Total Budget</p>
               <p>Total Clicks</p>
-              <p>Total Click WA</p>
+              <p>Total Conversions</p>
             </div>
             <div className="w-32 h-32 shrink-0">
               <ResponsiveContainer width="100%" height="100%">
