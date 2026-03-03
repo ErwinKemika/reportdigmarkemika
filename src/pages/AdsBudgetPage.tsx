@@ -181,7 +181,7 @@ export default function AdsBudgetPage() {
                 <span className="font-bold text-card-foreground">{formatCurrencyFull(c.budget)}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">Link Clicks</span>
+                <span className="text-muted-foreground">Clicks</span>
                 <div className="flex items-center gap-2">
                   <div className="w-16 h-6">
                     <ResponsiveContainer width="100%" height="100%">
@@ -194,7 +194,7 @@ export default function AdsBudgetPage() {
                 </div>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">Click WA</span>
+                <span className="text-muted-foreground">Conversions</span>
                 <div className="flex items-center gap-2">
                   <div className="w-16 h-6">
                     <ResponsiveContainer width="100%" height="100%">
