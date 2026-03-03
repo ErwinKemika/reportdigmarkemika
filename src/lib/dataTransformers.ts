@@ -347,6 +347,9 @@ export const platformAdsPrevMapper = (prev: Record<string, any>) => ({
   previousAvgCpc: prev.avgCpc,
   previousCostPerConv: prev.costPerConv,
   previousRevenue: prev.revenue,
+  previousLandingPageView: prev.landingPageView,
+  previousLpvRate: prev.lpvRate,
+  previousCostPerLpv: prev.costPerLpv,
 });
 
 export const roiRevenuePrevMapper = (prev: Record<string, any>) => {
@@ -381,6 +384,13 @@ export function transformPlatformAdsDetail(d: Record<string, any>): PlatformAdsD
     previousCostPerConv: d.previousCostPerConv || 0,
     revenue: d.revenue || 0,
     previousRevenue: d.previousRevenue || 0,
+    // Landing Page View (Meta Ads)
+    landingPageView: d.landingPageView || 0,
+    previousLandingPageView: d.previousLandingPageView || 0,
+    lpvRate: d.lpvRate || 0,
+    previousLpvRate: d.previousLpvRate || 0,
+    costPerLpv: d.costPerLpv || 0,
+    previousCostPerLpv: d.previousCostPerLpv || 0,
     campaigns: (d.campaigns || []).map((c: any) => ({
       name: c.name || "",
       cost: c.cost || 0,
