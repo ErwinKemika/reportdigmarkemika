@@ -5,6 +5,7 @@ import { TrendingUp, TrendingDown } from "lucide-react";
 interface Props {
   data: PlatformAdsDetailData;
   accentColor: string; // tailwind color class prefix e.g. "blue" or "purple"
+  conversionLabel?: string;
 }
 
 function GrowthBadge({ current, previous, invert = false }: { current: number; previous: number; invert?: boolean }) {
@@ -46,7 +47,7 @@ function SideMetric({ label, value, growth }: { label: string; value: string; gr
   );
 }
 
-export function AdsFunnelView({ data, accentColor }: Props) {
+export function AdsFunnelView({ data, accentColor, conversionLabel = "Conversions" }: Props) {
   const d = data;
 
   return (
@@ -81,7 +82,7 @@ export function AdsFunnelView({ data, accentColor }: Props) {
               </div>
             </div>
             <div className="flex items-center gap-2 h-[80px]">
-              <SideMetric label="Cost / conv." value={formatCurrencyFull(d.costPerConv)} growth={<GrowthBadge current={d.costPerConv} previous={d.previousCostPerConv} invert />} />
+              <SideMetric label={`Cost / ${conversionLabel.toLowerCase()}`} value={formatCurrencyFull(d.costPerConv)} growth={<GrowthBadge current={d.costPerConv} previous={d.previousCostPerConv} invert />} />
               <div className="flex items-center">
                 <div className="w-6 h-px bg-blue-400/60" />
                 <div className="w-2 h-2 rounded-full border-2 border-blue-400/60 bg-card" />
@@ -102,7 +103,7 @@ export function AdsFunnelView({ data, accentColor }: Props) {
               color={accentColor === "blue" ? "#0d9488" : "#0d9488"} widthTop="82" widthBottom="64"
             />
             <FunnelLayer
-              label="Conversions" value={formatNumber(d.conversions)}
+              label={conversionLabel} value={formatNumber(d.conversions)}
               growth={<GrowthBadge current={d.conversions} previous={d.previousConversions} />}
               color="#e9a030" widthTop="64" widthBottom="50"
             />
@@ -127,7 +128,7 @@ export function AdsFunnelView({ data, accentColor }: Props) {
               <div className="flex items-center">
                 <svg width="30" height="40" viewBox="0 0 30 40"><path d="M0 20 Q15 20 25 5" stroke="hsl(var(--destructive))" strokeWidth="1.5" fill="none" /><polygon points="23,2 28,5 23,8" fill="hsl(var(--destructive))" /></svg>
               </div>
-              <SideMetric label="Conv. rate" value={d.convRate.toFixed(2) + "%"} growth={<GrowthBadge current={d.convRate} previous={d.previousConvRate} />} />
+              <SideMetric label={`${conversionLabel} rate`} value={d.convRate.toFixed(2) + "%"} growth={<GrowthBadge current={d.convRate} previous={d.previousConvRate} />} />
             </div>
           </div>
         </div>
@@ -148,9 +149,9 @@ export function AdsFunnelView({ data, accentColor }: Props) {
               <tr className={`${accentColor === "blue" ? "bg-blue-600" : "bg-purple-600"} text-white`}>
                 <th className="text-left py-3 px-4 rounded-l-lg font-semibold">Campaign</th>
                 <th className="text-right py-3 px-4 font-semibold">Cost</th>
-                <th className="text-right py-3 px-4 font-semibold">Conv. rate</th>
-                <th className="text-right py-3 px-4 font-semibold">Conversions</th>
-                <th className="text-right py-3 px-4 rounded-r-lg font-semibold">Cost / conv.</th>
+                <th className="text-right py-3 px-4 font-semibold">{conversionLabel} rate</th>
+                <th className="text-right py-3 px-4 font-semibold">{conversionLabel}</th>
+                <th className="text-right py-3 px-4 rounded-r-lg font-semibold">Cost / {conversionLabel.toLowerCase()}</th>
               </tr>
             </thead>
             <tbody>

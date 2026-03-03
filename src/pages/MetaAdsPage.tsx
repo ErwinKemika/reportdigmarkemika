@@ -22,7 +22,7 @@ export default function MetaAdsPage() {
         <SectionHeader title="Meta Ads Performance" subtitle={selectedMonth} icon={<Target className="w-4 h-4 text-purple-500" />} />
         <PageEditDialog schema={metaAdsSchema} />
       </div>
-      <AdsFunnelView data={data} accentColor="purple" />
+      <AdsFunnelView data={data} accentColor="purple" conversionLabel="Click WA" />
     </div>
   );
 }

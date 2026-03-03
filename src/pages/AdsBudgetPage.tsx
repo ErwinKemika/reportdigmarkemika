@@ -142,7 +142,7 @@ export default function AdsBudgetPage() {
           <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/40 to-transparent dark:from-emerald-500/5 dark:to-transparent pointer-events-none" />
           <div className="relative flex items-start justify-between">
             <div>
-              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">Total Conversions</p>
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">Total Click WA</p>
               <p className="text-2xl font-extrabold text-card-foreground mt-1.5">{formatNumber(totalConversions)}</p>
             </div>
             <div className="flex items-start gap-3">
@@ -194,7 +194,7 @@ export default function AdsBudgetPage() {
                 </div>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">Conversions</span>
+                <span className="text-muted-foreground">Click WA</span>
                 <div className="flex items-center gap-2">
                   <div className="w-16 h-6">
                     <ResponsiveContainer width="100%" height="100%">
@@ -220,7 +220,7 @@ export default function AdsBudgetPage() {
             <div className="space-y-4 text-sm text-muted-foreground shrink-0">
               <p>Total Budget</p>
               <p>Total Clicks</p>
-              <p>Total Conversions</p>
+              <p>Total Click WA</p>
             </div>
             <div className="w-32 h-32 shrink-0">
               <ResponsiveContainer width="100%" height="100%">
@@ -255,7 +255,7 @@ export default function AdsBudgetPage() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#F97316]" />
-                <span className="text-xs text-muted-foreground">Total Conversions</span>
+                <span className="text-xs text-muted-foreground">Total Click WA</span>
                 <span className="text-sm font-bold text-card-foreground ml-auto">{formatNumber(totalConversions)}</span>
               </div>
             </div>
@@ -277,7 +277,7 @@ export default function AdsBudgetPage() {
                 <span className="font-bold text-card-foreground">{formatNumber(topChannel.clicks)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Conversions</span>
+                <span className="text-muted-foreground">Click WA</span>
                 <span className="font-bold text-card-foreground">{formatNumber(topChannel.conversions)}</span>
               </div>
             </div>
