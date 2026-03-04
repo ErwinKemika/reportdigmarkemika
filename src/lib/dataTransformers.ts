@@ -219,23 +219,26 @@ export function transformClosing(d: Record<string, any>): ClosingData {
 }
 
 export function transformROIRevenue(d: Record<string, any>): ROIRevenueData {
-  const b2b = d.b2bLeads || 0;
-  const b2g = d.b2gLeads || 0;
-  const prevB2b = d.previousB2bLeads || 0;
-  const prevB2g = d.previousB2gLeads || 0;
   const leadPipeline = (d.leadPipeline || []).map((l: any) => ({
     projectName: l.projectName || "", leadSource: l.leadSource || "",
     stage: l.stage || "Processing", estimatedRevenue: l.estimatedRevenue || 0,
     project: l.project || "Non-Gov",
   }));
+
+  // Auto-calculate leads from pipeline
+  const gov = leadPipeline.filter((l: any) => l.project === "Gov").length;
+  const nonGov = leadPipeline.filter((l: any) => l.project !== "Gov").length;
+  const prevB2b = d.previousB2bLeads || 0;
+  const prevB2g = d.previousB2gLeads || 0;
+
   const autoEstRevenue = leadPipeline.reduce((sum: number, l: any) => sum + l.estimatedRevenue, 0);
   // If new keys exist, use them directly; otherwise fallback to legacy keys
   const hasNewAds = d.ads !== undefined && d.ads !== null;
   const hasNewMaintenance = d.maintenanceWebSosmed !== undefined && d.maintenanceWebSosmed !== null;
   return {
-    b2bLeads: kpi(b2b, prevB2b),
-    b2gLeads: kpi(b2g, prevB2g),
-    totalLeads: kpi(b2b + b2g, prevB2b + prevB2g),
+    b2bLeads: kpi(gov, prevB2b),
+    b2gLeads: kpi(nonGov, prevB2g),
+    totalLeads: kpi(gov + nonGov, prevB2b + prevB2g),
     estimatedRevenue: kpi(autoEstRevenue || d.estimatedRevenue || 0, d.previousEstimatedRevenue || 0),
     investment: {
       ads: hasNewAds ? d.ads : (d.socialAds || 0) + (d.marketplaceAds || 0),
@@ -356,9 +359,11 @@ export const platformAdsPrevMapper = (prev: Record<string, any>) => ({
 export const roiRevenuePrevMapper = (prev: Record<string, any>) => {
   const pipeline = prev.leadPipeline || [];
   const prevEstRevenue = pipeline.reduce((s: number, l: any) => s + (l.estimatedRevenue || 0), 0);
+  const prevGov = pipeline.filter((l: any) => l.project === "Gov").length;
+  const prevNonGov = pipeline.filter((l: any) => l.project !== "Gov").length;
   return {
-    previousB2bLeads: prev.b2bLeads,
-    previousB2gLeads: prev.b2gLeads,
+    previousB2bLeads: prevGov || prev.b2bLeads,
+    previousB2gLeads: prevNonGov || prev.b2gLeads,
     previousEstimatedRevenue: prevEstRevenue || prev.estimatedRevenue,
   };
 };
