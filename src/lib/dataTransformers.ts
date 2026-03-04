@@ -226,6 +226,7 @@ export function transformROIRevenue(d: Record<string, any>): ROIRevenueData {
   const leadPipeline = (d.leadPipeline || []).map((l: any) => ({
     projectName: l.projectName || "", leadSource: l.leadSource || "",
     stage: l.stage || "Processing", estimatedRevenue: l.estimatedRevenue || 0,
+    project: l.project || "Non-Gov",
   }));
   const autoEstRevenue = leadPipeline.reduce((sum: number, l: any) => sum + l.estimatedRevenue, 0);
   // If new keys exist, use them directly; otherwise fallback to legacy keys

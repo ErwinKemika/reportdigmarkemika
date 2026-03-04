@@ -1,12 +1,13 @@
 // Page edit form schemas - defines fields for each page's Edit Data modal
 
-export type FieldType = "number" | "currency" | "percent" | "text" | "textarea" | "image" | "date";
+export type FieldType = "number" | "currency" | "percent" | "text" | "textarea" | "image" | "date" | "select";
 
 export interface FieldDef {
   key: string;
   label: string;
   type: FieldType;
   placeholder?: string;
+  options?: string[];
 }
 
 export interface FieldGroup {
@@ -17,7 +18,7 @@ export interface FieldGroup {
 export interface ArrayFieldDef {
   key: string;
   label: string;
-  columns: { key: string; label: string; type: FieldType }[];
+  columns: { key: string; label: string; type: FieldType; options?: string[] }[];
   maxRows?: number;
 }
 
@@ -459,6 +460,7 @@ export const roiRevenueSchema: PageSchema = {
       label: "Lead Pipeline",
       columns: [
         { key: "projectName", label: "Project Name", type: "text" },
+        { key: "project", label: "Project", type: "select", options: ["Non-Gov", "Gov"] },
         { key: "leadSource", label: "Lead Source", type: "text" },
         { key: "stage", label: "Stage", type: "text" },
         { key: "estimatedRevenue", label: "Est. Revenue (Rp)", type: "currency" },

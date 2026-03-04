@@ -141,6 +141,7 @@ export default function ROIRevenuePage() {
                 <thead>
                   <tr className="border-b border-border/40 text-label uppercase tracking-wider text-muted-foreground">
                     <th className="text-left px-6 py-3.5 font-medium">Project Name</th>
+                    <th className="text-left px-6 py-3.5 font-medium">Project</th>
                     <th className="text-left px-6 py-3.5 font-medium">Lead Source</th>
                     <th className="text-left px-6 py-3.5 font-medium">Stage</th>
                     <th className="text-right px-6 py-3.5 font-medium">Est. Revenue</th>
@@ -150,6 +151,13 @@ export default function ROIRevenuePage() {
                   {data.leadPipeline.map((lead, i) => (
                     <tr key={i} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
                       <td className="px-6 py-4 font-medium text-card-foreground">{lead.projectName}</td>
+                      <td className="px-6 py-4">
+                        <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-md ${
+                          lead.project === "Gov"
+                            ? "bg-destructive/10 text-destructive border border-destructive/20"
+                            : "bg-warning/10 text-warning border border-warning/20"
+                        }`}>{lead.project || "Non-Gov"}</span>
+                      </td>
                       <td className="px-6 py-4 text-muted-foreground">{lead.leadSource}</td>
                       <td className="px-6 py-4">{stageBadge(lead.stage)}</td>
                       <td className="px-6 py-4 text-right font-semibold text-card-foreground">{formatCurrencyFull(lead.estimatedRevenue)}</td>

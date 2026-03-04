@@ -241,6 +241,7 @@ export interface ROIRevenueData {
   actualMarketplaceRevenue: number;
   leadPipeline: {
     projectName: string;
+    project: "Non-Gov" | "Gov";
     leadSource: string;
     stage: "Processing" | "Qualified" | "Won";
     estimatedRevenue: number;
@@ -622,11 +623,11 @@ const closingFeb: ClosingData = {
 };
 
 const roiRevenueJanPipeline = [
-  { projectName: "PT Mandiri Konstruksi", leadSource: "Google Ads", stage: "Won" as const, estimatedRevenue: 450000000 },
-  { projectName: "Dinas Kesehatan Jabar", leadSource: "Website", stage: "Qualified" as const, estimatedRevenue: 320000000 },
-  { projectName: "RS Premier Bintaro", leadSource: "Referral", stage: "Processing" as const, estimatedRevenue: 280000000 },
-  { projectName: "PT Astra Infra", leadSource: "Meta Ads", stage: "Qualified" as const, estimatedRevenue: 520000000 },
-  { projectName: "Kemenkes RI", leadSource: "Website", stage: "Processing" as const, estimatedRevenue: 180000000 },
+  { projectName: "PT Mandiri Konstruksi", project: "Non-Gov" as const, leadSource: "Google Ads", stage: "Won" as const, estimatedRevenue: 450000000 },
+  { projectName: "Dinas Kesehatan Jabar", project: "Gov" as const, leadSource: "Website", stage: "Qualified" as const, estimatedRevenue: 320000000 },
+  { projectName: "RS Premier Bintaro", project: "Non-Gov" as const, leadSource: "Referral", stage: "Processing" as const, estimatedRevenue: 280000000 },
+  { projectName: "PT Astra Infra", project: "Non-Gov" as const, leadSource: "Meta Ads", stage: "Qualified" as const, estimatedRevenue: 520000000 },
+  { projectName: "Kemenkes RI", project: "Gov" as const, leadSource: "Website", stage: "Processing" as const, estimatedRevenue: 180000000 },
 ];
 const roiRevenueJan: ROIRevenueData = {
   b2bLeads: kpi(24, 18),
@@ -640,12 +641,12 @@ const roiRevenueJan: ROIRevenueData = {
 };
 
 const roiRevenueFebPipeline = [
-  { projectName: "PT Mandiri Konstruksi", leadSource: "Google Ads", stage: "Won" as const, estimatedRevenue: 450000000 },
-  { projectName: "Dinas Kesehatan Jabar", leadSource: "Website", stage: "Won" as const, estimatedRevenue: 320000000 },
-  { projectName: "RS Premier Bintaro", leadSource: "Referral", stage: "Qualified" as const, estimatedRevenue: 280000000 },
-  { projectName: "PT Astra Infra", leadSource: "Meta Ads", stage: "Won" as const, estimatedRevenue: 520000000 },
-  { projectName: "Kemenkes RI", leadSource: "Website", stage: "Qualified" as const, estimatedRevenue: 180000000 },
-  { projectName: "PT Pelindo III", leadSource: "Google Ads", stage: "Processing" as const, estimatedRevenue: 600000000 },
+  { projectName: "PT Mandiri Konstruksi", project: "Non-Gov" as const, leadSource: "Google Ads", stage: "Won" as const, estimatedRevenue: 450000000 },
+  { projectName: "Dinas Kesehatan Jabar", project: "Gov" as const, leadSource: "Website", stage: "Won" as const, estimatedRevenue: 320000000 },
+  { projectName: "RS Premier Bintaro", project: "Non-Gov" as const, leadSource: "Referral", stage: "Qualified" as const, estimatedRevenue: 280000000 },
+  { projectName: "PT Astra Infra", project: "Non-Gov" as const, leadSource: "Meta Ads", stage: "Won" as const, estimatedRevenue: 520000000 },
+  { projectName: "Kemenkes RI", project: "Gov" as const, leadSource: "Website", stage: "Qualified" as const, estimatedRevenue: 180000000 },
+  { projectName: "PT Pelindo III", project: "Non-Gov" as const, leadSource: "Google Ads", stage: "Processing" as const, estimatedRevenue: 600000000 },
 ];
 const roiRevenueFeb: ROIRevenueData = {
   b2bLeads: kpi(31, 24),
