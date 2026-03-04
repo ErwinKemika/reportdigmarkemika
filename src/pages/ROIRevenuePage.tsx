@@ -103,8 +103,8 @@ export default function ROIRevenuePage() {
       <section className="bg-tint-purple/50 rounded-2xl p-8">
         <SectionHeader title="Lead Performance" subtitle="B2B & B2G lead tracking" icon={<Users className="w-4 h-4" />} />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <KPICard title="B2B Leads" data={data.b2bLeads} icon={<Briefcase className="w-4 h-4" />} accentColor="blue" />
-          <KPICard title="B2G Leads" data={data.b2gLeads} icon={<Landmark className="w-4 h-4" />} accentColor="purple" />
+          <KPICard title="GOV LEADS" data={data.b2bLeads} icon={<Briefcase className="w-4 h-4" />} accentColor="blue" />
+          <KPICard title="NON-GOV LEADS" data={data.b2gLeads} icon={<Landmark className="w-4 h-4" />} accentColor="purple" />
           <KPICard title="Total Leads" data={data.totalLeads} icon={<Users className="w-4 h-4" />} accentColor="navy" />
           <KPICard title="Est. Revenue" data={data.estimatedRevenue} format="currency" icon={<DollarSign className="w-4 h-4" />} accentColor="green" hero currencyFormatter={formatCurrencyFull} />
         </div>
