@@ -269,8 +269,14 @@ export function AdsFunnelView({ data, accentColor, conversionLabel = "Conversion
                 <td className="py-3 px-4 text-right text-card-foreground font-extrabold">{formatCurrencyFull(d.cost)}</td>
                 {hasLpv && <td className="py-3 px-4 text-right text-card-foreground font-extrabold">{formatNumber(d.impressions)}</td>}
                 {hasLpv && <td className="py-3 px-4 text-right text-card-foreground font-extrabold">{formatNumber(d.landingPageView || 0)}</td>}
-                <td className="py-3 px-4 text-right text-card-foreground font-extrabold">{d.convRate.toFixed(2)}%</td>
-                <td className="py-3 px-4 text-right text-card-foreground font-extrabold">{d.conversions}</td>
+                <td className="py-3 px-4 text-right text-card-foreground font-extrabold">
+                  {d.campaigns.length > 0
+                    ? (d.campaigns.reduce((sum: number, c: CampaignRow) => sum + (c.convRate || 0), 0) / d.campaigns.length).toFixed(2)
+                    : "0.00"}%
+                </td>
+                <td className="py-3 px-4 text-right text-card-foreground font-extrabold">
+                  {d.campaigns.reduce((sum: number, c: CampaignRow) => sum + (c.conversions || 0), 0)}
+                </td>
                 {!hasLpv && <td className="py-3 px-4 text-right text-card-foreground font-extrabold">{formatCurrencyFull(d.costPerConv)}</td>}
               </tr>
             </tfoot>
