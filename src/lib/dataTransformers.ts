@@ -397,6 +397,8 @@ export function transformPlatformAdsDetail(d: Record<string, any>): PlatformAdsD
       convRate: c.convRate || 0,
       conversions: c.conversions || 0,
       costPerConv: c.costPerConv || 0,
+      impressions: c.impressions || 0,
+      landingPageViews: c.landingPageViews || 0,
     })),
     insight: d.insight || "",
   };
