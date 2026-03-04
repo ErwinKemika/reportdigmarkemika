@@ -98,7 +98,7 @@ export function PageEditDialog({ schema }: PageEditDialogProps) {
   const handleArrayChange = (arrayKey: string, rowIndex: number, colKey: string, value: string, colType: string) => {
     const arr = [...(values[arrayKey] || [])];
     if (!arr[rowIndex]) arr[rowIndex] = {};
-    if (colType === "text" || colType === "textarea") {
+    if (colType === "text" || colType === "textarea" || colType === "select") {
       arr[rowIndex] = { ...arr[rowIndex], [colKey]: value };
     } else {
       const num = value === "" ? 0 : Number(value);
@@ -296,6 +296,22 @@ export function PageEditDialog({ schema }: PageEditDialogProps) {
                             />
                           </PopoverContent>
                         </Popover>
+                      </div>
+                    );
+                  }
+                  if (col.type === "select" && col.options) {
+                    return (
+                      <div key={col.key} className="space-y-1">
+                        <Label className="text-[10px] text-muted-foreground">{col.label}</Label>
+                        <select
+                          value={row[col.key] || col.options[0] || ""}
+                          onChange={e => handleArrayChange(af.key, ri, col.key, e.target.value, col.type)}
+                          className="h-8 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        >
+                          {col.options.map(opt => (
+                            <option key={opt} value={opt}>{opt}</option>
+                          ))}
+                        </select>
                       </div>
                     );
                   }
