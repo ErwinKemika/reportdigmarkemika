@@ -228,13 +228,24 @@ export function AdsFunnelView({ data, accentColor, conversionLabel = "Conversion
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
+              {hasLpv ? (
+              <tr className="bg-green-600 text-white">
+                <th className="text-left py-3 px-4 rounded-l-lg font-semibold">Ad set name</th>
+                <th className="text-right py-3 px-4 font-semibold">Amount spent (IDR)</th>
+                <th className="text-right py-3 px-4 font-semibold">Impressions</th>
+                <th className="text-right py-3 px-4 font-semibold">Landing page views</th>
+                <th className="text-right py-3 px-4 font-semibold">CVR</th>
+                <th className="text-right py-3 px-4 rounded-r-lg font-semibold">Kemika - Click WA</th>
+              </tr>
+              ) : (
               <tr className={`${accentColor === "blue" ? "bg-blue-600" : "bg-purple-600"} text-white`}>
                 <th className="text-left py-3 px-4 rounded-l-lg font-semibold">Campaign</th>
                 <th className="text-right py-3 px-4 font-semibold">Cost</th>
-                <th className="text-right py-3 px-4 font-semibold">{hasLpv ? "CVR" : `${conversionLabel} rate`}</th>
+                <th className="text-right py-3 px-4 font-semibold">{`${conversionLabel} rate`}</th>
                 <th className="text-right py-3 px-4 font-semibold">{conversionLabel}</th>
                 <th className="text-right py-3 px-4 rounded-r-lg font-semibold">Cost / {conversionLabel.toLowerCase()}</th>
               </tr>
+              )}
             </thead>
             <tbody>
               {d.campaigns.map((c: CampaignRow, i: number) =>
@@ -244,9 +255,11 @@ export function AdsFunnelView({ data, accentColor, conversionLabel = "Conversion
                     {c.name}
                   </td>
                   <td className="py-3 px-4 text-right text-card-foreground">{formatCurrencyFull(c.cost)}</td>
+                  {hasLpv && <td className="py-3 px-4 text-right text-card-foreground">{formatNumber(c.impressions || 0)}</td>}
+                  {hasLpv && <td className="py-3 px-4 text-right text-card-foreground">{formatNumber(c.landingPageViews || 0)}</td>}
                   <td className="py-3 px-4 text-right text-card-foreground">{c.convRate.toFixed(2)}%</td>
                   <td className="py-3 px-4 text-right text-card-foreground">{c.conversions}</td>
-                  <td className="py-3 px-4 text-right text-card-foreground">{formatCurrencyFull(c.costPerConv)}</td>
+                  {!hasLpv && <td className="py-3 px-4 text-right text-card-foreground">{formatCurrencyFull(c.costPerConv)}</td>}
                 </tr>
               )}
             </tbody>
@@ -254,9 +267,11 @@ export function AdsFunnelView({ data, accentColor, conversionLabel = "Conversion
               <tr className="font-bold">
                 <td className="py-3 px-4 text-success">Grand total</td>
                 <td className="py-3 px-4 text-right text-card-foreground font-extrabold">{formatCurrencyFull(d.cost)}</td>
+                {hasLpv && <td className="py-3 px-4 text-right text-card-foreground font-extrabold">{formatNumber(d.impressions)}</td>}
+                {hasLpv && <td className="py-3 px-4 text-right text-card-foreground font-extrabold">{formatNumber(d.landingPageView || 0)}</td>}
                 <td className="py-3 px-4 text-right text-card-foreground font-extrabold">{d.convRate.toFixed(2)}%</td>
                 <td className="py-3 px-4 text-right text-card-foreground font-extrabold">{d.conversions}</td>
-                <td className="py-3 px-4 text-right text-card-foreground font-extrabold">{formatCurrencyFull(d.costPerConv)}</td>
+                {!hasLpv && <td className="py-3 px-4 text-right text-card-foreground font-extrabold">{formatCurrencyFull(d.costPerConv)}</td>}
               </tr>
             </tfoot>
           </table>

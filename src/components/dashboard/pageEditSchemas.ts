@@ -374,13 +374,14 @@ export const metaAdsSchema: PageSchema = {
   arrayFields: [
     {
       key: "campaigns",
-      label: "Campaign Breakdown",
+      label: "Audience Breakdown",
       columns: [
-        { key: "name", label: "Campaign Name", type: "text" },
-        { key: "cost", label: "Cost (Rp)", type: "currency" },
+        { key: "name", label: "Ad Set Name", type: "text" },
+        { key: "cost", label: "Amount Spent (Rp)", type: "currency" },
+        { key: "impressions", label: "Impressions", type: "number" },
+        { key: "landingPageViews", label: "Landing Page Views", type: "number" },
         { key: "convRate", label: "CVR (%)", type: "percent" },
-        { key: "conversions", label: "Click WA", type: "number" },
-        { key: "costPerConv", label: "Cost/Conv (Rp)", type: "currency" },
+        { key: "conversions", label: "Kemika - Click WA", type: "number" },
       ],
       maxRows: 10,
     },

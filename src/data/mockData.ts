@@ -172,6 +172,8 @@ export interface CampaignRow {
   convRate: number;
   conversions: number;
   costPerConv: number;
+  impressions?: number;
+  landingPageViews?: number;
 }
 
 export interface PlatformAdsDetailData {
