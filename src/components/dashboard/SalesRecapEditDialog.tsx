@@ -32,14 +32,6 @@ interface FieldDef { key: FieldKey; label: string; }
 
 const sections: { title: string; color: string; fields: FieldDef[] }[] = [
   {
-    title: "E-commerce", color: "bg-[hsl(160_84%_39%/0.1)]",
-    fields: [
-      { key: "tokopedia", label: "Tokopedia (Rp)" },
-      { key: "webstore", label: "Webstore (Rp)" },
-      { key: "shopee", label: "Shopee (Rp)" },
-    ],
-  },
-  {
     title: "Non-gov", color: "bg-[hsl(38_92%_50%/0.08)]",
     fields: [
       { key: "kommo", label: "Kommo (Rp)" },
