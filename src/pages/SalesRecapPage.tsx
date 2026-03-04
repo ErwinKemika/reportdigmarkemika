@@ -116,6 +116,7 @@ export default function SalesRecapPage() {
   const queryClient = useQueryClient();
   const [editOpen, setEditOpen] = useState(false);
 
+  // Fetch sales recap data
   const { data: monthData } = useQuery({
     queryKey: ["sales_recap", period],
     queryFn: async () => {
@@ -130,7 +131,52 @@ export default function SalesRecapPage() {
     },
   });
 
-  const d: SalesRecapMonthData = { ...emptyRow, ...(monthData ?? {}) };
+  // Fetch Webstore revenue
+  const { data: webstoreData } = useQuery({
+    queryKey: ["page_data", period, "webstore_sales"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("page_data")
+        .select("data")
+        .eq("period", period)
+        .eq("page_key", "webstore_sales")
+        .maybeSingle();
+      if (error) throw error;
+      return data?.data as Record<string, any> | null;
+    },
+  });
+
+  // Fetch Marketplace revenue (Tokopedia & Shopee)
+  const { data: marketplaceData } = useQuery({
+    queryKey: ["page_data", period, "marketplace"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("page_data")
+        .select("data")
+        .eq("period", period)
+        .eq("page_key", "marketplace")
+        .maybeSingle();
+      if (error) throw error;
+      return data?.data as Record<string, any> | null;
+    },
+  });
+
+  // Auto-fill E-Commerce from channel data
+  const autoTokopedia = marketplaceData?.tokopediaRevenue || 0;
+  const autoShopee = marketplaceData?.shopeeRevenue || 0;
+  const autoWebstore = (() => {
+    if (!webstoreData) return 0;
+    const products = webstoreData.topProductsSold || [];
+    return webstoreData.totalRevenue || products.reduce((s: number, p: any) => s + (p.units || 0) * (p.pricePerUnit || p.price || 0), 0);
+  })();
+
+  const d: SalesRecapMonthData = {
+    ...emptyRow,
+    ...(monthData ?? {}),
+    tokopedia: autoTokopedia,
+    webstore: autoWebstore,
+    shopee: autoShopee,
+  };
   const c = calc(d);
   const show = c.grand_total > 0 || d.marketing_expense > 0;
 
