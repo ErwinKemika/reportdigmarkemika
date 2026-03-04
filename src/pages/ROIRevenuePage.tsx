@@ -153,7 +153,7 @@ export default function ROIRevenuePage() {
                     <tr key={i} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
                       <td className="px-6 py-4 font-medium text-card-foreground">{lead.projectName}</td>
                       <td className="px-6 py-4">
-                        <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-md ${
+                        <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-md whitespace-nowrap ${
                           lead.project === "Gov"
                             ? "bg-destructive/10 text-destructive border border-destructive/20"
                             : "bg-warning/10 text-warning border border-warning/20"
