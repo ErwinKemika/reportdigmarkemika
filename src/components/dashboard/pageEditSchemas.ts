@@ -449,7 +449,6 @@ export const roiRevenueSchema: PageSchema = {
     {
       title: "Revenue",
       fields: [
-        { key: "actualMarketplaceRevenue", label: "Actual Marketplace Revenue (Rp)", type: "currency" },
         { key: "insightSummary", label: "Insight Summary", type: "textarea" },
       ],
     },

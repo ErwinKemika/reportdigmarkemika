@@ -9,6 +9,7 @@ import { useMonth } from "@/contexts/MonthContext";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { usePageData } from "@/hooks/usePageData";
 
 const STAGE_STYLES: Record<string, string> = {
   Won: "bg-status-won/10 text-status-won border border-status-won/20",
@@ -18,18 +19,46 @@ const STAGE_STYLES: Record<string, string> = {
   Drop: "bg-status-cancelled/10 text-status-cancelled border border-status-cancelled/20",
 };
 
+function calcWebstoreRevenue(d: Record<string, any> | null): number {
+  if (!d) return 0;
+  const products = d.topProductsSold || [];
+  const fromProducts = products.reduce((sum: number, p: any) => {
+    const units = p.units || 0;
+    const price = p.pricePerUnit || p.price || 0;
+    return sum + units * price;
+  }, 0);
+  return d.totalRevenue || fromProducts;
+}
+
+function calcMarketplaceRevenue(d: Record<string, any> | null): number {
+  if (!d) return 0;
+  return (d.tokopediaRevenue || 0) + (d.shopeeRevenue || 0);
+}
+
 export default function ROIRevenuePage() {
-  const { selectedMonth } = useMonth();
+  const { selectedMonth, period } = useMonth();
   const { data, isLoading } = useMergedPageData("roi-revenue", getROIRevenueData, transformROIRevenue, roiRevenuePrevMapper);
+
+  // Fetch webstore & marketplace data for auto-calculating Actual Marketplace Revenue
+  const { data: webstoreDb } = usePageData(period, "webstore-sales");
+  const { data: marketplaceDb } = usePageData(period, "marketplace");
+
   const [aiInsight, setAiInsight] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
   if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
   if (!data) return <NoData month={selectedMonth} />;
 
+  // Auto-calculate from webstore + marketplace
+  const autoRevenue =
+    calcWebstoreRevenue(webstoreDb as Record<string, any> | null) +
+    calcMarketplaceRevenue(marketplaceDb as Record<string, any> | null);
+
+  const actualMarketplaceRevenue = autoRevenue > 0 ? autoRevenue : data.actualMarketplaceRevenue;
+
   const totalInvestment = data.investment.ads + data.investment.websiteSEO + data.investment.maintenanceWebSosmed;
-  const projectedROI = totalInvestment > 0 ? ((data.actualMarketplaceRevenue - totalInvestment) / totalInvestment) * 100 : 0;
-  const roas = totalInvestment > 0 ? data.actualMarketplaceRevenue / totalInvestment : 0;
+  const projectedROI = totalInvestment > 0 ? ((actualMarketplaceRevenue - totalInvestment) / totalInvestment) * 100 : 0;
+  const roas = totalInvestment > 0 ? actualMarketplaceRevenue / totalInvestment : 0;
 
   const generateInsight = async () => {
     setIsGenerating(true);
@@ -42,7 +71,7 @@ export default function ROIRevenuePage() {
             totalLeads: data.totalLeads,
             estimatedRevenue: data.estimatedRevenue,
             investment: data.investment,
-            actualMarketplaceRevenue: data.actualMarketplaceRevenue,
+            actualMarketplaceRevenue,
             projectedROI,
             roas,
             leadPipeline: data.leadPipeline,
@@ -95,7 +124,8 @@ export default function ROIRevenuePage() {
             </div>
             <div className="bg-card rounded-xl p-6 shadow-card border border-border/40 border-l-[3px] border-l-success">
               <p className="text-label text-muted-foreground uppercase tracking-wider mb-2">Actual Marketplace Revenue</p>
-              <p className="text-kpi font-extrabold text-success tracking-tight">{formatCurrencyFull(data.actualMarketplaceRevenue)}</p>
+              <p className="text-kpi font-extrabold text-success tracking-tight">{formatCurrencyFull(actualMarketplaceRevenue)}</p>
+              <p className="mt-1 text-[10px] text-muted-foreground">Auto: Webstore + Tokopedia + Shopee</p>
               <p className="mt-2 text-xs font-semibold text-foreground/70">ROAS {roas.toFixed(2)}x</p>
             </div>
             <div className={`rounded-xl p-6 shadow-hero text-primary-foreground ${projectedROI >= 0 ? "gradient-success" : "gradient-danger"}`}>
