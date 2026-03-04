@@ -133,13 +133,13 @@ export default function SalesRecapPage() {
 
   // Fetch Webstore revenue
   const { data: webstoreData } = useQuery({
-    queryKey: ["page_data", period, "webstore_sales"],
+    queryKey: ["page_data", period, "webstore-sales"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("page_data")
         .select("data")
         .eq("period", period)
-        .eq("page_key", "webstore_sales")
+        .eq("page_key", "webstore-sales")
         .maybeSingle();
       if (error) throw error;
       return data?.data as Record<string, any> | null;
