@@ -12,11 +12,12 @@ import { toast } from "sonner";
 import { usePageData } from "@/hooks/usePageData";
 
 const STAGE_STYLES: Record<string, string> = {
-  Won: "bg-status-won/10 text-status-won border border-status-won/20",
-  Qualified: "bg-status-qualified/10 text-status-qualified border border-status-qualified/20",
-  Processing: "bg-status-processing/10 text-status-processing border border-status-processing/20",
-  Cancelled: "bg-status-cancelled/10 text-status-cancelled border border-status-cancelled/20",
-  Drop: "bg-status-cancelled/10 text-status-cancelled border border-status-cancelled/20",
+  Unqualified: "bg-[hsl(220,15%,90%)] text-[hsl(220,10%,40%)] border border-[hsl(220,15%,80%)]",
+  Qualified: "bg-[hsl(210,80%,90%)] text-[hsl(210,80%,40%)] border border-[hsl(210,80%,80%)]",
+  Negotiating: "bg-[hsl(40,90%,88%)] text-[hsl(40,90%,35%)] border border-[hsl(40,90%,75%)]",
+  Processing: "bg-[hsl(270,60%,90%)] text-[hsl(270,60%,40%)] border border-[hsl(270,60%,80%)]",
+  Won: "bg-[hsl(140,60%,88%)] text-[hsl(140,60%,30%)] border border-[hsl(140,60%,75%)]",
+  Lost: "bg-[hsl(0,70%,90%)] text-[hsl(0,70%,40%)] border border-[hsl(0,70%,80%)]",
 };
 
 function calcWebstoreRevenue(d: Record<string, any> | null): number {
