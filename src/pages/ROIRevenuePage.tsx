@@ -161,7 +161,7 @@ export default function ROIRevenuePage() {
                       </td>
                       <td className="px-6 py-4 text-muted-foreground">{lead.leadSource}</td>
                       <td className="px-6 py-4">{stageBadge(lead.stage)}</td>
-                      <td className="px-6 py-4 text-right font-semibold text-card-foreground">{formatCurrencyFull(lead.estimatedRevenue)}</td>
+                      <td className="px-6 py-4 text-right font-semibold text-card-foreground whitespace-nowrap">{formatCurrencyFull(lead.estimatedRevenue)}</td>
                     </tr>
                   ))}
                 </tbody>
