@@ -430,16 +430,6 @@ export const roiRevenueSchema: PageSchema = {
   pageTitle: "ROI & Revenue",
   groups: [
     {
-      title: "Lead KPIs",
-      fields: [
-        { key: "b2bLeads", label: "B2B Leads", type: "number" },
-        { key: "previousB2bLeads", label: "Previous B2B Leads", type: "number" },
-        { key: "b2gLeads", label: "B2G Leads", type: "number" },
-        { key: "previousB2gLeads", label: "Previous B2G Leads", type: "number" },
-        { key: "previousEstimatedRevenue", label: "Previous Est. Revenue", type: "currency" },
-      ],
-    },
-    {
       title: "Investment Breakdown",
       fields: [
         { key: "websiteSEO", label: "Website/SEO (Rp)", type: "currency" },
