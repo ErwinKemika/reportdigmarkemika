@@ -461,8 +461,8 @@ export const roiRevenueSchema: PageSchema = {
       columns: [
         { key: "projectName", label: "Project Name", type: "text" },
         { key: "project", label: "Project", type: "select", options: ["Non-Gov", "Gov"] },
-        { key: "leadSource", label: "Lead Source", type: "text" },
-        { key: "stage", label: "Stage", type: "text" },
+        { key: "leadSource", label: "Lead Source", type: "select", options: ["Website", "Referral", "Social Media", "Event", "Cold Call", "Other"] },
+        { key: "stage", label: "Stage", type: "select", options: ["New Lead", "Contacted", "Proposal", "Negotiation", "Closed Won", "Closed Lost"] },
         { key: "estimatedRevenue", label: "Est. Revenue (Rp)", type: "currency" },
       ],
       maxRows: 10,
