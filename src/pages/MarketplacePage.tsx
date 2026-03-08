@@ -4,6 +4,8 @@ import { transformMarketplace, marketplacePrevMapper, transformWebstoreSales, we
 import { NoData } from "@/components/dashboard/NoData";
 import { Store, TrendingUp, TrendingDown, ShoppingBag, ShoppingCart, Eye, Package } from "lucide-react";
 import { useMonth } from "@/contexts/MonthContext";
+import { PageEditDialog } from "@/components/dashboard/PageEditDialog";
+import { webstoreSalesSchema } from "@/components/dashboard/pageEditSchemas";
 
 export default function MarketplacePage() {
   const { selectedMonth, selectedYear } = useMonth();
