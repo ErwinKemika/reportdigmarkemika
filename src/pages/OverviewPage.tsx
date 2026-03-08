@@ -568,7 +568,7 @@ export default function OverviewPage() {
       shopCR, prevShopCR,
       topChannel, topChannelNotes,
     };
-  }, [webstore.data, marketplace.data, roi.data, website.data, prevWebstore.data, prevMarketplace.data, prevRoi.data, prevWebsite.data, manualData, shopeeAds.data, adsBudget.data, salesRecapData, prevSalesRecapData, selectedMonth, selectedYear]);
+  }, [webstore.data, marketplace.data, roi.data, website.data, prevWebstore.data, prevMarketplace.data, prevRoi.data, prevWebsite.data, manualData, shopeeAds.data, prevShopeeAds.data, adsBudget.data, salesRecapData, prevSalesRecapData, selectedMonth, selectedYear]);
 
   if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
   const hasAnyData = webstore.data || marketplace.data || roi.data || website.data;
