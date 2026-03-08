@@ -66,6 +66,15 @@ export default function WebsitePerformancePage() {
           </ResponsiveContainer>
         </section>
       </div>
+
+      {/* Tracking Button Performance */}
+      <TrackingButtonPerformance
+        platforms={wsData?.trackingPlatforms || [
+          { name: "Shopee Official", totalClicks: 0, previousClicks: 0, topProducts: [] },
+          { name: "Tokopedia Store", totalClicks: 0, previousClicks: 0, topProducts: [] },
+          { name: "Inaproc (B2B)", totalClicks: 0, previousClicks: 0, topProducts: [] },
+        ]}
+      />
     </div>
   );
 }

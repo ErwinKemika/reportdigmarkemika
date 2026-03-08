@@ -76,14 +76,6 @@ export default function WebstoreSalesPage() {
         </section>
       </div>
 
-      {/* Tracking Button Performance */}
-      <TrackingButtonPerformance
-        platforms={data.trackingPlatforms || [
-          { name: "Shopee Official", totalClicks: 0, previousClicks: 0, topProducts: [] },
-          { name: "Tokopedia Store", totalClicks: 0, previousClicks: 0, topProducts: [] },
-          { name: "Inaproc (B2B)", totalClicks: 0, previousClicks: 0, topProducts: [] },
-        ]}
-      />
     </div>
   );
 }
