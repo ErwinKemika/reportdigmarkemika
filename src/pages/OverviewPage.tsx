@@ -28,8 +28,8 @@ import type { MonthName } from "@/contexts/MonthContext";
 import { MONTHS } from "@/contexts/MonthContext";
 import { Progress } from "@/components/ui/progress";
 import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer,
-  Tooltip as RechartsTooltip, Legend,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer,
+  Tooltip as RechartsTooltip, Legend, Cell,
 } from "recharts";
 
 function getPreviousMonthYear(month: MonthName, year: number) {
@@ -265,7 +265,7 @@ function ChartTooltipContent({ active, payload, label }: any) {
           <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
           <span className="text-muted-foreground">{entry.name}:</span>
           <span className="font-bold text-card-foreground">
-            {entry.name === "Revenue" ? formatCurrencyFull(entry.value) : formatNumber(entry.value)}
+            {["Revenue", "Webstore", "Tokopedia", "Shopee"].includes(entry.name) ? formatCurrencyFull(entry.value) : formatNumber(entry.value)}
           </span>
         </div>
       ))}
@@ -532,22 +532,7 @@ export default function OverviewPage() {
     const topChannel = manual?.topRevenueChannel || "";
     const topChannelNotes = manual?.topChannelNotes || "";
 
-    // Chart data (simulate daily spread across month)
-    const daysInMonth = new Date(selectedYear, MONTHS.indexOf(selectedMonth) + 1, 0).getDate();
-    const chartData = Array.from({ length: daysInMonth }, (_, i) => {
-      const day = i + 1;
-      const progress = day / daysInMonth;
-      const revBase = totalRevenue / daysInMonth;
-      const trafficBase = totalTraffic / daysInMonth;
-      const leadsBase = leads / daysInMonth;
-      const jitter = 0.7 + Math.sin(day * 0.8) * 0.3 + Math.cos(day * 1.2) * 0.15;
-      return {
-        name: `${selectedMonth.slice(0, 3)} ${day}`,
-        Revenue: Math.round(revBase * jitter * (0.8 + progress * 0.4)),
-        Traffic: Math.round(trafficBase * jitter * (0.85 + progress * 0.3)),
-        Leads: Math.max(0, Math.round(leadsBase * jitter * (0.7 + progress * 0.6))),
-      };
-    });
+    // Chart data — not needed here anymore, moved to YTD channel chart
 
     return {
       totalTraffic, prevTotalTraffic,
@@ -570,7 +555,6 @@ export default function OverviewPage() {
       shopRevenue: mp?.shopee?.revenue || 0, prevShopRevenue: pmp?.shopee?.revenue || 0,
       shopCR, prevShopCR,
       topChannel, topChannelNotes,
-      chartData,
     };
   }, [webstore.data, marketplace.data, roi.data, website.data, prevWebstore.data, prevMarketplace.data, prevRoi.data, prevWebsite.data, manualData, shopeeAds.data, adsBudget.data, salesRecapData, prevSalesRecapData, selectedMonth, selectedYear]);
 
@@ -695,50 +679,84 @@ export default function OverviewPage() {
 
 
 
-      {/* ─── SECTION 2 + FUNNEL (side by side) ─── */}
-      <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-6">
-        {/* Performance Trend Chart */}
-        <div className="bg-card rounded-2xl border border-border/30 shadow-card p-6">
-          <h3 className="text-sm font-bold text-card-foreground mb-4">Revenue & Traffic Trends</h3>
-          <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={agg.chartData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-                <defs>
-                  <linearGradient id="gradRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(160, 84%, 39%)" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="hsl(160, 84%, 39%)" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="gradTraffic" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(217, 91%, 60%)" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="hsl(217, 91%, 60%)" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="gradLeads" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(262, 52%, 56%)" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="hsl(262, 52%, 56%)" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 13%, 91%)" />
-                <XAxis dataKey="name" tick={{ fontSize: 10, fill: "hsl(220, 9%, 46%)" }} interval="preserveStartEnd" />
-                <YAxis yAxisId="left" tick={{ fontSize: 10, fill: "hsl(160, 84%, 39%)" }} tickFormatter={(v) => formatNumber(v)} width={55} />
-                <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10, fill: "hsl(217, 91%, 60%)" }} tickFormatter={(v) => formatNumber(v)} width={55} />
-                <RechartsTooltip content={<ChartTooltipContent />} />
-                <Legend iconType="circle" wrapperStyle={{ fontSize: 11 }} />
-                <Area yAxisId="left" type="monotone" dataKey="Revenue" stroke="hsl(160, 84%, 39%)" fill="url(#gradRevenue)" strokeWidth={2} dot={false} animationDuration={1200} />
-                <Area yAxisId="right" type="monotone" dataKey="Traffic" stroke="hsl(217, 91%, 60%)" fill="url(#gradTraffic)" strokeWidth={2} dot={false} animationDuration={1400} />
-                <Area yAxisId="right" type="monotone" dataKey="Leads" stroke="hsl(262, 52%, 56%)" fill="url(#gradLeads)" strokeWidth={2} dot={false} animationDuration={1600} />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+      {/* ─── SECTION 2: YTD CHANNEL REVENUE + FUNNEL ─── */}
+      {(() => {
+        // Build monthly channel revenue data from YTD queries
+        const channelChartData = ytdMonths.map(m => {
+          const shortLabel = m.split(" ")[0].slice(0, 3);
+          const wsRow = (ytdWebstoreRows || []).find((r: any) => r.period === m);
+          const mpRow = (ytdMarketplaceRows || []).find((r: any) => r.period === m);
+          const wsD = wsRow ? (typeof wsRow.data === "string" ? JSON.parse(wsRow.data) : wsRow.data) : null;
+          const mpD = mpRow ? (typeof mpRow.data === "string" ? JSON.parse(mpRow.data) : mpRow.data) : null;
+          const wsTransformed = wsD ? transformWebstoreSales(wsD) : null;
+          const mpTransformed = mpD ? transformMarketplace(mpD) : null;
+          const webstoreRev = wsTransformed?.totalRevenue || 0;
+          const tokRev = mpTransformed?.tokopedia?.revenue || 0;
+          const shopRev = mpTransformed?.shopee?.revenue || 0;
+          return { name: shortLabel, Webstore: webstoreRev, Tokopedia: tokRev, Shopee: shopRev };
+        });
 
-        {/* Conversion Funnel */}
-        <ConversionFunnel
-          impressions={agg.impressions}
-          clicks={agg.clicks}
-          leads={agg.leads}
-          orders={agg.orders}
-        />
-      </div>
+        // Calculate YTD totals for summary
+        const ytdWebstore = channelChartData.reduce((s, d) => s + d.Webstore, 0);
+        const ytdTokopedia = channelChartData.reduce((s, d) => s + d.Tokopedia, 0);
+        const ytdShopee = channelChartData.reduce((s, d) => s + d.Shopee, 0);
+        const ytdTotal = ytdWebstore + ytdTokopedia + ytdShopee;
+        const pctW = ytdTotal > 0 ? (ytdWebstore / ytdTotal * 100) : 0;
+        const pctT = ytdTotal > 0 ? (ytdTokopedia / ytdTotal * 100) : 0;
+        const pctS = ytdTotal > 0 ? (ytdShopee / ytdTotal * 100) : 0;
+        const best = ytdTokopedia >= ytdShopee && ytdTokopedia >= ytdWebstore ? "Tokopedia" : ytdShopee >= ytdWebstore ? "Shopee" : "Webstore";
+
+        return (
+          <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-6">
+            <div className="bg-card rounded-2xl border border-border/30 shadow-card p-6">
+              <div className="flex items-center justify-between mb-1">
+                <h3 className="text-sm font-bold text-card-foreground">Channel Revenue Contribution (YTD {selectedYear})</h3>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-semibold">🏆 {best}</span>
+              </div>
+              <p className="text-[10px] text-muted-foreground mb-4">Revenue per channel — trend bulanan & kontribusi YTD</p>
+
+              {/* YTD summary pills */}
+              <div className="flex flex-wrap gap-2 mb-4">
+                {[
+                  { label: "Webstore", value: ytdWebstore, pct: pctW, color: "hsl(217, 91%, 60%)" },
+                  { label: "Tokopedia", value: ytdTokopedia, pct: pctT, color: "hsl(142, 71%, 45%)" },
+                  { label: "Shopee", value: ytdShopee, pct: pctS, color: "hsl(24, 95%, 53%)" },
+                ].map(ch => (
+                  <div key={ch.label} className="flex items-center gap-1.5 text-[10px] bg-muted/50 rounded-full px-2.5 py-1">
+                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: ch.color }} />
+                    <span className="font-semibold text-card-foreground">{ch.label}</span>
+                    <span className="text-muted-foreground">{formatCurrencyFull(ch.value)}</span>
+                    <span className="font-bold text-card-foreground">({ch.pct.toFixed(1)}%)</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="h-[280px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={channelChartData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 13%, 91%)" />
+                    <XAxis dataKey="name" tick={{ fontSize: 11, fill: "hsl(220, 9%, 46%)" }} />
+                    <YAxis tick={{ fontSize: 10, fill: "hsl(220, 9%, 46%)" }} tickFormatter={(v) => formatCurrencyFull(v)} width={75} />
+                    <RechartsTooltip content={<ChartTooltipContent />} />
+                    <Legend iconType="circle" wrapperStyle={{ fontSize: 11 }} />
+                    <Bar dataKey="Webstore" stackId="a" fill="hsl(217, 91%, 60%)" radius={[0, 0, 0, 0]} />
+                    <Bar dataKey="Tokopedia" stackId="a" fill="hsl(142, 71%, 45%)" radius={[0, 0, 0, 0]} />
+                    <Bar dataKey="Shopee" stackId="a" fill="hsl(24, 95%, 53%)" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Conversion Funnel */}
+            <ConversionFunnel
+              impressions={agg.impressions}
+              clicks={agg.clicks}
+              leads={agg.leads}
+              orders={agg.orders}
+            />
+          </div>
+        );
+      })()}
 
       {/* ─── SECTION 3: CHANNEL PERFORMANCE ─── */}
       <div>
