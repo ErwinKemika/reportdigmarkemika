@@ -687,37 +687,8 @@ export default function OverviewPage() {
         </div>
       </div>
 
-      {/* ─── YTD TARGET ACHIEVEMENT ─── */}
-      <div>
-        <h3 className="text-sm font-bold text-card-foreground mb-1">🎯 Yearly Target Achievement (YTD — {selectedYear})</h3>
-        <p className="text-[10px] text-muted-foreground mb-4">Monitoring progress sampai {selectedMonth} {selectedYear}</p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <YTDTargetCard
-            title="E-Commerce Revenue"
-            ytdValue={ytd.totalRevenue}
-            target={YEARLY_TARGETS.ecommerceRevenue}
-            formatter={formatCurrencyFull}
-            icon={<DollarSign className="w-4 h-4" />}
-            gradient="from-[hsl(160,84%,32%)] to-[hsl(142,60%,42%)]"
-          />
-          <YTDTargetCard
-            title="Total Traffic"
-            ytdValue={ytd.totalTraffic}
-            target={YEARLY_TARGETS.traffic}
-            formatter={formatNumber}
-            icon={<Users className="w-4 h-4" />}
-            gradient="from-[hsl(217,91%,50%)] to-[hsl(210,100%,62%)]"
-          />
-          <YTDTargetCard
-            title="Conversion Rate"
-            ytdValue={ytd.weightedCR}
-            target={YEARLY_TARGETS.conversionRate}
-            formatter={(n) => n.toFixed(2) + "%"}
-            icon={<Percent className="w-4 h-4" />}
-            gradient="from-[hsl(245,58%,44%)] to-[hsl(262,52%,55%)]"
-          />
-        </div>
-      </div>
+
+
 
       {/* ─── SECTION 2 + FUNNEL (side by side) ─── */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-6">
