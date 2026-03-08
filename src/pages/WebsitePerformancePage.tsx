@@ -5,6 +5,8 @@ import { KPICard } from "@/components/dashboard/KPICard";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
 import { TrackingButtonPerformance } from "@/components/dashboard/TrackingButtonPerformance";
+import { PageEditDialog } from "@/components/dashboard/PageEditDialog";
+import { webstoreSalesSchema } from "@/components/dashboard/pageEditSchemas";
 import { Globe, Search, Share2 } from "lucide-react";
 import { useMonth } from "@/contexts/MonthContext";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
@@ -68,6 +70,10 @@ export default function WebsitePerformancePage() {
       </div>
 
       {/* Tracking Button Performance */}
+      <div className="flex items-center justify-between">
+        <SectionHeader title="Tracking Button Performance" />
+        <PageEditDialog schema={webstoreSalesSchema} />
+      </div>
       <TrackingButtonPerformance
         platforms={wsData?.trackingPlatforms || [
           { name: "Shopee Official", totalClicks: 0, previousClicks: 0, topProducts: [] },
