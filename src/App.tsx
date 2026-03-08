@@ -31,7 +31,7 @@ function AppRoutes() {
       <Routes>
         <Route path="/" element={<OverviewPage />} />
         <Route path="/website" element={<WebsitePerformancePage />} />
-        <Route path="/webstore" element={<WebstoreSalesPage />} />
+        
         <Route path="/marketplace" element={<MarketplacePage />} />
         <Route path="/benchmark" element={<BenchmarkPage />} />
         <Route path="/ads-budget" element={<AdsBudgetPage />} />

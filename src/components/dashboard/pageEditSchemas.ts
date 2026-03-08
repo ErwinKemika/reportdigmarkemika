@@ -608,7 +608,7 @@ export const overviewSchema: PageSchema = {
 // Map page routes to schemas
 export const PAGE_SCHEMA_MAP: Record<string, PageSchema> = {
   "/website": websitePerformanceSchema,
-  "/webstore": webstoreSalesSchema,
+  
   "/marketplace": marketplaceSchema,
   "/shopee-ads": shopeeAdsSchema,
   "/ads-budget": adsBudgetSchema,
