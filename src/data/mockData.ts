@@ -134,6 +134,12 @@ export interface MarketplaceData {
     previousCancelledOrders: number;
     topProducts: { name: string; units: number; revenue: number }[];
   };
+  webstore?: {
+    totalRevenue: number;
+    previousRevenue: number;
+    topProductsViewed: { name: string; sessions: number }[];
+    topProductsSold: { name: string; units: number; price: number; revenue: number }[];
+  };
 }
 
 // ==================== PAGE 5 — SHOPEE ADS ====================

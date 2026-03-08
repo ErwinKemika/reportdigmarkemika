@@ -9,7 +9,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import OverviewPage from "./pages/OverviewPage";
 import WebsitePerformancePage from "./pages/WebsitePerformancePage";
-import WebstoreSalesPage from "./pages/WebstoreSalesPage";
+
 import MarketplacePage from "./pages/MarketplacePage";
 import ShopeeAdsPage from "./pages/ShopeeAdsPage";
 import AdsBudgetPage from "./pages/AdsBudgetPage";
@@ -31,7 +31,7 @@ function AppRoutes() {
       <Routes>
         <Route path="/" element={<OverviewPage />} />
         <Route path="/website" element={<WebsitePerformancePage />} />
-        <Route path="/webstore" element={<WebstoreSalesPage />} />
+        
         <Route path="/marketplace" element={<MarketplacePage />} />
         <Route path="/benchmark" element={<BenchmarkPage />} />
         <Route path="/ads-budget" element={<AdsBudgetPage />} />

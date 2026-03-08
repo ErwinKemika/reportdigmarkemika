@@ -27,7 +27,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { label: "Overview", path: "/", icon: LayoutDashboard },
   { label: "Website Performance", path: "/website", icon: Globe },
-  { label: "Webstore Sales", path: "/webstore", icon: ShoppingCart },
+  
   { label: "Marketplace", path: "/marketplace", icon: Store },
   { label: "Benchmark", path: "/benchmark", icon: BarChart3 },
   {
