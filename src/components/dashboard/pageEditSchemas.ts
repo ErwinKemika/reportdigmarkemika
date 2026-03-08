@@ -86,6 +86,35 @@ export const webstoreSalesSchema: PageSchema = {
         { key: "conversionRate", label: "Conversion Rate (%)", type: "percent" },
       ],
     },
+  ],
+  arrayFields: [
+    {
+      key: "topProductsViewed",
+      label: "Top Products Viewed",
+      columns: [
+        { key: "name", label: "Product Name", type: "text" },
+        { key: "sessions", label: "Views", type: "number" },
+      ],
+      maxRows: 5,
+    },
+    {
+      key: "topProductsSold",
+      label: "Top Products Sold",
+      columns: [
+        { key: "name", label: "Product Name", type: "text" },
+        { key: "units", label: "Units Sold", type: "number" },
+        { key: "pricePerUnit", label: "Price/Unit (Rp)", type: "currency" },
+      ],
+      maxRows: 5,
+    },
+  ],
+};
+
+// ===== TRACKING BUTTON PERFORMANCE =====
+export const trackingButtonSchema: PageSchema = {
+  pageKey: "webstore-sales",
+  pageTitle: "Tracking Button Performance",
+  groups: [
     {
       title: "Tracking - Shopee Official",
       fields: [
@@ -109,25 +138,6 @@ export const webstoreSalesSchema: PageSchema = {
     },
   ],
   arrayFields: [
-    {
-      key: "topProductsViewed",
-      label: "Top Products Viewed",
-      columns: [
-        { key: "name", label: "Product Name", type: "text" },
-        { key: "sessions", label: "Views", type: "number" },
-      ],
-      maxRows: 5,
-    },
-    {
-      key: "topProductsSold",
-      label: "Top Products Sold",
-      columns: [
-        { key: "name", label: "Product Name", type: "text" },
-        { key: "units", label: "Units Sold", type: "number" },
-        { key: "pricePerUnit", label: "Price/Unit (Rp)", type: "currency" },
-      ],
-      maxRows: 5,
-    },
     {
       key: "trackingShopee",
       label: "Tracking - Shopee Official",
