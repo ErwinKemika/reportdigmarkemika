@@ -356,6 +356,7 @@ export default function OverviewPage() {
   const website = useSourceData(period, "website-performance", selectedMonth, getWebsitePerformanceData, transformWebsitePerformance);
   const prevWebsite = useSourceData(prev.period, "website-performance", prev.month, getWebsitePerformanceData, transformWebsitePerformance);
   const shopeeAds = useSourceData(period, "shopee-ads", selectedMonth, getShopeeAdsData, transformShopeeAds);
+  const prevShopeeAds = useSourceData(prev.period, "shopee-ads", prev.month, getShopeeAdsData, transformShopeeAds);
   const adsBudget = useSourceData(period, "ads-budget", selectedMonth, getAdsBudgetData, transformAdsBudget);
 
   const { data: manualData, isLoading: manualLoading } = usePageData(period, "overview-manual");
