@@ -265,7 +265,7 @@ function ChartTooltipContent({ active, payload, label }: any) {
           <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
           <span className="text-muted-foreground">{entry.name}:</span>
           <span className="font-bold text-card-foreground">
-            {entry.name === "Revenue" ? formatCurrencyFull(entry.value) : formatNumber(entry.value)}
+            {["Revenue", "Webstore", "Tokopedia", "Shopee"].includes(entry.name) ? formatCurrencyFull(entry.value) : formatNumber(entry.value)}
           </span>
         </div>
       ))}
