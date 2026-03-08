@@ -555,7 +555,6 @@ export default function OverviewPage() {
       shopRevenue: mp?.shopee?.revenue || 0, prevShopRevenue: pmp?.shopee?.revenue || 0,
       shopCR, prevShopCR,
       topChannel, topChannelNotes,
-      chartData,
     };
   }, [webstore.data, marketplace.data, roi.data, website.data, prevWebstore.data, prevMarketplace.data, prevRoi.data, prevWebsite.data, manualData, shopeeAds.data, adsBudget.data, salesRecapData, prevSalesRecapData, selectedMonth, selectedYear]);
 
