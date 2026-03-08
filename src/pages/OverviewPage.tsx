@@ -28,8 +28,8 @@ import type { MonthName } from "@/contexts/MonthContext";
 import { MONTHS } from "@/contexts/MonthContext";
 import { Progress } from "@/components/ui/progress";
 import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer,
-  Tooltip as RechartsTooltip, Legend,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer,
+  Tooltip as RechartsTooltip, Legend, Cell,
 } from "recharts";
 
 function getPreviousMonthYear(month: MonthName, year: number) {
