@@ -355,6 +355,89 @@ export default function OverviewPage() {
   const { data: salesRecapData, isLoading: salesRecapLoading } = usePageData(period, "sales_recap_classified_by_channel");
   const { data: prevSalesRecapData } = usePageData(prev.period, "sales_recap_classified_by_channel");
 
+  // ── YTD data: fetch all months up to selected month for the year ──
+  const ytdMonths = useMemo(() => {
+    const idx = MONTHS.indexOf(selectedMonth);
+    return MONTHS.slice(0, idx + 1).map(m => `${m} ${selectedYear}`);
+  }, [selectedMonth, selectedYear]);
+
+  const { data: ytdWebstoreRows } = useQuery({
+    queryKey: ["ytd-webstore", selectedYear, selectedMonth],
+    queryFn: async () => {
+      const { data } = await supabase.from("page_data").select("data, period")
+        .eq("page_key", "webstore-sales").in("period", ytdMonths);
+      return data || [];
+    },
+  });
+
+  const { data: ytdMarketplaceRows } = useQuery({
+    queryKey: ["ytd-marketplace", selectedYear, selectedMonth],
+    queryFn: async () => {
+      const { data } = await supabase.from("page_data").select("data, period")
+        .eq("page_key", "marketplace").in("period", ytdMonths);
+      return data || [];
+    },
+  });
+
+  const { data: ytdWebsiteRows } = useQuery({
+    queryKey: ["ytd-website", selectedYear, selectedMonth],
+    queryFn: async () => {
+      const { data } = await supabase.from("page_data").select("data, period")
+        .eq("page_key", "website-performance").in("period", ytdMonths);
+      return data || [];
+    },
+  });
+
+  const ytd = useMemo(() => {
+    let totalRevenue = 0;
+    let totalTraffic = 0;
+    let totalOrders = 0;
+
+    // Webstore revenue
+    (ytdWebstoreRows || []).forEach((row: any) => {
+      const d = typeof row.data === "string" ? JSON.parse(row.data) : row.data;
+      const transformed = transformWebstoreSales(d);
+      totalRevenue += transformed?.totalRevenue || 0;
+    });
+
+    // Marketplace revenue + traffic + orders
+    (ytdMarketplaceRows || []).forEach((row: any) => {
+      const d = typeof row.data === "string" ? JSON.parse(row.data) : row.data;
+      const transformed = transformMarketplace(d);
+      totalRevenue += transformed?.totalCombinedRevenue || 0;
+      totalTraffic += (transformed?.tokopedia?.visitors || 0) + (transformed?.shopee?.visitors || 0);
+      totalOrders += (transformed?.tokopedia?.unitsSold || 0) + (transformed?.shopee?.orders || 0);
+    });
+
+    // Website traffic
+    (ytdWebsiteRows || []).forEach((row: any) => {
+      const d = typeof row.data === "string" ? JSON.parse(row.data) : row.data;
+      const transformed = transformWebsitePerformance(d);
+      totalTraffic += transformed?.totalSessions?.value || 0;
+    });
+
+    // Also include current month mock data if no DB data for it
+    const hasWsDb = (ytdWebstoreRows || []).some((r: any) => r.period === period);
+    const hasMpDb = (ytdMarketplaceRows || []).some((r: any) => r.period === period);
+    const hasWebDb = (ytdWebsiteRows || []).some((r: any) => r.period === period);
+
+    if (!hasWsDb && webstore.data) {
+      totalRevenue += webstore.data.totalRevenue || 0;
+    }
+    if (!hasMpDb && marketplace.data) {
+      totalRevenue += marketplace.data.totalCombinedRevenue || 0;
+      totalTraffic += (marketplace.data.tokopedia?.visitors || 0) + (marketplace.data.shopee?.visitors || 0);
+      totalOrders += (marketplace.data.tokopedia?.unitsSold || 0) + (marketplace.data.shopee?.orders || 0);
+    }
+    if (!hasWebDb && website.data) {
+      totalTraffic += website.data.totalSessions?.value || 0;
+    }
+
+    const weightedCR = totalTraffic > 0 ? (totalOrders / totalTraffic) * 100 : 0;
+
+    return { totalRevenue, totalTraffic, weightedCR };
+  }, [ytdWebstoreRows, ytdMarketplaceRows, ytdWebsiteRows, webstore.data, marketplace.data, website.data, period]);
+
   const isLoading = webstore.isLoading || marketplace.isLoading || roi.isLoading || website.isLoading || manualLoading || salesRecapLoading;
 
   const agg = useMemo(() => {
