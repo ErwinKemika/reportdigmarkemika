@@ -4,6 +4,8 @@ import { transformMarketplace, marketplacePrevMapper, transformWebstoreSales, we
 import { NoData } from "@/components/dashboard/NoData";
 import { Store, TrendingUp, TrendingDown, ShoppingBag, ShoppingCart, Eye, Package } from "lucide-react";
 import { useMonth } from "@/contexts/MonthContext";
+import { PageEditDialog } from "@/components/dashboard/PageEditDialog";
+import { webstoreSalesSchema } from "@/components/dashboard/pageEditSchemas";
 
 export default function MarketplacePage() {
   const { selectedMonth, selectedYear } = useMonth();
@@ -208,9 +210,12 @@ export default function MarketplacePage() {
               </div>
               <h3 className="text-xl font-bold text-card-foreground">Webstore Sales</h3>
             </div>
-            <div className="flex items-center gap-1.5 text-xs">
-              <span className="px-3 py-1 rounded-md border border-border/50 bg-muted/50 font-medium text-card-foreground">{selectedMonth}</span>
-              <span className="px-3 py-1 rounded-md border border-border/50 bg-muted/50 font-medium text-card-foreground">{selectedYear}</span>
+            <div className="flex items-center gap-2">
+              <PageEditDialog schema={webstoreSalesSchema} />
+              <div className="flex items-center gap-1.5 text-xs">
+                <span className="px-3 py-1 rounded-md border border-border/50 bg-muted/50 font-medium text-card-foreground">{selectedMonth}</span>
+                <span className="px-3 py-1 rounded-md border border-border/50 bg-muted/50 font-medium text-card-foreground">{selectedYear}</span>
+              </div>
             </div>
           </div>
 
