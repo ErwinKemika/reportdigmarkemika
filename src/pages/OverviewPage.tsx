@@ -22,8 +22,11 @@ import {
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import type { MonthName } from "@/contexts/MonthContext";
 import { MONTHS } from "@/contexts/MonthContext";
+import { Progress } from "@/components/ui/progress";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer,
   Tooltip as RechartsTooltip, Legend,
@@ -270,6 +273,67 @@ function ChartTooltipContent({ active, payload, label }: any) {
   );
 }
 
+// ============ YEARLY TARGETS ============
+const YEARLY_TARGETS = {
+  ecommerceRevenue: 1_500_000_000, // Rp 1,5 Miliar
+  traffic: 15_000,
+  conversionRate: 2.0, // 2.00%
+};
+
+function YTDTargetCard({ title, ytdValue, target, formatter, icon, gradient, unit }: {
+  title: string;
+  ytdValue: number;
+  target: number;
+  formatter: (n: number) => string;
+  icon: React.ReactNode;
+  gradient: string;
+  unit?: string;
+}) {
+  const achievementPct = target > 0 ? (ytdValue / target) * 100 : 0;
+  const clampedPct = Math.min(achievementPct, 100);
+  const isOnTrack = achievementPct >= 50; // rough midpoint check
+
+  return (
+    <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${gradient} p-5 shadow-lg border border-white/10`}>
+      <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-white/5 -translate-y-8 translate-x-8" />
+      <div className="relative z-10">
+        <div className="flex items-center gap-2 mb-3">
+          <div className="p-1.5 rounded-lg bg-white/20 text-white/90">{icon}</div>
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-white/80">{title}</span>
+        </div>
+        <div className="flex items-end justify-between mb-3">
+          <div>
+            <p className="text-2xl font-extrabold text-white tracking-tight">{formatter(ytdValue)}</p>
+            <p className="text-[10px] text-white/50 mt-0.5">Target: {formatter(target)}{unit || ""}</p>
+          </div>
+          <div className="text-right">
+            <p className={`text-3xl font-black ${achievementPct >= 100 ? "text-green-200" : "text-white"}`}>
+              {achievementPct.toFixed(1)}%
+            </p>
+            <p className="text-[10px] text-white/50">achieved</p>
+          </div>
+        </div>
+        <div className="relative">
+          <div className="w-full h-2.5 rounded-full bg-white/15 overflow-hidden">
+            <div
+              className={`h-full rounded-full transition-all duration-1000 ease-out ${achievementPct >= 100 ? "bg-green-300" : "bg-white/70"}`}
+              style={{ width: `${clampedPct}%` }}
+            />
+          </div>
+          {/* Quarter markers */}
+          <div className="flex justify-between mt-1">
+            <span className="text-[8px] text-white/30">0%</span>
+            <span className="text-[8px] text-white/30">25%</span>
+            <span className="text-[8px] text-white/30">50%</span>
+            <span className="text-[8px] text-white/30">75%</span>
+            <span className="text-[8px] text-white/30">100%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ============ MAIN PAGE ============
 export default function OverviewPage() {
   const { selectedMonth, selectedYear, period } = useMonth();
@@ -290,6 +354,89 @@ export default function OverviewPage() {
   const { data: manualData, isLoading: manualLoading } = usePageData(period, "overview-manual");
   const { data: salesRecapData, isLoading: salesRecapLoading } = usePageData(period, "sales_recap_classified_by_channel");
   const { data: prevSalesRecapData } = usePageData(prev.period, "sales_recap_classified_by_channel");
+
+  // ── YTD data: fetch all months up to selected month for the year ──
+  const ytdMonths = useMemo(() => {
+    const idx = MONTHS.indexOf(selectedMonth);
+    return MONTHS.slice(0, idx + 1).map(m => `${m} ${selectedYear}`);
+  }, [selectedMonth, selectedYear]);
+
+  const { data: ytdWebstoreRows } = useQuery({
+    queryKey: ["ytd-webstore", selectedYear, selectedMonth],
+    queryFn: async () => {
+      const { data } = await supabase.from("page_data").select("data, period")
+        .eq("page_key", "webstore-sales").in("period", ytdMonths);
+      return data || [];
+    },
+  });
+
+  const { data: ytdMarketplaceRows } = useQuery({
+    queryKey: ["ytd-marketplace", selectedYear, selectedMonth],
+    queryFn: async () => {
+      const { data } = await supabase.from("page_data").select("data, period")
+        .eq("page_key", "marketplace").in("period", ytdMonths);
+      return data || [];
+    },
+  });
+
+  const { data: ytdWebsiteRows } = useQuery({
+    queryKey: ["ytd-website", selectedYear, selectedMonth],
+    queryFn: async () => {
+      const { data } = await supabase.from("page_data").select("data, period")
+        .eq("page_key", "website-performance").in("period", ytdMonths);
+      return data || [];
+    },
+  });
+
+  const ytd = useMemo(() => {
+    let totalRevenue = 0;
+    let totalTraffic = 0;
+    let totalOrders = 0;
+
+    // Webstore revenue
+    (ytdWebstoreRows || []).forEach((row: any) => {
+      const d = typeof row.data === "string" ? JSON.parse(row.data) : row.data;
+      const transformed = transformWebstoreSales(d);
+      totalRevenue += transformed?.totalRevenue || 0;
+    });
+
+    // Marketplace revenue + traffic + orders
+    (ytdMarketplaceRows || []).forEach((row: any) => {
+      const d = typeof row.data === "string" ? JSON.parse(row.data) : row.data;
+      const transformed = transformMarketplace(d);
+      totalRevenue += transformed?.totalCombinedRevenue || 0;
+      totalTraffic += (transformed?.tokopedia?.visitors || 0) + (transformed?.shopee?.visitors || 0);
+      totalOrders += (transformed?.tokopedia?.unitsSold || 0) + (transformed?.shopee?.orders || 0);
+    });
+
+    // Website traffic
+    (ytdWebsiteRows || []).forEach((row: any) => {
+      const d = typeof row.data === "string" ? JSON.parse(row.data) : row.data;
+      const transformed = transformWebsitePerformance(d);
+      totalTraffic += transformed?.totalSessions?.value || 0;
+    });
+
+    // Also include current month mock data if no DB data for it
+    const hasWsDb = (ytdWebstoreRows || []).some((r: any) => r.period === period);
+    const hasMpDb = (ytdMarketplaceRows || []).some((r: any) => r.period === period);
+    const hasWebDb = (ytdWebsiteRows || []).some((r: any) => r.period === period);
+
+    if (!hasWsDb && webstore.data) {
+      totalRevenue += webstore.data.totalRevenue || 0;
+    }
+    if (!hasMpDb && marketplace.data) {
+      totalRevenue += marketplace.data.totalCombinedRevenue || 0;
+      totalTraffic += (marketplace.data.tokopedia?.visitors || 0) + (marketplace.data.shopee?.visitors || 0);
+      totalOrders += (marketplace.data.tokopedia?.unitsSold || 0) + (marketplace.data.shopee?.orders || 0);
+    }
+    if (!hasWebDb && website.data) {
+      totalTraffic += website.data.totalSessions?.value || 0;
+    }
+
+    const weightedCR = totalTraffic > 0 ? (totalOrders / totalTraffic) * 100 : 0;
+
+    return { totalRevenue, totalTraffic, weightedCR };
+  }, [ytdWebstoreRows, ytdMarketplaceRows, ytdWebsiteRows, webstore.data, marketplace.data, website.data, period]);
 
   const isLoading = webstore.isLoading || marketplace.isLoading || roi.isLoading || website.isLoading || manualLoading || salesRecapLoading;
 
@@ -504,6 +651,38 @@ export default function OverviewPage() {
             icon={<TrendingUp className="w-4 h-4" />}
             tooltip="ROMI = (Grand Total Revenue - Marketing Expense) / Marketing Expense × 100 — dari Sales Recap"
             gradientKey="roi"
+          />
+        </div>
+      </div>
+
+      {/* ─── YTD TARGET ACHIEVEMENT ─── */}
+      <div>
+        <h3 className="text-sm font-bold text-card-foreground mb-1">🎯 Yearly Target Achievement (YTD — {selectedYear})</h3>
+        <p className="text-[10px] text-muted-foreground mb-4">Monitoring progress sampai {selectedMonth} {selectedYear}</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <YTDTargetCard
+            title="E-Commerce Revenue"
+            ytdValue={ytd.totalRevenue}
+            target={YEARLY_TARGETS.ecommerceRevenue}
+            formatter={formatCurrencyFull}
+            icon={<DollarSign className="w-4 h-4" />}
+            gradient="from-[hsl(160,84%,32%)] to-[hsl(142,60%,42%)]"
+          />
+          <YTDTargetCard
+            title="Total Traffic"
+            ytdValue={ytd.totalTraffic}
+            target={YEARLY_TARGETS.traffic}
+            formatter={formatNumber}
+            icon={<Users className="w-4 h-4" />}
+            gradient="from-[hsl(217,91%,50%)] to-[hsl(210,100%,62%)]"
+          />
+          <YTDTargetCard
+            title="Conversion Rate"
+            ytdValue={ytd.weightedCR}
+            target={YEARLY_TARGETS.conversionRate}
+            formatter={(n) => n.toFixed(2) + "%"}
+            icon={<Percent className="w-4 h-4" />}
+            gradient="from-[hsl(245,58%,44%)] to-[hsl(262,52%,55%)]"
           />
         </div>
       </div>
