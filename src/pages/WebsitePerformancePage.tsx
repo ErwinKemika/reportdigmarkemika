@@ -1,9 +1,10 @@
 import { useMergedPageData } from "@/hooks/useMergedPageData";
-import { getWebsitePerformanceData } from "@/data/mockData";
-import { transformWebsitePerformance, websitePerformancePrevMapper } from "@/lib/dataTransformers";
+import { getWebsitePerformanceData, getWebstoreSalesData } from "@/data/mockData";
+import { transformWebsitePerformance, websitePerformancePrevMapper, transformWebstoreSales } from "@/lib/dataTransformers";
 import { KPICard } from "@/components/dashboard/KPICard";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
+import { TrackingButtonPerformance } from "@/components/dashboard/TrackingButtonPerformance";
 import { Globe, Search, Share2 } from "lucide-react";
 import { useMonth } from "@/contexts/MonthContext";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
