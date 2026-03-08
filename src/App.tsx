@@ -9,7 +9,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import OverviewPage from "./pages/OverviewPage";
 import WebsitePerformancePage from "./pages/WebsitePerformancePage";
-import WebstoreSalesPage from "./pages/WebstoreSalesPage";
+
 import MarketplacePage from "./pages/MarketplacePage";
 import ShopeeAdsPage from "./pages/ShopeeAdsPage";
 import AdsBudgetPage from "./pages/AdsBudgetPage";
