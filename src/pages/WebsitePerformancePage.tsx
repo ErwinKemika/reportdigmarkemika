@@ -6,7 +6,7 @@ import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
 import { TrackingButtonPerformance } from "@/components/dashboard/TrackingButtonPerformance";
 import { PageEditDialog } from "@/components/dashboard/PageEditDialog";
-import { webstoreSalesSchema } from "@/components/dashboard/pageEditSchemas";
+import { trackingButtonSchema } from "@/components/dashboard/pageEditSchemas";
 import { Globe, Search, Share2 } from "lucide-react";
 import { useMonth } from "@/contexts/MonthContext";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
