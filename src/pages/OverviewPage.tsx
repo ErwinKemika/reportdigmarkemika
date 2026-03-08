@@ -548,6 +548,10 @@ export default function OverviewPage() {
       topByRevenue, topByUnits,
       prevTopByRevenue, prevTopByUnits,
       impressions, clicks, leads, orders,
+      prevImpressions: prevAds?.impressions?.value || 0,
+      prevClicks: prevAds?.clicks?.value || 0,
+      prevLeads: (proi?.b2bLeads?.value || 0) + (proi?.b2gLeads?.value || 0),
+      prevOrders: prevTotalOrders,
       // Channel
       webTraffic, prevWebTraffic: pweb?.totalSessions?.value || 0,
       webstoreRev, prevWebstoreRev: pws?.totalRevenue || 0,
