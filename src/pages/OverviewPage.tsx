@@ -765,6 +765,10 @@ export default function OverviewPage() {
               clicks={agg.clicks}
               leads={agg.leads}
               orders={agg.orders}
+              prevImpressions={agg.prevImpressions}
+              prevClicks={agg.prevClicks}
+              prevLeads={agg.prevLeads}
+              prevOrders={agg.prevOrders}
             />
           </div>
         );
