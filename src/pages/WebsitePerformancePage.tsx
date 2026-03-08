@@ -70,6 +70,10 @@ export default function WebsitePerformancePage() {
       </div>
 
       {/* Tracking Button Performance */}
+      <div className="flex items-center justify-between">
+        <SectionHeader title="Tracking Button Performance" />
+        <PageEditDialog schema={webstoreSalesSchema} />
+      </div>
       <TrackingButtonPerformance
         platforms={wsData?.trackingPlatforms || [
           { name: "Shopee Official", totalClicks: 0, previousClicks: 0, topProducts: [] },
