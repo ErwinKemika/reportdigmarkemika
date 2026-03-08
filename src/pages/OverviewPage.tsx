@@ -180,43 +180,46 @@ function ChannelCard({ name, icon, traffic, prevTraffic, revenue, prevRevenue, c
 }
 
 // ============ CONVERSION FUNNEL ============
-function ConversionFunnel({ impressions, clicks, leads, orders }: {
+function ConversionFunnel({ impressions, clicks, leads, orders, prevImpressions, prevClicks, prevLeads, prevOrders }: {
   impressions: number;
   clicks: number;
   leads: number;
   orders: number;
+  prevImpressions: number;
+  prevClicks: number;
+  prevLeads: number;
+  prevOrders: number;
 }) {
-  const maxVal = Math.max(impressions, 1);
   const steps = [
-    { label: "Impressions ADS", value: impressions, color: "from-[hsl(217,91%,55%)] to-[hsl(217,91%,65%)]" },
-    { label: "Clicks", value: clicks, color: "from-[hsl(210,100%,55%)] to-[hsl(210,100%,65%)]" },
-    { label: "Leads", value: leads, color: "from-[hsl(245,58%,51%)] to-[hsl(262,52%,60%)]" },
-    { label: "Orders", value: orders, color: "from-[hsl(50,80%,50%)] to-[hsl(60,70%,55%)]" },
+    { label: "Impressions ADS", value: impressions, prev: prevImpressions, color: "from-[hsl(217,91%,55%)] to-[hsl(217,91%,65%)]", width: "100%" },
+    { label: "Clicks", value: clicks, prev: prevClicks, color: "from-[hsl(210,100%,55%)] to-[hsl(210,100%,65%)]", width: "78%" },
+    { label: "Leads", value: leads, prev: prevLeads, color: "from-[hsl(245,58%,51%)] to-[hsl(262,52%,60%)]", width: "55%" },
+    { label: "Orders", value: orders, prev: prevOrders, color: "from-[hsl(50,80%,50%)] to-[hsl(60,70%,55%)]", width: "35%" },
   ];
 
   return (
     <div className="bg-card rounded-2xl border border-border/30 shadow-card p-6">
       <h3 className="text-sm font-bold text-card-foreground mb-5">Conversion Funnel</h3>
       <div className="space-y-3">
-        {steps.map((step, i) => {
-          const widthPct = Math.max((step.value / maxVal) * 100, 15);
-          const convRate = i > 0 && steps[i - 1].value > 0
-            ? ((step.value / steps[i - 1].value) * 100).toFixed(2)
-            : null;
+        {steps.map((step) => {
+          const changePct = step.prev > 0 ? ((step.value - step.prev) / step.prev) * 100 : null;
+          const isUp = changePct !== null && changePct >= 0;
           return (
             <div key={step.label} className="flex items-center gap-3">
               <div className="flex-1">
                 <div
                   className={`bg-gradient-to-r ${step.color} rounded-lg py-2 px-3 flex items-center justify-center transition-all duration-500`}
-                  style={{ width: `${widthPct}%` }}
+                  style={{ width: step.width }}
                 >
                   <span className="text-[11px] font-bold text-white truncate">{step.label}</span>
                 </div>
               </div>
               <div className="w-20 text-right">
                 <p className="text-sm font-extrabold text-card-foreground">{formatNumber(step.value)}</p>
-                {convRate && (
-                  <p className="text-[9px] text-muted-foreground font-medium">{convRate}% CR</p>
+                {changePct !== null && (
+                  <p className={`text-[9px] font-medium ${isUp ? 'text-emerald-500' : 'text-destructive'}`}>
+                    {isUp ? '↑' : '↓'} {Math.abs(changePct).toFixed(1)}%
+                  </p>
                 )}
               </div>
             </div>
