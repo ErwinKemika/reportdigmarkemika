@@ -22,8 +22,11 @@ import {
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import type { MonthName } from "@/contexts/MonthContext";
 import { MONTHS } from "@/contexts/MonthContext";
+import { Progress } from "@/components/ui/progress";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer,
   Tooltip as RechartsTooltip, Legend,
