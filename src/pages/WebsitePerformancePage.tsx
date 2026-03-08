@@ -72,7 +72,7 @@ export default function WebsitePerformancePage() {
       {/* Tracking Button Performance */}
       <div className="flex items-center justify-between">
         <SectionHeader title="Tracking Button Performance" />
-        <PageEditDialog schema={webstoreSalesSchema} />
+        <PageEditDialog schema={trackingButtonSchema} />
       </div>
       <TrackingButtonPerformance
         platforms={wsData?.trackingPlatforms || [
