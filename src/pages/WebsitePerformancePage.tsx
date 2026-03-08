@@ -1,9 +1,10 @@
 import { useMergedPageData } from "@/hooks/useMergedPageData";
-import { getWebsitePerformanceData } from "@/data/mockData";
-import { transformWebsitePerformance, websitePerformancePrevMapper } from "@/lib/dataTransformers";
+import { getWebsitePerformanceData, getWebstoreSalesData } from "@/data/mockData";
+import { transformWebsitePerformance, websitePerformancePrevMapper, transformWebstoreSales } from "@/lib/dataTransformers";
 import { KPICard } from "@/components/dashboard/KPICard";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
+import { TrackingButtonPerformance } from "@/components/dashboard/TrackingButtonPerformance";
 import { Globe, Search, Share2 } from "lucide-react";
 import { useMonth } from "@/contexts/MonthContext";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
@@ -18,6 +19,7 @@ export default function WebsitePerformancePage() {
   const isDark = theme === "dark";
   const CHART_COLORS = isDark ? CHART_COLORS_DARK : CHART_COLORS_LIGHT;
   const { data, isLoading } = useMergedPageData("website-performance", getWebsitePerformanceData, transformWebsitePerformance, websitePerformancePrevMapper);
+  const { data: wsData } = useMergedPageData("webstore-sales", getWebstoreSalesData, transformWebstoreSales);
 
   if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
   if (!data) return <NoData month={selectedMonth} />;
@@ -64,6 +66,15 @@ export default function WebsitePerformancePage() {
           </ResponsiveContainer>
         </section>
       </div>
+
+      {/* Tracking Button Performance */}
+      <TrackingButtonPerformance
+        platforms={wsData?.trackingPlatforms || [
+          { name: "Shopee Official", totalClicks: 0, previousClicks: 0, topProducts: [] },
+          { name: "Tokopedia Store", totalClicks: 0, previousClicks: 0, topProducts: [] },
+          { name: "Inaproc (B2B)", totalClicks: 0, previousClicks: 0, topProducts: [] },
+        ]}
+      />
     </div>
   );
 }

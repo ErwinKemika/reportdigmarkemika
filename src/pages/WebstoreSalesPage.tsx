@@ -3,7 +3,7 @@ import { getWebstoreSalesData, formatCurrency, formatNumber, growthPercent } fro
 import { transformWebstoreSales, webstoreSalesPrevMapper } from "@/lib/dataTransformers";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
-import { TrackingButtonPerformance } from "@/components/dashboard/TrackingButtonPerformance";
+
 import { ShoppingCart, Eye, Package, TrendingUp, TrendingDown } from "lucide-react";
 import { useMonth } from "@/contexts/MonthContext";
 
@@ -76,14 +76,6 @@ export default function WebstoreSalesPage() {
         </section>
       </div>
 
-      {/* Tracking Button Performance */}
-      <TrackingButtonPerformance
-        platforms={data.trackingPlatforms || [
-          { name: "Shopee Official", totalClicks: 0, previousClicks: 0, topProducts: [] },
-          { name: "Tokopedia Store", totalClicks: 0, previousClicks: 0, topProducts: [] },
-          { name: "Inaproc (B2B)", totalClicks: 0, previousClicks: 0, topProducts: [] },
-        ]}
-      />
     </div>
   );
 }
