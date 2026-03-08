@@ -532,22 +532,7 @@ export default function OverviewPage() {
     const topChannel = manual?.topRevenueChannel || "";
     const topChannelNotes = manual?.topChannelNotes || "";
 
-    // Chart data (simulate daily spread across month)
-    const daysInMonth = new Date(selectedYear, MONTHS.indexOf(selectedMonth) + 1, 0).getDate();
-    const chartData = Array.from({ length: daysInMonth }, (_, i) => {
-      const day = i + 1;
-      const progress = day / daysInMonth;
-      const revBase = totalRevenue / daysInMonth;
-      const trafficBase = totalTraffic / daysInMonth;
-      const leadsBase = leads / daysInMonth;
-      const jitter = 0.7 + Math.sin(day * 0.8) * 0.3 + Math.cos(day * 1.2) * 0.15;
-      return {
-        name: `${selectedMonth.slice(0, 3)} ${day}`,
-        Revenue: Math.round(revBase * jitter * (0.8 + progress * 0.4)),
-        Traffic: Math.round(trafficBase * jitter * (0.85 + progress * 0.3)),
-        Leads: Math.max(0, Math.round(leadsBase * jitter * (0.7 + progress * 0.6))),
-      };
-    });
+    // Chart data — not needed here anymore, moved to YTD channel chart
 
     return {
       totalTraffic, prevTotalTraffic,
