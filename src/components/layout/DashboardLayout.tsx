@@ -203,6 +203,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
       <Link
         key={item.path}
         to={item.path}
+        onClick={closeMobileDrawer}
         title={item.label}
         className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] transition-all duration-200 relative ${
           isActive ? "font-semibold" : "hover:bg-white/50 dark:hover:bg-white/10"
