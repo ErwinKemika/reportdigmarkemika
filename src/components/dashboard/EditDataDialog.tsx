@@ -84,9 +84,22 @@ export function EditDataDialog({ defaultChannel, relevantFields }: EditDataDialo
     setValues(prev => ({ ...prev, [key]: num }));
   };
 
-  const handleSave = () => {
+  const doSave = () => {
     upsert.mutate({ period: selectedMonth, channel, ...values });
     setOpen(false);
+    setConfirmOpen(false);
+  };
+
+  const handleSave = () => {
+    const emptyRequired = REQUIRED_FIELDS
+      .filter(f => fields.some(ff => ff.key === f.key))
+      .filter(f => !values[f.key as keyof typeof defaultValues]);
+    if (emptyRequired.length > 0) {
+      setZeroFields(emptyRequired.map(f => f.label));
+      setConfirmOpen(true);
+    } else {
+      doSave();
+    }
   };
 
   // Auto-calculated preview
