@@ -47,6 +47,7 @@ function AppRoutes() {
         <Route path="/admin-login" element={<AuthPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+      </ErrorBoundary>
     </DashboardLayout>
   );
 }
