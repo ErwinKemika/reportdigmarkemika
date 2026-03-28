@@ -5,11 +5,22 @@ import { useUpsertDashboardData, DashboardInsert } from "@/hooks/useDashboardDat
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Pencil } from "lucide-react";
+
+const REQUIRED_FIELDS: { key: keyof DashboardInsert; label: string }[] = [
+  { key: "revenue", label: "Revenue" },
+  { key: "target_revenue", label: "Target Revenue" },
+  { key: "traffic", label: "Traffic" },
+  { key: "target_traffic", label: "Target Traffic" },
+];
 
 const CHANNELS = ["Tokopedia", "Shopee", "Webstore", "Google Ads", "Meta Ads"];
 
@@ -52,6 +63,8 @@ export function EditDataDialog({ defaultChannel, relevantFields }: EditDataDialo
   const { selectedMonth } = useMonth();
   const upsert = useUpsertDashboardData();
   const [open, setOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [zeroFields, setZeroFields] = useState<string[]>([]);
   const [channel, setChannel] = useState(defaultChannel || CHANNELS[0]);
   const [values, setValues] = useState(defaultValues);
 
@@ -71,9 +84,22 @@ export function EditDataDialog({ defaultChannel, relevantFields }: EditDataDialo
     setValues(prev => ({ ...prev, [key]: num }));
   };
 
-  const handleSave = () => {
+  const doSave = () => {
     upsert.mutate({ period: selectedMonth, channel, ...values });
     setOpen(false);
+    setConfirmOpen(false);
+  };
+
+  const handleSave = () => {
+    const emptyRequired = REQUIRED_FIELDS
+      .filter(f => fields.some(ff => ff.key === f.key))
+      .filter(f => !values[f.key as keyof typeof defaultValues]);
+    if (emptyRequired.length > 0) {
+      setZeroFields(emptyRequired.map(f => f.label));
+      setConfirmOpen(true);
+    } else {
+      doSave();
+    }
   };
 
   // Auto-calculated preview
@@ -83,6 +109,7 @@ export function EditDataDialog({ defaultChannel, relevantFields }: EditDataDialo
   const trafficAchPct = values.target_traffic > 0 ? (values.traffic / values.target_traffic * 100) : 0;
 
   return (
+    <>
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="gap-2">
@@ -137,5 +164,21 @@ export function EditDataDialog({ defaultChannel, relevantFields }: EditDataDialo
         </div>
       </DialogContent>
     </Dialog>
+
+    <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Konfirmasi Simpan</AlertDialogTitle>
+          <AlertDialogDescription>
+            Beberapa field penting masih bernilai 0: {zeroFields.join(", ")}. Yakin ingin menyimpan data ini?
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Batal</AlertDialogCancel>
+          <AlertDialogAction onClick={doSave}>Simpan Tetap</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    </>
   );
 }
