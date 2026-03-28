@@ -59,11 +59,17 @@ function getPageTitle(pathname: string): string {
 
 export function DashboardLayout({ children }: { children: ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const isMobile = useIsMobile();
   const location = useLocation();
   const { selectedMonth, selectedYear, setSelectedMonth, setSelectedYear } = useMonth();
   const { user, role, isAdmin, signOut } = useAuth();
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
+
+  const closeMobileDrawer = useCallback(() => {
+    if (isMobile) setDrawerOpen(false);
+  }, [isMobile]);
 
   // Ads Budget group expanded state — auto-expand when on child route
   const isOnAdsBudgetChild = location.pathname.startsWith("/ads-budget/");
