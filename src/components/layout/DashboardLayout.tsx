@@ -233,40 +233,37 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
     );
   };
 
-  return (
-    <div className="flex min-h-screen w-full bg-background">
-      {/* Sidebar */}
-      <aside
-        className={`${collapsed ? "w-[68px]" : "w-[260px]"} flex flex-col transition-all duration-300 ease-in-out shrink-0 relative`}
-        style={{
-          background: isDark
-            ? "linear-gradient(180deg, hsla(222, 40%, 10%, 0.92) 0%, hsla(222, 45%, 8%, 0.95) 50%, hsla(222, 40%, 10%, 0.92) 100%)"
-            : "linear-gradient(180deg, hsla(160, 40%, 96%, 0.85) 0%, hsla(0, 0%, 100%, 0.92) 30%, hsla(0, 0%, 100%, 0.95) 70%, hsla(180, 30%, 96%, 0.85) 100%)",
-          backdropFilter: "blur(24px)",
-          WebkitBackdropFilter: "blur(24px)",
-          borderRight: isDark ? "1px solid hsla(222, 25%, 20%, 0.6)" : "1px solid hsla(160, 20%, 88%, 0.6)",
-        }}
-      >
-        {/* Sparkle accents */}
-        <div className="absolute top-0 left-0 right-0 h-24 pointer-events-none overflow-hidden rounded-tr-2xl">
-          <div className="absolute top-4 right-8 w-20 h-20 rounded-full opacity-30" style={{ background: isDark ? "radial-gradient(circle, hsla(160, 60%, 40%, 0.3), transparent 70%)" : "radial-gradient(circle, hsla(160, 80%, 70%, 0.4), transparent 70%)" }} />
-          <div className="absolute top-2 left-12 w-12 h-12 rounded-full opacity-20" style={{ background: isDark ? "radial-gradient(circle, hsla(200, 60%, 50%, 0.3), transparent 70%)" : "radial-gradient(circle, hsla(200, 80%, 75%, 0.5), transparent 70%)" }} />
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none overflow-hidden">
-          <div className="absolute bottom-3 right-6 w-16 h-16 rounded-full opacity-25" style={{ background: isDark ? "radial-gradient(circle, hsla(160, 50%, 35%, 0.3), transparent 70%)" : "radial-gradient(circle, hsla(160, 70%, 65%, 0.4), transparent 70%)" }} />
-          <div className="absolute bottom-5 left-8 w-10 h-10 rounded-full opacity-15" style={{ background: isDark ? "radial-gradient(circle, hsla(40, 70%, 45%, 0.3), transparent 70%)" : "radial-gradient(circle, hsla(40, 90%, 70%, 0.4), transparent 70%)" }} />
-        </div>
+  const sidebarContent = (
+    <>
+      {/* Sparkle accents */}
+      <div className="absolute top-0 left-0 right-0 h-24 pointer-events-none overflow-hidden rounded-tr-2xl">
+        <div className="absolute top-4 right-8 w-20 h-20 rounded-full opacity-30" style={{ background: isDark ? "radial-gradient(circle, hsla(160, 60%, 40%, 0.3), transparent 70%)" : "radial-gradient(circle, hsla(160, 80%, 70%, 0.4), transparent 70%)" }} />
+        <div className="absolute top-2 left-12 w-12 h-12 rounded-full opacity-20" style={{ background: isDark ? "radial-gradient(circle, hsla(200, 60%, 50%, 0.3), transparent 70%)" : "radial-gradient(circle, hsla(200, 80%, 75%, 0.5), transparent 70%)" }} />
+      </div>
+      <div className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none overflow-hidden">
+        <div className="absolute bottom-3 right-6 w-16 h-16 rounded-full opacity-25" style={{ background: isDark ? "radial-gradient(circle, hsla(160, 50%, 35%, 0.3), transparent 70%)" : "radial-gradient(circle, hsla(160, 70%, 65%, 0.4), transparent 70%)" }} />
+        <div className="absolute bottom-5 left-8 w-10 h-10 rounded-full opacity-15" style={{ background: isDark ? "radial-gradient(circle, hsla(40, 70%, 45%, 0.3), transparent 70%)" : "radial-gradient(circle, hsla(40, 90%, 70%, 0.4), transparent 70%)" }} />
+      </div>
 
-        {/* Header */}
-        <div className="flex items-center justify-between px-5 py-5 relative z-10">
-          {!collapsed && (
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm" style={{ background: isDark ? "linear-gradient(135deg, hsla(160, 40%, 20%, 0.6), hsla(200, 40%, 22%, 0.6))" : "linear-gradient(135deg, hsla(160, 50%, 92%, 0.9), hsla(200, 50%, 94%, 0.9))" }}>
-                <Megaphone className="w-5 h-5" style={{ color: isDark ? "hsl(160, 50%, 60%)" : "hsl(160, 50%, 40%)" }} />
-              </div>
-              <span className="font-bold text-[15px] tracking-tight" style={{ color: isDark ? "hsl(210, 20%, 88%)" : "hsl(220, 20%, 18%)" }}>DigiDash</span>
+      {/* Header */}
+      <div className="flex items-center justify-between px-5 py-5 relative z-10">
+        {!(isMobile ? false : collapsed) && (
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm" style={{ background: isDark ? "linear-gradient(135deg, hsla(160, 40%, 20%, 0.6), hsla(200, 40%, 22%, 0.6))" : "linear-gradient(135deg, hsla(160, 50%, 92%, 0.9), hsla(200, 50%, 94%, 0.9))" }}>
+              <Megaphone className="w-5 h-5" style={{ color: isDark ? "hsl(160, 50%, 60%)" : "hsl(160, 50%, 40%)" }} />
             </div>
-          )}
+            <span className="font-bold text-[15px] tracking-tight" style={{ color: isDark ? "hsl(210, 20%, 88%)" : "hsl(220, 20%, 18%)" }}>DigiDash</span>
+          </div>
+        )}
+        {isMobile ? (
+          <button
+            onClick={() => setDrawerOpen(false)}
+            className="p-1.5 rounded-lg transition-colors hover:bg-white/60"
+            style={{ color: "hsl(220, 15%, 50%)" }}
+          >
+            <X className="w-5 h-5" />
+          </button>
+        ) : (
           <button
             onClick={() => setCollapsed(!collapsed)}
             className="p-1.5 rounded-lg transition-colors hover:bg-white/60"
@@ -274,59 +271,110 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
           >
             {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
           </button>
-        </div>
-
-        {/* Navigation */}
-        <nav className="flex-1 py-2 px-3 space-y-0.5 overflow-y-auto relative z-10">
-          {navItems.map(renderNavItem)}
-        </nav>
-
-        {/* Footer */}
-        {!collapsed && (
-          <div className="px-5 py-4 relative z-10" style={{ borderTop: isDark ? "1px solid hsla(222, 25%, 20%, 0.5)" : "1px solid hsla(160, 20%, 88%, 0.5)" }}>
-            {user ? (
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  {isAdmin && <Shield className="w-3.5 h-3.5" style={{ color: "hsl(160, 50%, 40%)" }} />}
-                  <span className="text-[11px] truncate" style={{ color: "hsl(220, 12%, 55%)" }}>{user.email}</span>
-                  <Badge variant="outline" className="text-[9px] px-1.5 py-0" style={{ borderColor: "hsla(160, 20%, 85%, 0.6)", color: "hsl(220, 12%, 55%)" }}>
-                    {role}
-                  </Badge>
-                </div>
-                <button
-                  onClick={signOut}
-                  className="flex items-center gap-2 text-[11px] transition-colors hover:opacity-80"
-                  style={{ color: "hsl(220, 12%, 60%)" }}
-                >
-                  <LogOut className="w-3.5 h-3.5" /> Sign Out
-                </button>
-              </div>
-            ) : (
-              <Link
-                to="/admin-login"
-                className="flex items-center gap-2 text-[11px] transition-colors hover:opacity-80"
-                style={{ color: "hsl(220, 12%, 55%)" }}
-              >
-                <Shield className="w-3.5 h-3.5" style={{ color: "hsl(160, 50%, 40%)" }} /> Admin Login
-                <div className="ml-auto w-2 h-2 rounded-full" style={{ background: "hsl(38, 90%, 55%)" }} />
-              </Link>
-            )}
-          </div>
         )}
-      </aside>
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex-1 py-2 px-3 space-y-0.5 overflow-y-auto relative z-10">
+        {navItems.map(renderNavItem)}
+      </nav>
+
+      {/* Footer */}
+      {!(isMobile ? false : collapsed) && (
+        <div className="px-5 py-4 relative z-10" style={{ borderTop: isDark ? "1px solid hsla(222, 25%, 20%, 0.5)" : "1px solid hsla(160, 20%, 88%, 0.5)" }}>
+          {user ? (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                {isAdmin && <Shield className="w-3.5 h-3.5" style={{ color: "hsl(160, 50%, 40%)" }} />}
+                <span className="text-[11px] truncate" style={{ color: "hsl(220, 12%, 55%)" }}>{user.email}</span>
+                <Badge variant="outline" className="text-[9px] px-1.5 py-0" style={{ borderColor: "hsla(160, 20%, 85%, 0.6)", color: "hsl(220, 12%, 55%)" }}>
+                  {role}
+                </Badge>
+              </div>
+              <button
+                onClick={signOut}
+                className="flex items-center gap-2 text-[11px] transition-colors hover:opacity-80"
+                style={{ color: "hsl(220, 12%, 60%)" }}
+              >
+                <LogOut className="w-3.5 h-3.5" /> Sign Out
+              </button>
+            </div>
+          ) : (
+            <Link
+              to="/admin-login"
+              onClick={closeMobileDrawer}
+              className="flex items-center gap-2 text-[11px] transition-colors hover:opacity-80"
+              style={{ color: "hsl(220, 12%, 55%)" }}
+            >
+              <Shield className="w-3.5 h-3.5" style={{ color: "hsl(160, 50%, 40%)" }} /> Admin Login
+              <div className="ml-auto w-2 h-2 rounded-full" style={{ background: "hsl(38, 90%, 55%)" }} />
+            </Link>
+          )}
+        </div>
+      )}
+    </>
+  );
+
+  const sidebarStyles = {
+    background: isDark
+      ? "linear-gradient(180deg, hsla(222, 40%, 10%, 0.92) 0%, hsla(222, 45%, 8%, 0.95) 50%, hsla(222, 40%, 10%, 0.92) 100%)"
+      : "linear-gradient(180deg, hsla(160, 40%, 96%, 0.85) 0%, hsla(0, 0%, 100%, 0.92) 30%, hsla(0, 0%, 100%, 0.95) 70%, hsla(180, 30%, 96%, 0.85) 100%)",
+    backdropFilter: "blur(24px)" as const,
+    WebkitBackdropFilter: "blur(24px)",
+    borderRight: isDark ? "1px solid hsla(222, 25%, 20%, 0.6)" : "1px solid hsla(160, 20%, 88%, 0.6)",
+  };
+
+  return (
+    <div className="flex min-h-screen w-full bg-background">
+      {/* Mobile overlay */}
+      {isMobile && drawerOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 transition-opacity"
+          onClick={() => setDrawerOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      {isMobile ? (
+        <aside
+          className={`fixed inset-y-0 left-0 z-50 w-[260px] flex flex-col transition-transform duration-300 ease-in-out ${
+            drawerOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+          style={sidebarStyles}
+        >
+          {sidebarContent}
+        </aside>
+      ) : (
+        <aside
+          className={`${collapsed ? "w-[68px]" : "w-[260px]"} flex flex-col transition-all duration-300 ease-in-out shrink-0 relative`}
+          style={sidebarStyles}
+        >
+          {sidebarContent}
+        </aside>
+      )}
 
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="bg-card/80 backdrop-blur-sm border-b border-border/60 px-8 py-4 flex items-center justify-between shrink-0 sticky top-0 z-10">
-          <h1 className="text-page-title text-foreground tracking-tight">
-            {getPageTitle(location.pathname)}
-          </h1>
+        <header className="bg-card/80 backdrop-blur-sm border-b border-border/60 px-4 md:px-8 py-4 flex items-center justify-between shrink-0 sticky top-0 z-10">
           <div className="flex items-center gap-3">
+            {isMobile && (
+              <button
+                onClick={() => setDrawerOpen(true)}
+                className="p-1.5 rounded-lg transition-colors hover:bg-muted"
+              >
+                <Menu className="w-5 h-5 text-foreground" />
+              </button>
+            )}
+            <h1 className="text-page-title text-foreground tracking-tight">
+              {getPageTitle(location.pathname)}
+            </h1>
+          </div>
+          <div className="flex items-center gap-2 md:gap-3">
             {currentSchema && <PageEditDialog schema={currentSchema} />}
             <ThemeToggle />
-            <Calendar className="w-4 h-4 text-muted-foreground" />
+            <Calendar className="w-4 h-4 text-muted-foreground hidden md:block" />
             <Select value={selectedMonth} onValueChange={(v) => setSelectedMonth(v as any)}>
-              <SelectTrigger className="w-32 h-9 text-sm rounded-lg border-border/60 bg-background">
+              <SelectTrigger className="w-24 md:w-32 h-9 text-sm rounded-lg border-border/60 bg-background">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -348,7 +396,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
           </div>
         </header>
 
-        <main className="flex-1 px-8 py-8 overflow-y-auto">
+        <main className="flex-1 px-4 md:px-8 py-4 md:py-8 overflow-y-auto">
           {children}
         </main>
       </div>
