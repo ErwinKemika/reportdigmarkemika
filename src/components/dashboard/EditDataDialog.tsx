@@ -163,5 +163,21 @@ export function EditDataDialog({ defaultChannel, relevantFields }: EditDataDialo
         </div>
       </DialogContent>
     </Dialog>
+
+    <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Konfirmasi Simpan</AlertDialogTitle>
+          <AlertDialogDescription>
+            Beberapa field penting masih bernilai 0: {zeroFields.join(", ")}. Yakin ingin menyimpan data ini?
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Batal</AlertDialogCancel>
+          <AlertDialogAction onClick={doSave}>Simpan Tetap</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    </>
   );
 }
