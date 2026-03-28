@@ -168,6 +168,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
                     />
                     <Link
                       to={child.path}
+                      onClick={closeMobileDrawer}
                       title={child.label}
                       className={`flex items-center gap-2.5 ml-[26px] px-3 py-2 rounded-xl text-[12.5px] transition-all duration-200 w-full ${
                         isChildItemActive ? "font-semibold" : "hover:bg-white/40 dark:hover:bg-white/10"
