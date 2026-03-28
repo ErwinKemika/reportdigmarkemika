@@ -63,6 +63,8 @@ export function EditDataDialog({ defaultChannel, relevantFields }: EditDataDialo
   const { selectedMonth } = useMonth();
   const upsert = useUpsertDashboardData();
   const [open, setOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [zeroFields, setZeroFields] = useState<string[]>([]);
   const [channel, setChannel] = useState(defaultChannel || CHANNELS[0]);
   const [values, setValues] = useState(defaultValues);
 
