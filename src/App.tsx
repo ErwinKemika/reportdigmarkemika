@@ -22,12 +22,14 @@ import BenchmarkPage from "./pages/BenchmarkPage";
 import SalesRecapPage from "./pages/SalesRecapPage";
 import AuthPage from "./pages/AuthPage";
 import NotFound from "./pages/NotFound";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 const queryClient = new QueryClient();
 
 function AppRoutes() {
   return (
     <DashboardLayout>
+      <ErrorBoundary>
       <Routes>
         <Route path="/" element={<OverviewPage />} />
         <Route path="/website" element={<WebsitePerformancePage />} />
