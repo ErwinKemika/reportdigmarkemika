@@ -109,6 +109,7 @@ export function EditDataDialog({ defaultChannel, relevantFields }: EditDataDialo
   const trafficAchPct = values.target_traffic > 0 ? (values.traffic / values.target_traffic * 100) : 0;
 
   return (
+    <>
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="gap-2">
