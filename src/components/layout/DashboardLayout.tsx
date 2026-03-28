@@ -1,5 +1,7 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Menu, X } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useMonth, MONTHS, YEARS } from "@/contexts/MonthContext";
 import { useAuth } from "@/contexts/AuthContext";
