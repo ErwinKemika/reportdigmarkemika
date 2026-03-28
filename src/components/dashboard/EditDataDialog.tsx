@@ -5,11 +5,22 @@ import { useUpsertDashboardData, DashboardInsert } from "@/hooks/useDashboardDat
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Pencil } from "lucide-react";
+
+const REQUIRED_FIELDS: { key: keyof DashboardInsert; label: string }[] = [
+  { key: "revenue", label: "Revenue" },
+  { key: "target_revenue", label: "Target Revenue" },
+  { key: "traffic", label: "Traffic" },
+  { key: "target_traffic", label: "Target Traffic" },
+];
 
 const CHANNELS = ["Tokopedia", "Shopee", "Webstore", "Google Ads", "Meta Ads"];
 
