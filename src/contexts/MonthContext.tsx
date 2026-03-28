@@ -7,12 +7,14 @@ export const MONTHS = [
 
 export type MonthName = typeof MONTHS[number];
 
-export const YEARS = [2024, 2025, 2026, 2027] as const;
+const currentDate = new Date();
+const currentYear = currentDate.getFullYear();
+export const YEARS = Array.from({ length: 2 }, (_, i) => currentYear + i) as number[];
 
 interface MonthContextType {
   selectedMonth: MonthName;
   selectedYear: number;
-  period: string; // "January 2026"
+  period: string;
   setSelectedMonth: (month: MonthName) => void;
   setSelectedYear: (year: number) => void;
 }
@@ -20,8 +22,8 @@ interface MonthContextType {
 const MonthContext = createContext<MonthContextType | undefined>(undefined);
 
 export function MonthProvider({ children }: { children: ReactNode }) {
-  const [selectedMonth, setSelectedMonth] = useState<MonthName>("February");
-  const [selectedYear, setSelectedYear] = useState<number>(2026);
+  const [selectedMonth, setSelectedMonth] = useState<MonthName>(MONTHS[currentDate.getMonth()]);
+  const [selectedYear, setSelectedYear] = useState<number>(currentYear);
 
   const period = `${selectedMonth} ${selectedYear}`;
 
