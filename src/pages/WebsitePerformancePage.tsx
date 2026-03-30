@@ -12,8 +12,8 @@ import { useMonth } from "@/contexts/MonthContext";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
 import { useTheme } from "next-themes";
 
-const CHART_COLORS_LIGHT = ["hsl(222,47%,25%)", "hsl(217,91%,60%)", "hsl(160,84%,39%)", "hsl(25,95%,53%)"];
-const CHART_COLORS_DARK = ["hsl(199,89%,68%)", "hsl(262,83%,68%)", "hsl(160,84%,55%)", "hsl(25,95%,65%)"];
+const CHART_COLORS_LIGHT = ["hsl(222,47%,25%)", "hsl(217,91%,60%)", "hsl(160,84%,39%)", "hsl(25,95%,53%)", "hsl(45,93%,47%)"];
+const CHART_COLORS_DARK = ["hsl(199,89%,68%)", "hsl(262,83%,68%)", "hsl(160,84%,55%)", "hsl(25,95%,65%)", "hsl(48,96%,53%)"];
 
 export default function WebsitePerformancePage() {
   const { selectedMonth } = useMonth();
