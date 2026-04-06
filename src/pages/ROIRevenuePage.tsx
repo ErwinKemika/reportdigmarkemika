@@ -59,7 +59,8 @@ export default function ROIRevenuePage() {
 
   const totalInvestment = data.investment.ads + data.investment.websiteSEO + data.investment.maintenanceWebSosmed;
   const projectedROI = totalInvestment > 0 ? ((actualMarketplaceRevenue - totalInvestment) / totalInvestment) * 100 : 0;
-  const roas = totalInvestment > 0 ? actualMarketplaceRevenue / totalInvestment : 0;
+  const adsSpend = data.investment.ads;
+  const roas = adsSpend > 0 ? actualMarketplaceRevenue / adsSpend : 0;
 
   const generateInsight = async () => {
     setIsGenerating(true);
