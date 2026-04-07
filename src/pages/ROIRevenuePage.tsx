@@ -99,15 +99,30 @@ export default function ROIRevenuePage() {
     return <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-md ${style}`}>{stage}</span>;
   };
 
+  // Calculate Actual Revenue from Won leads
+  const actualRevenueFromWon = data.leadPipeline
+    .filter((lead: any) => lead.stage === "Won")
+    .reduce((sum: number, lead: any) => sum + (lead.estimatedRevenue || 0), 0);
+
   return (
     <div className="space-y-10 animate-fade-in">
       <section className="bg-tint-purple/50 rounded-2xl p-8">
         <SectionHeader title="Lead Performance" subtitle="B2B & B2G lead tracking" icon={<Users className="w-4 h-4" />} />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           <KPICard title="GOV LEADS" data={data.b2bLeads} icon={<Briefcase className="w-4 h-4" />} accentColor="blue" />
           <KPICard title="NON-GOV LEADS" data={data.b2gLeads} icon={<Landmark className="w-4 h-4" />} accentColor="purple" />
           <KPICard title="Total Leads" data={data.totalLeads} icon={<Users className="w-4 h-4" />} accentColor="navy" />
           <KPICard title="Est. Revenue" data={data.estimatedRevenue} format="currency" icon={<DollarSign className="w-4 h-4" />} accentColor="green" hero currencyFormatter={formatCurrencyFull} />
+          <div className="bg-gradient-to-br from-success/90 to-success rounded-xl p-5 shadow-hero border border-success/40 animate-fade-in overflow-hidden">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] uppercase tracking-wider text-white/80 font-medium">Actual Revenue</span>
+              <DollarSign className="w-4 h-4 text-white/60" />
+            </div>
+            <div className="font-extrabold text-white text-xl tracking-tight leading-tight mb-2">
+              {formatCurrencyFull(actualRevenueFromWon)}
+            </div>
+            <span className="text-[10px] text-white/70">From Won leads in pipeline</span>
+          </div>
         </div>
       </section>
 
