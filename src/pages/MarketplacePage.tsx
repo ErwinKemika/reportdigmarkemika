@@ -294,8 +294,9 @@ export default function MarketplacePage() {
               </div>
             </div>
           </div>
-        </div>
-      )}
+        </>
+        )}
+      </div>
     </div>
   );
 }
