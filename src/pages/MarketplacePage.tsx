@@ -201,24 +201,29 @@ export default function MarketplacePage() {
       </div>
 
       {/* ===== Webstore Sales ===== */}
-      {wsData && (
-        <div className="rounded-2xl border border-border/30 overflow-hidden shadow-card bg-card">
-          <div className="flex items-center justify-between px-6 py-4">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-sm" style={{ background: "linear-gradient(135deg, #6c5ce7, #a29bfe)" }}>
-                <ShoppingCart className="w-5 h-5" />
-              </div>
-              <h3 className="text-xl font-bold text-card-foreground">Webstore Sales</h3>
+      <div className="rounded-2xl border border-border/30 overflow-hidden shadow-card bg-card">
+        <div className="flex items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-sm" style={{ background: "linear-gradient(135deg, #6c5ce7, #a29bfe)" }}>
+              <ShoppingCart className="w-5 h-5" />
             </div>
-            <div className="flex items-center gap-2">
-              <PageEditDialog schema={webstoreSalesSchema} />
-              <div className="flex items-center gap-1.5 text-xs">
-                <span className="px-3 py-1 rounded-md border border-border/50 bg-muted/50 font-medium text-card-foreground">{selectedMonth}</span>
-                <span className="px-3 py-1 rounded-md border border-border/50 bg-muted/50 font-medium text-card-foreground">{selectedYear}</span>
-              </div>
+            <h3 className="text-xl font-bold text-card-foreground">Webstore Sales</h3>
+          </div>
+          <div className="flex items-center gap-2">
+            <PageEditDialog schema={webstoreSalesSchema} />
+            <div className="flex items-center gap-1.5 text-xs">
+              <span className="px-3 py-1 rounded-md border border-border/50 bg-muted/50 font-medium text-card-foreground">{selectedMonth}</span>
+              <span className="px-3 py-1 rounded-md border border-border/50 bg-muted/50 font-medium text-card-foreground">{selectedYear}</span>
             </div>
           </div>
+        </div>
 
+        {!wsData ? (
+          <div className="px-6 pb-6">
+            <NoData month={selectedMonth} />
+          </div>
+        ) : (
+        <>
           {/* Revenue Banner - Purple gradient */}
           <div className="mx-5 mb-5 rounded-xl p-5" style={{ background: "linear-gradient(135deg, hsl(262 60% 94%), hsl(262 40% 97%))" }}>
             <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Total Revenue</p>
@@ -289,8 +294,9 @@ export default function MarketplacePage() {
               </div>
             </div>
           </div>
-        </div>
-      )}
+        </>
+        )}
+      </div>
     </div>
   );
 }
