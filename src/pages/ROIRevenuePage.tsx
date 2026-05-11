@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { usePageData } from "@/hooks/usePageData";
 import { useGoogleSheetROILeads } from "@/hooks/useGoogleSheetROILeads";
+import { useGoogleSheetInvestment } from "@/hooks/useGoogleSheetInvestment";
 
 const STAGE_STYLES: Record<string, string> = {
   Unqualified: "bg-[hsl(220,15%,90%)] text-[hsl(220,10%,40%)] border border-[hsl(220,15%,80%)]",
@@ -41,6 +42,7 @@ export default function ROIRevenuePage() {
   const { selectedMonth, period } = useMonth();
   const { data, isLoading: dbLoading } = useMergedPageData("roi-revenue", getROIRevenueData, transformROIRevenue, roiRevenuePrevMapper);
   const { leads: sheetLeads, isLoading: sheetLoading } = useGoogleSheetROILeads(selectedMonth);
+  const { investment: sheetInvestment, isLoading: investmentLoading } = useGoogleSheetInvestment(selectedMonth);
 
   // Fetch webstore & marketplace data for auto-calculating Actual Marketplace Revenue
   const { data: webstoreDb } = usePageData(period, "webstore-sales");
@@ -49,13 +51,14 @@ export default function ROIRevenuePage() {
   const [aiInsight, setAiInsight] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const isLoading = dbLoading || sheetLoading;
+  const isLoading = dbLoading || sheetLoading || investmentLoading;
 
   if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
 
   const hasSheetData = sheetLeads.length > 0;
+  const hasInvestmentData = sheetInvestment && sheetInvestment.total > 0;
   
-  if (!data && !hasSheetData) return <NoData month={selectedMonth} />;
+  if (!data && !hasSheetData && !hasInvestmentData) return <NoData month={selectedMonth} />;
 
   // Create a fallback object if mock/DB data is missing but we have sheet data
   const safeData = data || {
@@ -66,8 +69,11 @@ export default function ROIRevenuePage() {
     investment: { ads: 0, websiteSEO: 0, maintenanceWebSosmed: 0 },
     actualMarketplaceRevenue: 0,
     leadPipeline: [],
-    insightSummary: "Data lead berhasil disinkronkan dari Google Sheets. Data investment belum tersedia untuk bulan ini."
+    insightSummary: "Data berhasil disinkronkan dari Google Sheets."
   };
+
+  // Override investment if sheet data is available
+  const currentInvestment = hasInvestmentData ? sheetInvestment : safeData.investment;
 
   // Override pipeline and totals if sheet data is available
   const leadPipeline = hasSheetData ? sheetLeads : safeData.leadPipeline;
@@ -96,9 +102,9 @@ export default function ROIRevenuePage() {
   // Combine marketplace/webstore revenue with Won pipeline revenue
   const totalActualRevenue = actualMarketplaceRevenue + actualRevenueFromWon;
 
-  const totalInvestment = safeData.investment.ads + safeData.investment.websiteSEO + safeData.investment.maintenanceWebSosmed;
+  const totalInvestment = currentInvestment.ads + currentInvestment.websiteSEO + currentInvestment.maintenanceWebSosmed;
   const projectedROI = totalInvestment > 0 ? ((totalActualRevenue - totalInvestment) / totalInvestment) * 100 : 0;
-  const adsSpend = safeData.investment.ads;
+  const adsSpend = currentInvestment.ads;
   const roas = adsSpend > 0 ? totalActualRevenue / adsSpend : 0;
 
   const generateInsight = async () => {
@@ -111,7 +117,7 @@ export default function ROIRevenuePage() {
             b2gLeads,
             totalLeads,
             estimatedRevenue,
-            investment: safeData.investment,
+            investment: currentInvestment,
             totalActualRevenue,
             projectedROI,
             roas,
@@ -143,7 +149,7 @@ export default function ROIRevenuePage() {
       <section className="bg-tint-purple/50 rounded-2xl p-8">
         <div className="flex items-center justify-between mb-4">
           <SectionHeader title="Lead Performance" subtitle="B2B & B2G lead tracking" icon={<Users className="w-4 h-4" />} />
-          {hasSheetData && (
+          {(hasSheetData || hasInvestmentData) && (
             <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-success/10 text-success border border-success/20 text-[10px] font-bold uppercase tracking-wider animate-pulse">
               <div className="w-1.5 h-1.5 rounded-full bg-success" />
               Synced from Google Sheets
@@ -176,9 +182,9 @@ export default function ROIRevenuePage() {
               <p className="text-label text-muted-foreground uppercase tracking-wider mb-2">Total Digital Investment</p>
               <p className="text-kpi font-extrabold text-card-foreground tracking-tight">{formatCurrencyFull(totalInvestment)}</p>
               <div className="mt-4 grid grid-cols-3 gap-2 text-xs text-muted-foreground">
-                <span>Website/SEO: {formatCurrencyFull(safeData.investment.websiteSEO)}</span>
-                <span>Ads: {formatCurrencyFull(safeData.investment.ads)}</span>
-                <span>Maintenance Web&amp;Sosmed: {formatCurrencyFull(safeData.investment.maintenanceWebSosmed)}</span>
+                <span>Website/SEO: {formatCurrencyFull(currentInvestment.websiteSEO)}</span>
+                <span>Ads: {formatCurrencyFull(currentInvestment.ads)}</span>
+                <span>Maintenance Web&amp;Sosmed: {formatCurrencyFull(currentInvestment.maintenanceWebSosmed)}</span>
               </div>
             </div>
             <div className="bg-card rounded-xl p-6 shadow-card border border-border/40 border-l-[3px] border-l-success">
