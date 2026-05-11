@@ -2,11 +2,8 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useMonth } from "@/contexts/MonthContext";
-import { useAuth } from "@/contexts/AuthContext";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
-import { Button } from "@/components/ui/button";
-import { Pencil, FileSpreadsheet, TrendingUp, DollarSign, Megaphone, RefreshCw } from "lucide-react";
-import { SalesRecapEditDialog } from "@/components/dashboard/SalesRecapEditDialog";
+import { FileSpreadsheet, TrendingUp, DollarSign, Megaphone, RefreshCw } from "lucide-react";
 import { useGoogleSheetSalesRecap } from "@/hooks/useGoogleSheetSalesRecap";
 
 const PAGE_KEY = "sales_recap_classified_by_channel";
@@ -113,9 +110,7 @@ function SectionCard({ title, gradientFrom, gradientTo, rows, footer }: SectionC
 
 export default function SalesRecapPage() {
   const { selectedMonth, selectedYear, period } = useMonth();
-  const { isAdmin } = useAuth();
   const queryClient = useQueryClient();
-  const [editOpen, setEditOpen] = useState(false);
 
   // ── Primary source: Google Sheets CSV ──
   const { monthData: sheetData, isLoading: sheetLoading, refetch: refetchSheet } = useGoogleSheetSalesRecap(selectedMonth);
@@ -225,14 +220,6 @@ export default function SalesRecapPage() {
         </div>
       </div>
 
-      {/* Admin Edit Button */}
-      {isAdmin && (
-        <div className="flex justify-end">
-          <Button variant="outline" size="sm" className="gap-2" onClick={() => setEditOpen(true)}>
-            <Pencil className="w-4 h-4" /> Edit Data
-          </Button>
-        </div>
-      )}
 
       {/* Vertical Card Layout */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
@@ -326,19 +313,7 @@ export default function SalesRecapPage() {
         />
       </div>
 
-      {/* Edit Dialog */}
-      {editOpen && (
-        <SalesRecapEditDialog
-          month={selectedMonth}
-          year={selectedYear}
-          initialData={monthData ?? undefined}
-          onClose={() => setEditOpen(false)}
-          onSaved={() => {
-            queryClient.invalidateQueries({ queryKey: ["sales_recap", period] });
-            setEditOpen(false);
-          }}
-        />
-      )}
+
     </div>
   );
 }
