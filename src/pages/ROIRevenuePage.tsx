@@ -10,6 +10,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { usePageData } from "@/hooks/usePageData";
+import { useGoogleSheetROILeads } from "@/hooks/useGoogleSheetROILeads";
 
 const STAGE_STYLES: Record<string, string> = {
   Unqualified: "bg-[hsl(220,15%,90%)] text-[hsl(220,10%,40%)] border border-[hsl(220,15%,80%)]",
@@ -38,7 +39,8 @@ function calcMarketplaceRevenue(d: Record<string, any> | null): number {
 
 export default function ROIRevenuePage() {
   const { selectedMonth, period } = useMonth();
-  const { data, isLoading } = useMergedPageData("roi-revenue", getROIRevenueData, transformROIRevenue, roiRevenuePrevMapper);
+  const { data, isLoading: dbLoading } = useMergedPageData("roi-revenue", getROIRevenueData, transformROIRevenue, roiRevenuePrevMapper);
+  const { leads: sheetLeads, isLoading: sheetLoading } = useGoogleSheetROILeads(selectedMonth);
 
   // Fetch webstore & marketplace data for auto-calculating Actual Marketplace Revenue
   const { data: webstoreDb } = usePageData(period, "webstore-sales");
@@ -47,8 +49,23 @@ export default function ROIRevenuePage() {
   const [aiInsight, setAiInsight] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
+  const isLoading = dbLoading || sheetLoading;
+
   if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
   if (!data) return <NoData month={selectedMonth} />;
+
+  // Override pipeline and totals if sheet data is available
+  const hasSheetData = sheetLeads.length > 0;
+  const leadPipeline = hasSheetData ? sheetLeads : data.leadPipeline;
+  
+  const b2gCount = leadPipeline.filter(l => l.project === "Gov").length;
+  const b2bCount = leadPipeline.filter(l => l.project === "Non-Gov").length;
+  const sheetEstRevenue = leadPipeline.reduce((sum, l) => sum + l.estimatedRevenue, 0);
+
+  const b2bLeads = hasSheetData ? { ...data.b2bLeads, value: b2bCount } : data.b2bLeads;
+  const b2gLeads = hasSheetData ? { ...data.b2gLeads, value: b2gCount } : data.b2gLeads;
+  const totalLeads = hasSheetData ? { ...data.totalLeads, value: leadPipeline.length } : data.totalLeads;
+  const estimatedRevenue = hasSheetData ? { ...data.estimatedRevenue, value: sheetEstRevenue } : data.estimatedRevenue;
 
   // Auto-calculate from webstore + marketplace
   const autoRevenue =
@@ -100,19 +117,27 @@ export default function ROIRevenuePage() {
   };
 
   // Calculate Actual Revenue from Won leads
-  const actualRevenueFromWon = data.leadPipeline
+  const actualRevenueFromWon = leadPipeline
     .filter((lead: any) => lead.stage === "Won")
     .reduce((sum: number, lead: any) => sum + (lead.estimatedRevenue || 0), 0);
 
   return (
     <div className="space-y-10 animate-fade-in">
       <section className="bg-tint-purple/50 rounded-2xl p-8">
-        <SectionHeader title="Lead Performance" subtitle="B2B & B2G lead tracking" icon={<Users className="w-4 h-4" />} />
+        <div className="flex items-center justify-between mb-4">
+          <SectionHeader title="Lead Performance" subtitle="B2B & B2G lead tracking" icon={<Users className="w-4 h-4" />} />
+          {hasSheetData && (
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-success/10 text-success border border-success/20 text-[10px] font-bold uppercase tracking-wider animate-pulse">
+              <div className="w-1.5 h-1.5 rounded-full bg-success" />
+              Synced from Google Sheets
+            </div>
+          )}
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          <KPICard title="NON-GOV LEADS" data={data.b2bLeads} icon={<Briefcase className="w-4 h-4" />} accentColor="blue" />
-          <KPICard title="GOV LEADS" data={data.b2gLeads} icon={<Landmark className="w-4 h-4" />} accentColor="purple" />
-          <KPICard title="Total Leads" data={data.totalLeads} icon={<Users className="w-4 h-4" />} accentColor="navy" />
-          <KPICard title="Est. Revenue" data={data.estimatedRevenue} format="currency" icon={<DollarSign className="w-4 h-4" />} accentColor="green" hero currencyFormatter={formatCurrencyFull} />
+          <KPICard title="NON-GOV LEADS" data={b2bLeads} icon={<Briefcase className="w-4 h-4" />} accentColor="blue" />
+          <KPICard title="GOV LEADS" data={b2gLeads} icon={<Landmark className="w-4 h-4" />} accentColor="purple" />
+          <KPICard title="Total Leads" data={totalLeads} icon={<Users className="w-4 h-4" />} accentColor="navy" />
+          <KPICard title="Est. Revenue" data={estimatedRevenue} format="currency" icon={<DollarSign className="w-4 h-4" />} accentColor="green" hero currencyFormatter={formatCurrencyFull} />
           <div className="bg-gradient-to-br from-success/90 to-success rounded-xl p-5 shadow-hero border border-success/40 animate-fade-in overflow-hidden">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[10px] uppercase tracking-wider text-white/80 font-medium">Actual Revenue</span>
@@ -165,7 +190,7 @@ export default function ROIRevenuePage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.leadPipeline.map((lead, i) => (
+                  {leadPipeline.map((lead, i) => (
                     <tr key={i} className="border-b border-border/20 hover:bg-muted/30 transition-colors">
                       <td className="px-6 py-4 font-medium text-card-foreground">{lead.projectName}</td>
                       <td className="px-6 py-4">
