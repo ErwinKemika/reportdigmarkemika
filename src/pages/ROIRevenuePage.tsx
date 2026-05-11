@@ -52,31 +52,45 @@ export default function ROIRevenuePage() {
   const isLoading = dbLoading || sheetLoading;
 
   if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
-  if (!data) return <NoData month={selectedMonth} />;
+
+  const hasSheetData = sheetLeads.length > 0;
+  
+  if (!data && !hasSheetData) return <NoData month={selectedMonth} />;
+
+  // Create a fallback object if mock/DB data is missing but we have sheet data
+  const safeData = data || {
+    b2bLeads: { value: 0, previousValue: 0 },
+    b2gLeads: { value: 0, previousValue: 0 },
+    totalLeads: { value: 0, previousValue: 0 },
+    estimatedRevenue: { value: 0, previousValue: 0 },
+    investment: { ads: 0, websiteSEO: 0, maintenanceWebSosmed: 0 },
+    actualMarketplaceRevenue: 0,
+    leadPipeline: [],
+    insightSummary: "Data lead berhasil disinkronkan dari Google Sheets. Data investment belum tersedia untuk bulan ini."
+  };
 
   // Override pipeline and totals if sheet data is available
-  const hasSheetData = sheetLeads.length > 0;
-  const leadPipeline = hasSheetData ? sheetLeads : data.leadPipeline;
+  const leadPipeline = hasSheetData ? sheetLeads : safeData.leadPipeline;
   
-  const b2gCount = leadPipeline.filter(l => l.project === "Gov").length;
-  const b2bCount = leadPipeline.filter(l => l.project === "Non-Gov").length;
-  const sheetEstRevenue = leadPipeline.reduce((sum, l) => sum + l.estimatedRevenue, 0);
+  const b2gCount = leadPipeline.filter((l: any) => l.project === "Gov").length;
+  const b2bCount = leadPipeline.filter((l: any) => l.project === "Non-Gov").length;
+  const sheetEstRevenue = leadPipeline.reduce((sum: number, l: any) => sum + (l.estimatedRevenue || 0), 0);
 
-  const b2bLeads = hasSheetData ? { ...data.b2bLeads, value: b2bCount } : data.b2bLeads;
-  const b2gLeads = hasSheetData ? { ...data.b2gLeads, value: b2gCount } : data.b2gLeads;
-  const totalLeads = hasSheetData ? { ...data.totalLeads, value: leadPipeline.length } : data.totalLeads;
-  const estimatedRevenue = hasSheetData ? { ...data.estimatedRevenue, value: sheetEstRevenue } : data.estimatedRevenue;
+  const b2bLeads = hasSheetData ? { ...safeData.b2bLeads, value: b2bCount } : safeData.b2bLeads;
+  const b2gLeads = hasSheetData ? { ...safeData.b2gLeads, value: b2gCount } : safeData.b2gLeads;
+  const totalLeads = hasSheetData ? { ...safeData.totalLeads, value: leadPipeline.length } : safeData.totalLeads;
+  const estimatedRevenue = hasSheetData ? { ...safeData.estimatedRevenue, value: sheetEstRevenue } : safeData.estimatedRevenue;
 
   // Auto-calculate from webstore + marketplace
   const autoRevenue =
     calcWebstoreRevenue(webstoreDb as Record<string, any> | null) +
     calcMarketplaceRevenue(marketplaceDb as Record<string, any> | null);
 
-  const actualMarketplaceRevenue = autoRevenue > 0 ? autoRevenue : data.actualMarketplaceRevenue;
+  const actualMarketplaceRevenue = autoRevenue > 0 ? autoRevenue : safeData.actualMarketplaceRevenue;
 
-  const totalInvestment = data.investment.ads + data.investment.websiteSEO + data.investment.maintenanceWebSosmed;
+  const totalInvestment = safeData.investment.ads + safeData.investment.websiteSEO + safeData.investment.maintenanceWebSosmed;
   const projectedROI = totalInvestment > 0 ? ((actualMarketplaceRevenue - totalInvestment) / totalInvestment) * 100 : 0;
-  const adsSpend = data.investment.ads;
+  const adsSpend = safeData.investment.ads;
   const roas = adsSpend > 0 ? actualMarketplaceRevenue / adsSpend : 0;
 
   const generateInsight = async () => {
@@ -85,15 +99,15 @@ export default function ROIRevenuePage() {
       const { data: result, error } = await supabase.functions.invoke("generate-roi-insight", {
         body: {
           data: {
-            b2bLeads: data.b2bLeads,
-            b2gLeads: data.b2gLeads,
-            totalLeads: data.totalLeads,
-            estimatedRevenue: data.estimatedRevenue,
-            investment: data.investment,
+            b2bLeads,
+            b2gLeads,
+            totalLeads,
+            estimatedRevenue,
+            investment: safeData.investment,
             actualMarketplaceRevenue,
             projectedROI,
             roas,
-            leadPipeline: data.leadPipeline,
+            leadPipeline,
           },
         },
       });
@@ -159,9 +173,9 @@ export default function ROIRevenuePage() {
               <p className="text-label text-muted-foreground uppercase tracking-wider mb-2">Total Digital Investment</p>
               <p className="text-kpi font-extrabold text-card-foreground tracking-tight">{formatCurrencyFull(totalInvestment)}</p>
               <div className="mt-4 grid grid-cols-3 gap-2 text-xs text-muted-foreground">
-                <span>Website/SEO: {formatCurrencyFull(data.investment.websiteSEO)}</span>
-                <span>Ads: {formatCurrencyFull(data.investment.ads)}</span>
-                <span>Maintenance Web&amp;Sosmed: {formatCurrencyFull(data.investment.maintenanceWebSosmed)}</span>
+                <span>Website/SEO: {formatCurrencyFull(safeData.investment.websiteSEO)}</span>
+                <span>Ads: {formatCurrencyFull(safeData.investment.ads)}</span>
+                <span>Maintenance Web&amp;Sosmed: {formatCurrencyFull(safeData.investment.maintenanceWebSosmed)}</span>
               </div>
             </div>
             <div className="bg-card rounded-xl p-6 shadow-card border border-border/40 border-l-[3px] border-l-success">
@@ -237,7 +251,7 @@ export default function ROIRevenuePage() {
               <span>AI sedang menganalisis data...</span>
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground leading-relaxed">{aiInsight || data.insightSummary}</p>
+            <p className="text-sm text-muted-foreground leading-relaxed">{aiInsight || safeData.insightSummary}</p>
           )}
         </div>
       </section>
