@@ -31,8 +31,11 @@ export function useMergedPageData<T>(
 
   if (loading) return { data: undefined, isLoading: true };
 
-  if (dbData && transformer) {
-    const merged = { ...(dbData as Record<string, any>) };
+  if (dbData && Object.keys(dbData).length > 0 && transformer) {
+    // Start with mockData as the base (if it exists) to ensure hardcoded data is preserved
+    // Then override with whatever is in dbData
+    const baseData = mockData ? (mockData as Record<string, any>) : {};
+    const merged = { ...baseData, ...(dbData as Record<string, any>) };
 
     // Auto-fill "previous" fields from previous month's data
     if (previousMapper && prevDbData) {
