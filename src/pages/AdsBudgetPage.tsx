@@ -70,15 +70,21 @@ export default function AdsBudgetPage() {
 
   const isLoading = gLoading || mLoading || sLoading;
 
-  const googleRaw = googleDbData ?
-  transformPlatformAdsDetail(googleDbData as Record<string, any>) :
-  getGoogleAdsData(selectedMonth);
-  const metaRaw = metaDbData ?
-  transformPlatformAdsDetail(metaDbData as Record<string, any>) :
-  getMetaAdsData(selectedMonth);
-  const shopeeRaw = shopeeDbData ?
-  transformShopeeAds(shopeeDbData as Record<string, any>) :
-  getShopeeAdsData(selectedMonth);
+  const googleMock = getGoogleAdsData(selectedMonth);
+  const metaMock = getMetaAdsData(selectedMonth);
+  const shopeeMock = getShopeeAdsData(selectedMonth);
+
+  const googleRaw = (googleDbData && Object.keys(googleDbData).length > 0) ?
+    transformPlatformAdsDetail({ ...(googleMock || {}), ...(googleDbData as Record<string, any>) }) :
+    googleMock;
+
+  const metaRaw = (metaDbData && Object.keys(metaDbData).length > 0) ?
+    transformPlatformAdsDetail({ ...(metaMock || {}), ...(metaDbData as Record<string, any>) }) :
+    metaMock;
+
+  const shopeeRaw = (shopeeDbData && Object.keys(shopeeDbData).length > 0) ?
+    transformShopeeAds({ ...(shopeeMock || {}), ...(shopeeDbData as Record<string, any>) }) :
+    shopeeMock;
 
   const channels = [
   { name: "Google Ads", budget: googleRaw?.cost ?? 0, clicks: googleRaw?.clicks ?? 0, conversions: googleRaw?.conversions ?? 0 },
