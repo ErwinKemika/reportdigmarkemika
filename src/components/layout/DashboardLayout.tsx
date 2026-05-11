@@ -1,4 +1,4 @@
-import { ReactNode, useState, useCallback } from "react";
+import { ReactNode, useState, useCallback, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Menu, X } from "lucide-react";
@@ -75,9 +75,11 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
   const isOnAdsBudgetChild = location.pathname.startsWith("/ads-budget/");
   const [adsBudgetExpanded, setAdsBudgetExpanded] = useState(isOnAdsBudgetChild);
   // Keep expanded when navigating to child
-  if (isOnAdsBudgetChild && !adsBudgetExpanded) {
-    setAdsBudgetExpanded(true);
-  }
+  useEffect(() => {
+    if (isOnAdsBudgetChild) {
+      setAdsBudgetExpanded(true);
+    }
+  }, [isOnAdsBudgetChild]);
 
   const currentSchema = PAGE_SCHEMA_MAP[location.pathname];
 
