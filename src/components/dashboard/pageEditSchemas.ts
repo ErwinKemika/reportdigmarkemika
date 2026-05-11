@@ -440,32 +440,10 @@ export const roiRevenueSchema: PageSchema = {
   pageTitle: "ROI & Revenue",
   groups: [
     {
-      title: "Investment Breakdown",
+      title: "Manual Insights",
       fields: [
-        { key: "websiteSEO", label: "Website/SEO (Rp)", type: "currency" },
-        { key: "ads", label: "Ads (Rp)", type: "currency" },
-        { key: "maintenanceWebSosmed", label: "Maintenance Web&Sosmed (Rp)", type: "currency" },
+        { key: "insightSummary", label: "Insight Summary", type: "textarea", placeholder: "Tulis insight summary secara manual (akan menimpa insight otomatis)..." },
       ],
-    },
-    {
-      title: "Revenue",
-      fields: [
-        { key: "insightSummary", label: "Insight Summary", type: "textarea" },
-      ],
-    },
-  ],
-  arrayFields: [
-    {
-      key: "leadPipeline",
-      label: "Lead Pipeline",
-      columns: [
-        { key: "projectName", label: "Project Name", type: "text" },
-        { key: "project", label: "Project", type: "select", options: ["Non-Gov", "Gov"] },
-        { key: "leadSource", label: "Lead Source", type: "select", options: ["Website", "Referral", "Social Media", "Event", "Cold Call", "Other"] },
-        { key: "stage", label: "Stage", type: "select", options: ["Unqualified", "Qualified", "Negotiating", "Processing", "Won", "Lost"] },
-        { key: "estimatedRevenue", label: "Est. Revenue (Rp)", type: "currency" },
-      ],
-      maxRows: 10,
     },
   ],
 };
