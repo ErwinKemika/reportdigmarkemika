@@ -5,8 +5,9 @@ import { useMonth } from "@/contexts/MonthContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { Button } from "@/components/ui/button";
-import { Pencil, FileSpreadsheet, TrendingUp, DollarSign, Megaphone } from "lucide-react";
+import { Pencil, FileSpreadsheet, TrendingUp, DollarSign, Megaphone, RefreshCw } from "lucide-react";
 import { SalesRecapEditDialog } from "@/components/dashboard/SalesRecapEditDialog";
+import { useGoogleSheetSalesRecap } from "@/hooks/useGoogleSheetSalesRecap";
 
 const PAGE_KEY = "sales_recap_classified_by_channel";
 
@@ -116,7 +117,10 @@ export default function SalesRecapPage() {
   const queryClient = useQueryClient();
   const [editOpen, setEditOpen] = useState(false);
 
-  // Fetch sales recap data
+  // ── Primary source: Google Sheets CSV ──
+  const { monthData: sheetData, isLoading: sheetLoading, refetch: refetchSheet } = useGoogleSheetSalesRecap(selectedMonth);
+
+  // ── Fallback source: Supabase manual entries ──
   const { data: monthData } = useQuery({
     queryKey: ["sales_recap", period],
     queryFn: async () => {
@@ -131,53 +135,35 @@ export default function SalesRecapPage() {
     },
   });
 
-  // Fetch Webstore revenue
-  const { data: webstoreData } = useQuery({
-    queryKey: ["page_data", period, "webstore-sales"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("page_data")
-        .select("data")
-        .eq("period", period)
-        .eq("page_key", "webstore-sales")
-        .maybeSingle();
-      if (error) throw error;
-      return data?.data as Record<string, any> | null;
-    },
-  });
+  // ── Merge: Google Sheets → Supabase → empty ──
+  // Google Sheets is the primary source of truth
+  const hasSheetData = sheetData && sheetData.grand_total > 0;
 
-  // Fetch Marketplace revenue (Tokopedia & Shopee)
-  const { data: marketplaceData } = useQuery({
-    queryKey: ["page_data", period, "marketplace"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("page_data")
-        .select("data")
-        .eq("period", period)
-        .eq("page_key", "marketplace")
-        .maybeSingle();
-      if (error) throw error;
-      return data?.data as Record<string, any> | null;
-    },
-  });
+  const d: SalesRecapMonthData = hasSheetData
+    ? {
+        tokopedia: sheetData.tokopedia,
+        webstore: sheetData.webstore,
+        shopee: sheetData.shopee,
+        kommo: sheetData.kommo,
+        direct_selling_nongov: sheetData.direct_selling_nongov,
+        inaproc: sheetData.inaproc,
+        e_catalogue: sheetData.e_catalogue,
+        direct_selling_gov: sheetData.direct_selling_gov,
+        marketing_expense: sheetData.marketing_expense,
+        digital_marketing_expenses: sheetData.digital_marketing_expenses,
+      }
+    : {
+        ...emptyRow,
+        ...(monthData ?? {}),
+      };
 
-  // Auto-fill E-Commerce from channel data
-  const autoTokopedia = marketplaceData?.tokopediaRevenue || 0;
-  const autoShopee = marketplaceData?.shopeeRevenue || 0;
-  const autoWebstore = (() => {
-    if (!webstoreData) return 0;
-    const products = webstoreData.topProductsSold || [];
-    return webstoreData.totalRevenue || products.reduce((s: number, p: any) => s + (p.units || 0) * (p.pricePerUnit || p.price || 0), 0);
-  })();
-
-  const d: SalesRecapMonthData = {
-    ...emptyRow,
-    ...(monthData ?? {}),
-    tokopedia: autoTokopedia,
-    webstore: autoWebstore,
-    shopee: autoShopee,
-  };
   const c = calc(d);
+
+  // Use ROI percentages from Google Sheets if available (they match the spreadsheet formulas)
+  const displayRomi = hasSheetData ? sheetData.romi_percent : c.romi_percent;
+  const displayRoiEcom = hasSheetData ? sheetData.roi_ecommerce_percent : c.roi_ecommerce_percent;
+  const displayRoiNongov = hasSheetData ? sheetData.roi_nongov_percent : c.roi_nongov_percent;
+
   const show = c.grand_total > 0 || d.marketing_expense > 0;
 
   return (
@@ -187,6 +173,23 @@ export default function SalesRecapPage() {
         subtitle={`Marketing Performance by Revenue — ${selectedMonth} ${selectedYear}`}
         icon={<FileSpreadsheet className="w-5 h-5" />}
       />
+
+      {/* Google Sheets Sync Indicator */}
+      {hasSheetData && (
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-lg w-fit">
+          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-xs font-medium text-emerald-700 dark:text-emerald-400">Synced from Google Sheets</span>
+          <button onClick={() => refetchSheet()} className="ml-1 p-0.5 rounded hover:bg-emerald-200/50 dark:hover:bg-emerald-500/20 transition-colors">
+            <RefreshCw className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+          </button>
+        </div>
+      )}
+      {sheetLoading && (
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/50 border border-border/40 rounded-lg w-fit">
+          <RefreshCw className="w-3 h-3 text-muted-foreground animate-spin" />
+          <span className="text-xs text-muted-foreground">Loading from Google Sheets...</span>
+        </div>
+      )}
 
       {/* Executive Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -216,8 +219,8 @@ export default function SalesRecapPage() {
             <TrendingUp className="w-3.5 h-3.5 text-muted-foreground" />
             <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">ROMI (%)</p>
           </div>
-          <p className={`text-2xl font-extrabold ${c.romi_percent > 0 ? "text-[hsl(var(--success))]" : "text-foreground"}`}>
-            {c.romi_percent !== 0 ? formatPct(c.romi_percent) : "–"}
+          <p className={`text-2xl font-extrabold ${displayRomi > 0 ? "text-[hsl(var(--success))]" : "text-foreground"}`}>
+            {displayRomi !== 0 ? formatPct(displayRomi) : "–"}
           </p>
         </div>
       </div>
@@ -303,21 +306,21 @@ export default function SalesRecapPage() {
           rows={[
             {
               label: "ROMI (%)",
-              value: show ? formatPct(c.romi_percent) : "–",
+              value: show ? formatPct(displayRomi) : "–",
               isBold: true,
-              isHighlight: c.romi_percent > 0,
+              isHighlight: displayRomi > 0,
             },
             {
               label: "ROI E-Commerce (%)",
-              value: show ? formatPct(c.roi_ecommerce_percent) : "–",
+              value: show ? formatPct(displayRoiEcom) : "–",
               isBold: true,
-              isHighlight: c.roi_ecommerce_percent > 0,
+              isHighlight: displayRoiEcom > 0,
             },
             {
               label: "ROI Non-gov (%)",
-              value: show ? formatPct(c.roi_nongov_percent) : "–",
+              value: show ? formatPct(displayRoiNongov) : "–",
               isBold: true,
-              isHighlight: c.roi_nongov_percent > 0,
+              isHighlight: displayRoiNongov > 0,
             },
           ]}
         />
