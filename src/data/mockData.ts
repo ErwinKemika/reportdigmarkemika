@@ -779,8 +779,50 @@ const metaAdsFeb: PlatformAdsDetailData = {
   insight: "Februari menunjukkan peningkatan signifikan pada efisiensi Meta Ads campaign.\n\nDengan budget naik +12%, impressions meningkat +18% dan clicks naik +14%. Cost per conversion turun -5% ke Rp45,902.\n\nCampaign Retargeting mencatat conversion rate tertinggi (3.8%) meskipun budget-nya kecil. Rekomendasi untuk alokasi budget lebih besar ke retargeting di bulan selanjutnya.",
 };
 
-const googleAdsMap: MonthlyDataMap<PlatformAdsDetailData> = { January: googleAdsJan, February: googleAdsFeb };
-const metaAdsMap: MonthlyDataMap<PlatformAdsDetailData> = { January: metaAdsJan, February: metaAdsFeb };
+// ==================== APRIL 2026 — FROM PDF REPORT ====================
+const googleAdsApr: PlatformAdsDetailData = {
+  cost: 4375019, previousCost: 4700000,
+  impressions: 7943, previousImpressions: 8188,
+  clicks: 698, previousClicks: 634,
+  conversions: 174, previousConversions: 138,
+  ctr: 8.79, previousCtr: 7.74,
+  convRate: 24.93, previousConvRate: 21.77,
+  avgCpm: 550802, previousAvgCpm: 573800,
+  avgCpc: 6268, previousAvgCpc: 7413,
+  costPerConv: 25144, previousCostPerConv: 34058,
+  revenue: 0, previousRevenue: 0,
+  campaigns: [
+    { name: "K/Kemicraft - Industry", cost: 4143763, convRate: 24.2, conversions: 158, costPerConv: 26226 },
+    { name: "K/Kemicraft - Hama", cost: 212822, convRate: 26.19, conversions: 11, costPerConv: 19347 },
+    { name: "K/Kemicraft - Malaria", cost: 18434, convRate: 166.67, conversions: 5, costPerConv: 3687 },
+    { name: "K/Kemicraft - Tools", cost: 0, convRate: 0, conversions: 0, costPerConv: 0 },
+  ],
+  insight: "Meskipun impressions sedikit menurun (-3%), campaign menunjukkan peningkatan kualitas performa yang signifikan, terlihat dari kenaikan CTR (+13%) dan conversion rate (+14%) yang mengindikasikan traffic lebih relevan dan memiliki intent tinggi.\n\nEfisiensi juga semakin optimal dengan penurunan CPC (-16%) dan cost per conversion (-26%), sehingga total conversions meningkat cukup kuat (+26%).\n\nHal ini menunjukkan bahwa meskipun dengan budget yang lebih rendah, campaign tetap mampu menghasilkan performa yang lebih efektif dan efisien secara keseluruhan.",
+};
+
+const metaAdsApr: PlatformAdsDetailData = {
+  cost: 1777421, previousCost: 1531397,
+  impressions: 87461, previousImpressions: 132300,
+  clicks: 1411, previousClicks: 2523,
+  conversions: 106, previousConversions: 96,
+  ctr: 2.11, previousCtr: 3.24,
+  convRate: 14.60, previousConvRate: 7.37,
+  avgCpm: 25223, previousAvgCpm: 15630,
+  avgCpc: 1501, previousAvgCpc: 1047,
+  costPerConv: 16768, previousCostPerConv: 15952,
+  revenue: 0, previousRevenue: 0,
+  landingPageView: 726, previousLandingPageView: 1173,
+  lpvRate: 57.75, previousLpvRate: 57.75,
+  costPerLpv: 2828, previousCostPerLpv: 2828,
+  campaigns: [
+    { name: "K/Kemicraft - Car enthusiast", cost: 960553, convRate: 13.46, conversions: 56, costPerConv: 17153, impressions: 53693, landingPageViews: 416 },
+    { name: "K/Kemicraft - Pest Control (broad)", cost: 816868, convRate: 16.13, conversions: 50, costPerConv: 16337, impressions: 33768, landingPageViews: 310 },
+  ],
+  insight: "Meskipun budget meningkat (+16%), terjadi penurunan pada impressions dan klik akibat kenaikan biaya iklan (CPM & CPC) yang cukup signifikan, sehingga jangkauan menjadi lebih terbatas.\n\nNamun, kualitas traffic tetap terjaga dengan LPV Rate yang stabil dan peningkatan CVR (+98%), yang mendorong total konversi tetap tumbuh (+10%).\n\nHal ini menunjukkan bahwa campaign masih efektif di bagian bawah funnel, meskipun efisiensi di bagian atas funnel menurun.",
+};
+
+const googleAdsMap: MonthlyDataMap<PlatformAdsDetailData> = { January: googleAdsJan, February: googleAdsFeb, April: googleAdsApr };
+const metaAdsMap: MonthlyDataMap<PlatformAdsDetailData> = { January: metaAdsJan, February: metaAdsFeb, April: metaAdsApr };
 
 // ==================== DATA ACCESS ====================
 type MonthlyDataMap<T> = Partial<Record<Month, T>>;
