@@ -88,10 +88,18 @@ export default function ROIRevenuePage() {
 
   const actualMarketplaceRevenue = autoRevenue > 0 ? autoRevenue : safeData.actualMarketplaceRevenue;
 
+  // Calculate Actual Revenue from Won leads
+  const actualRevenueFromWon = leadPipeline
+    .filter((lead: any) => lead.stage === "Won")
+    .reduce((sum: number, lead: any) => sum + (lead.estimatedRevenue || 0), 0);
+
+  // Combine marketplace/webstore revenue with Won pipeline revenue
+  const totalActualRevenue = actualMarketplaceRevenue + actualRevenueFromWon;
+
   const totalInvestment = safeData.investment.ads + safeData.investment.websiteSEO + safeData.investment.maintenanceWebSosmed;
-  const projectedROI = totalInvestment > 0 ? ((actualMarketplaceRevenue - totalInvestment) / totalInvestment) * 100 : 0;
+  const projectedROI = totalInvestment > 0 ? ((totalActualRevenue - totalInvestment) / totalInvestment) * 100 : 0;
   const adsSpend = safeData.investment.ads;
-  const roas = adsSpend > 0 ? actualMarketplaceRevenue / adsSpend : 0;
+  const roas = adsSpend > 0 ? totalActualRevenue / adsSpend : 0;
 
   const generateInsight = async () => {
     setIsGenerating(true);
@@ -104,7 +112,7 @@ export default function ROIRevenuePage() {
             totalLeads,
             estimatedRevenue,
             investment: safeData.investment,
-            actualMarketplaceRevenue,
+            totalActualRevenue,
             projectedROI,
             roas,
             leadPipeline,
@@ -129,11 +137,6 @@ export default function ROIRevenuePage() {
     const style = STAGE_STYLES[stage] || "bg-muted text-muted-foreground";
     return <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-md ${style}`}>{stage}</span>;
   };
-
-  // Calculate Actual Revenue from Won leads
-  const actualRevenueFromWon = leadPipeline
-    .filter((lead: any) => lead.stage === "Won")
-    .reduce((sum: number, lead: any) => sum + (lead.estimatedRevenue || 0), 0);
 
   return (
     <div className="space-y-10 animate-fade-in">
@@ -179,9 +182,9 @@ export default function ROIRevenuePage() {
               </div>
             </div>
             <div className="bg-card rounded-xl p-6 shadow-card border border-border/40 border-l-[3px] border-l-success">
-              <p className="text-label text-muted-foreground uppercase tracking-wider mb-2">Actual Marketplace Revenue</p>
-              <p className="text-kpi font-extrabold text-success tracking-tight">{formatCurrencyFull(actualMarketplaceRevenue)}</p>
-              <p className="mt-1 text-[10px] text-muted-foreground">Auto: Webstore + Tokopedia + Shopee</p>
+              <p className="text-label text-muted-foreground uppercase tracking-wider mb-2">Total Actual Revenue</p>
+              <p className="text-kpi font-extrabold text-success tracking-tight">{formatCurrencyFull(totalActualRevenue)}</p>
+              <p className="mt-1 text-[10px] text-muted-foreground">Auto: Webstore + Marketplace + Won Leads</p>
               <p className="mt-2 text-xs font-semibold text-foreground/70">ROAS {roas.toFixed(2)}x</p>
             </div>
             <div className={`rounded-xl p-6 shadow-hero text-primary-foreground ${projectedROI >= 0 ? "gradient-success" : "gradient-danger"}`}>
