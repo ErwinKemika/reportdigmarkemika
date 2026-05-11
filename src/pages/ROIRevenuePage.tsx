@@ -179,12 +179,26 @@ export default function ROIRevenuePage() {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
           <div className="lg:col-span-2 space-y-5">
             <div className="bg-card rounded-xl p-6 shadow-card border border-border/40 border-l-[3px] border-l-channel-shopee">
-              <p className="text-label text-muted-foreground uppercase tracking-wider mb-2">Total Digital Investment</p>
-              <p className="text-kpi font-extrabold text-card-foreground tracking-tight">{formatCurrencyFull(totalInvestment)}</p>
-              <div className="mt-4 grid grid-cols-3 gap-2 text-xs text-muted-foreground">
-                <span>Website/SEO: {formatCurrencyFull(currentInvestment.websiteSEO)}</span>
-                <span>Ads: {formatCurrencyFull(currentInvestment.ads)}</span>
-                <span>Maintenance Web&amp;Sosmed: {formatCurrencyFull(currentInvestment.maintenanceWebSosmed)}</span>
+              <p className="text-label text-muted-foreground uppercase tracking-wider mb-4">Digital Investment Breakdown</p>
+              
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium text-muted-foreground">Ads Budget & Setup</span>
+                  <span className="text-base font-bold text-card-foreground">{formatCurrencyFull(currentInvestment.ads)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium text-muted-foreground">Website & SEO</span>
+                  <span className="text-base font-bold text-card-foreground">{formatCurrencyFull(currentInvestment.websiteSEO)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium text-muted-foreground">Maintenance & Sosmed</span>
+                  <span className="text-base font-bold text-card-foreground">{formatCurrencyFull(currentInvestment.maintenanceWebSosmed)}</span>
+                </div>
+              </div>
+              
+              <div className="mt-4 pt-4 border-t border-border/40 flex justify-between items-center bg-muted/20 p-2 rounded-lg">
+                <span className="text-[11px] uppercase font-bold text-muted-foreground">Total Investasi</span>
+                <span className="text-lg font-extrabold text-channel-shopee tracking-tight">{formatCurrencyFull(totalInvestment)}</span>
               </div>
             </div>
             <div className="bg-card rounded-xl p-6 shadow-card border border-border/40 border-l-[3px] border-l-success">
