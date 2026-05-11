@@ -70,8 +70,6 @@ export default function AdsBudgetPage() {
 
   const isLoading = gLoading || mLoading || sLoading;
 
-  if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
-
   const googleRaw = googleDbData ?
   transformPlatformAdsDetail(googleDbData as Record<string, any>) :
   getGoogleAdsData(selectedMonth);
@@ -82,13 +80,10 @@ export default function AdsBudgetPage() {
   transformShopeeAds(shopeeDbData as Record<string, any>) :
   getShopeeAdsData(selectedMonth);
 
-  if (!googleRaw && !metaRaw && !shopeeRaw) return <NoData month={selectedMonth} />;
-
   const channels = [
   { name: "Google Ads", budget: googleRaw?.cost ?? 0, clicks: googleRaw?.clicks ?? 0, conversions: googleRaw?.conversions ?? 0 },
   { name: "Meta Ads", budget: metaRaw?.cost ?? 0, clicks: metaRaw?.clicks ?? 0, conversions: metaRaw?.conversions ?? 0 },
   { name: "Shopee Ads", budget: shopeeRaw?.adSpend?.value ?? 0, clicks: shopeeRaw?.clicks?.value ?? 0, conversions: shopeeRaw?.orders?.value ?? 0 }];
-
 
   const totalBudget = channels.reduce((s, c) => s + c.budget, 0);
   const totalClicks = channels.reduce((s, c) => s + c.clicks, 0);
@@ -105,6 +100,9 @@ export default function AdsBudgetPage() {
 
   // Find top channel
   const topChannel = channels.reduce((max, c) => c.budget > max.budget ? c : max, channels[0]);
+
+  if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
+  if (!googleRaw && !metaRaw && !shopeeRaw) return <NoData month={selectedMonth} />;
 
   return (
     <div className="space-y-8 animate-fade-in">
