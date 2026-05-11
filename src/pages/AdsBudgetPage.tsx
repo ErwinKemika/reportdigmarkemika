@@ -6,6 +6,7 @@ import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
 import { DollarSign } from "lucide-react";
 import { BarChart, Bar, LineChart, Line, AreaChart, Area, PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { useMemo } from "react";
 
 const CHANNEL_ICONS: Record<string, React.ReactNode> = {
   "Google Ads":
@@ -37,20 +38,26 @@ const CHANNEL_COLORS: Record<string, string> = {
   "Shopee Ads": "#F97316"
 };
 
-// Mini sparkline data generators
+// Pseudo-random deterministik berbasis seed — hasil SELALU sama untuk nilai yang sama
+// Tidak pakai Math.random() agar grafik tidak flickering saat re-render
+function seededRandom(seed: number): number {
+  const x = Math.sin(seed + 1) * 10000;
+  return x - Math.floor(x);
+}
+
 function genBarData(value: number, count = 7) {
   return Array.from({ length: count }, (_, i) => ({
-    v: Math.max(value * 0.3, value * (0.4 + Math.random() * 0.6) * ((i + 1) / count))
+    v: Math.max(value * 0.3, value * (0.4 + seededRandom(value * 0.01 + i * 7.3) * 0.6) * ((i + 1) / count))
   }));
 }
 function genLineData(value: number, count = 7) {
   return Array.from({ length: count }, (_, i) => ({
-    v: value * (0.3 + i / count * 0.5 + Math.random() * 0.2)
+    v: value * (0.3 + i / count * 0.5 + seededRandom(value * 0.01 + i * 13.7) * 0.2)
   }));
 }
 function genAreaData(value: number, count = 7) {
   return Array.from({ length: count }, (_, i) => ({
-    v: value * (0.4 + i / count * 0.4 + Math.random() * 0.2)
+    v: value * (0.4 + i / count * 0.4 + seededRandom(value * 0.01 + i * 11.1) * 0.2)
   }));
 }
 
@@ -91,6 +98,11 @@ export default function AdsBudgetPage() {
   const pieData = channels.map((c) => ({ name: c.name, value: c.budget })).filter((d) => d.value > 0);
   const PIE_COLORS = ["#34A853", "#0081FB", "#F97316"];
 
+  // Memoize sparkline data — hanya dihitung ulang jika nilai berubah, tidak setiap render
+  const budgetSparkData = useMemo(() => genBarData(totalBudget), [totalBudget]);
+  const clicksSparkData = useMemo(() => genLineData(totalClicks), [totalClicks]);
+  const convSparkData = useMemo(() => genAreaData(totalConversions), [totalConversions]);
+
   // Find top channel
   const topChannel = channels.reduce((max, c) => c.budget > max.budget ? c : max, channels[0]);
 
@@ -111,7 +123,7 @@ export default function AdsBudgetPage() {
             </div>
             <div className="w-24 h-12">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={genBarData(totalBudget)} barCategoryGap={2}>
+                <BarChart data={budgetSparkData} barCategoryGap={2}>
                   <Bar dataKey="v" fill="#34A853" radius={[2, 2, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -129,7 +141,7 @@ export default function AdsBudgetPage() {
             </div>
             <div className="w-24 h-12">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={genLineData(totalClicks)}>
+                <LineChart data={clicksSparkData}>
                   <Line type="monotone" dataKey="v" stroke="#6B9BF7" strokeWidth={2} dot={false} />
                 </LineChart>
               </ResponsiveContainer>
@@ -148,7 +160,7 @@ export default function AdsBudgetPage() {
             <div className="flex items-start gap-3">
               <div className="w-24 h-12">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={genAreaData(totalConversions)}>
+                  <AreaChart data={convSparkData}>
                     <defs>
                       <linearGradient id="convGrad" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stopColor="#34A853" stopOpacity={0.3} />
