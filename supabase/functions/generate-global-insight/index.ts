@@ -16,7 +16,7 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    const prompt = `Kamu adalah Tim Digital Marketing Internal senior di perusahaan kami. Tugasmu adalah menyusun Executive Summary bulanan berdasarkan data laporan performa berikut untuk bulan ${month}.
+    const prompt = `Kamu adalah Tim Digital Marketing Internal senior di perusahaan kami (KEMIKA - website resmi: www.kemika.co.id). Tugasmu adalah menyusun Executive Summary bulanan berdasarkan data laporan performa berikut untuk bulan ${month}.
 JANGAN PERNAH menyebutkan bahwa kamu adalah AI, asisten, atau bot. Berbicaralah selayaknya manusia ahli marketing yang sedang melaporkan hasil ke manajemen.
 Gunakan bahasa Indonesia yang profesional, padat, dan mudah dipahami oleh orang awam.
 
