@@ -5,12 +5,11 @@ import { transformInsights } from "@/lib/dataTransformers";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { Lightbulb, ThumbsUp, ThumbsDown, Award, Target, FileText, Loader2 } from "lucide-react";
 import { useMonth } from "@/contexts/MonthContext";
-import { usePageData } from "@/hooks/usePageData";
+import { usePageData, useUpsertPageData } from "@/hooks/usePageData";
 import { useGoogleSheetSalesRecap } from "@/hooks/useGoogleSheetSalesRecap";
 import { useGoogleSheetROILeads } from "@/hooks/useGoogleSheetROILeads";
 import { useGoogleSheetInvestment } from "@/hooks/useGoogleSheetInvestment";
 import { supabase } from "@/integrations/supabase/client";
-import { useUpsertPageData } from "@/hooks/useUpsertPageData";
 
 export default function InsightsPage() {
   const { selectedMonth, period } = useMonth();
