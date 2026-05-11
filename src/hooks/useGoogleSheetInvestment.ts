@@ -2,10 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSrd6L0Cux-Hyz3D_jqAedqCkavzoJ66bhzAFPIQGrCQOVqDujgKU-j1pXNdoGTh_vqDEIwlYGpONVs/pub?gid=422224935&single=true&output=csv";
 
+export interface InvestmentItem {
+  name: string;
+  amount: number;
+}
+
 export interface SheetInvestmentData {
-  ads: number;
-  websiteSEO: number;
-  maintenanceWebSosmed: number;
+  items: InvestmentItem[];
   total: number;
 }
 
@@ -101,11 +104,10 @@ async function fetchInvestmentData(): Promise<Record<string, SheetInvestmentData
   
   // Initialize result object for each month
   MONTH_NAMES.forEach(month => {
-    result[month] = { ads: 0, websiteSEO: 0, maintenanceWebSosmed: 0, total: 0 };
+    result[month] = { items: [], total: 0 };
   });
 
   // Start reading items under REALIZATION BUDGET
-  // Assuming items start a few rows below REALIZATION BUDGET and end at "Total"
   let inDataSection = false;
   
   for (let i = realizationStartIndex + 1; i < rows.length; i++) {
@@ -120,32 +122,22 @@ async function fetchInvestmentData(): Promise<Record<string, SheetInvestmentData
     if (inDataSection) {
       // Check if we reached the total row
       if (col1 === "Total" || cols[2]?.trim() === "Total") {
-        // We can use the total row to set the absolute total if we want,
-        // but it's safer to sum the categories we mapped.
         break;
       }
 
       // If it's a valid data row (has a number in col 1)
       if (!isNaN(parseInt(col1))) {
-        const itemName = (cols[2] || "").toLowerCase();
+        const itemName = (cols[2] || "").trim();
         
-        let category: keyof SheetInvestmentData | null = null;
-        
-        if (itemName.includes("seo") || itemName.includes("website") || itemName.includes("domain") || itemName.includes("hosting") || itemName.includes("elementor")) {
-          category = "websiteSEO";
-        } else if (itemName.includes("ads") || itemName.includes("ad ")) {
-          category = "ads";
-        } else if (itemName.includes("digital marketing campaign") || itemName.includes("kommo") || itemName.includes("big seller")) {
-          category = "maintenanceWebSosmed";
-        }
-
-        if (category) {
+        if (itemName) {
           // Add amounts for each month
           MONTH_NAMES.forEach((month, idx) => {
             const amountColIndex = 6 + (idx * 2);
             const amount = parseRp(cols[amountColIndex] || "");
-            result[month][category] += amount;
-            result[month].total += amount;
+            if (amount > 0) {
+              result[month].items.push({ name: itemName, amount });
+              result[month].total += amount;
+            }
           });
         }
       }

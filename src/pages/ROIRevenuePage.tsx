@@ -102,9 +102,11 @@ export default function ROIRevenuePage() {
   // Combine marketplace/webstore revenue with Won pipeline revenue
   const totalActualRevenue = actualMarketplaceRevenue + actualRevenueFromWon;
 
-  const totalInvestment = currentInvestment.ads + currentInvestment.websiteSEO + currentInvestment.maintenanceWebSosmed;
+  const totalInvestment = hasInvestmentData ? currentInvestment.total : (currentInvestment.ads + currentInvestment.websiteSEO + currentInvestment.maintenanceWebSosmed);
   const projectedROI = totalInvestment > 0 ? ((totalActualRevenue - totalInvestment) / totalInvestment) * 100 : 0;
-  const adsSpend = currentInvestment.ads;
+  const adsSpend = hasInvestmentData ? 
+    currentInvestment.items.filter((i: any) => i.name.toLowerCase().includes("ads")).reduce((sum: number, i: any) => sum + i.amount, 0) : 
+    currentInvestment.ads;
   const roas = adsSpend > 0 ? totalActualRevenue / adsSpend : 0;
 
   const generateInsight = async () => {
@@ -182,18 +184,29 @@ export default function ROIRevenuePage() {
               <p className="text-label text-muted-foreground uppercase tracking-wider mb-4">Digital Investment Breakdown</p>
               
               <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-muted-foreground">Ads Budget & Setup</span>
-                  <span className="text-base font-bold text-card-foreground">{formatCurrencyFull(currentInvestment.ads)}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-muted-foreground">Website & SEO</span>
-                  <span className="text-base font-bold text-card-foreground">{formatCurrencyFull(currentInvestment.websiteSEO)}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-muted-foreground">Maintenance & Sosmed</span>
-                  <span className="text-base font-bold text-card-foreground">{formatCurrencyFull(currentInvestment.maintenanceWebSosmed)}</span>
-                </div>
+                {hasInvestmentData ? (
+                  currentInvestment.items.map((item: any, idx: number) => (
+                    <div key={idx} className="flex justify-between items-center border-b border-border/20 pb-2 last:border-0 last:pb-0">
+                      <span className="text-[13px] font-medium text-muted-foreground pr-4 leading-tight">{item.name}</span>
+                      <span className="text-sm font-bold text-card-foreground whitespace-nowrap">{formatCurrencyFull(item.amount)}</span>
+                    </div>
+                  ))
+                ) : (
+                  <>
+                    <div className="flex justify-between items-center border-b border-border/20 pb-2">
+                      <span className="text-[13px] font-medium text-muted-foreground">Ads Budget & Setup</span>
+                      <span className="text-sm font-bold text-card-foreground whitespace-nowrap">{formatCurrencyFull(currentInvestment.ads)}</span>
+                    </div>
+                    <div className="flex justify-between items-center border-b border-border/20 pb-2">
+                      <span className="text-[13px] font-medium text-muted-foreground">Website & SEO</span>
+                      <span className="text-sm font-bold text-card-foreground whitespace-nowrap">{formatCurrencyFull(currentInvestment.websiteSEO)}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-[13px] font-medium text-muted-foreground">Maintenance & Sosmed</span>
+                      <span className="text-sm font-bold text-card-foreground whitespace-nowrap">{formatCurrencyFull(currentInvestment.maintenanceWebSosmed)}</span>
+                    </div>
+                  </>
+                )}
               </div>
               
               <div className="mt-4 pt-4 border-t border-border/40 flex justify-between items-center bg-muted/20 p-2 rounded-lg">
