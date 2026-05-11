@@ -401,43 +401,48 @@ export default function OverviewPage() {
     let totalTraffic = 0;
     let totalOrders = 0;
 
-    // Webstore revenue
+    // Track bulan yang sudah diproses dari database untuk setiap source
+    const wsDbPeriods = new Set<string>();
+    const mpDbPeriods = new Set<string>();
+    const webDbPeriods = new Set<string>();
+
+    // Webstore revenue dari DB
     (ytdWebstoreRows || []).forEach((row: any) => {
       const d = typeof row.data === "string" ? JSON.parse(row.data) : row.data;
       const transformed = transformWebstoreSales(d);
       totalRevenue += transformed?.totalRevenue || 0;
+      wsDbPeriods.add(row.period);
     });
 
-    // Marketplace revenue + traffic + orders
+    // Marketplace revenue + traffic + orders dari DB
     (ytdMarketplaceRows || []).forEach((row: any) => {
       const d = typeof row.data === "string" ? JSON.parse(row.data) : row.data;
       const transformed = transformMarketplace(d);
       totalRevenue += transformed?.totalCombinedRevenue || 0;
       totalTraffic += (transformed?.tokopedia?.visitors || 0) + (transformed?.shopee?.visitors || 0);
       totalOrders += (transformed?.tokopedia?.unitsSold || 0) + (transformed?.shopee?.orders || 0);
+      mpDbPeriods.add(row.period);
     });
 
-    // Website traffic
+    // Website traffic dari DB
     (ytdWebsiteRows || []).forEach((row: any) => {
       const d = typeof row.data === "string" ? JSON.parse(row.data) : row.data;
       const transformed = transformWebsitePerformance(d);
       totalTraffic += transformed?.totalSessions?.value || 0;
+      webDbPeriods.add(row.period);
     });
 
-    // Also include current month mock data if no DB data for it
-    const hasWsDb = (ytdWebstoreRows || []).some((r: any) => r.period === period);
-    const hasMpDb = (ytdMarketplaceRows || []).some((r: any) => r.period === period);
-    const hasWebDb = (ytdWebsiteRows || []).some((r: any) => r.period === period);
-
-    if (!hasWsDb && webstore.data) {
+    // Fallback: hanya untuk bulan SAAT INI dan hanya jika bulan itu TIDAK ada di DB
+    // Ini mencegah double-count karena data dari DB sudah dihitung di atas
+    if (!wsDbPeriods.has(period) && webstore.data) {
       totalRevenue += webstore.data.totalRevenue || 0;
     }
-    if (!hasMpDb && marketplace.data) {
+    if (!mpDbPeriods.has(period) && marketplace.data) {
       totalRevenue += marketplace.data.totalCombinedRevenue || 0;
       totalTraffic += (marketplace.data.tokopedia?.visitors || 0) + (marketplace.data.shopee?.visitors || 0);
       totalOrders += (marketplace.data.tokopedia?.unitsSold || 0) + (marketplace.data.shopee?.orders || 0);
     }
-    if (!hasWebDb && website.data) {
+    if (!webDbPeriods.has(period) && website.data) {
       totalTraffic += website.data.totalSessions?.value || 0;
     }
 
