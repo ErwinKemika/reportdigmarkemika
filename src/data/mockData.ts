@@ -779,6 +779,49 @@ const metaAdsFeb: PlatformAdsDetailData = {
   insight: "Februari menunjukkan peningkatan signifikan pada efisiensi Meta Ads campaign.\n\nDengan budget naik +12%, impressions meningkat +18% dan clicks naik +14%. Cost per conversion turun -5% ke Rp45,902.\n\nCampaign Retargeting mencatat conversion rate tertinggi (3.8%) meskipun budget-nya kecil. Rekomendasi untuk alokasi budget lebih besar ke retargeting di bulan selanjutnya.",
 };
 
+// ==================== MARCH 2026 — FROM PDF REPORT ====================
+const googleAdsMar: PlatformAdsDetailData = {
+  cost: 4702388, previousCost: 4478000,
+  impressions: 8160, previousImpressions: 9100,
+  clicks: 632, previousClicks: 665,
+  conversions: 138, previousConversions: 108,
+  ctr: 7.75, previousCtr: 7.75,
+  convRate: 21.84, previousConvRate: 16.24,
+  avgCpm: 576273, previousAvgCpm: 605714,
+  avgCpc: 7440, previousAvgCpc: 7825,
+  costPerConv: 34075, previousCostPerConv: 41463,
+  revenue: 0, previousRevenue: 0,
+  campaigns: [
+    { name: "K/Kemicraft - Industry", cost: 4036146, convRate: 22.95, conversions: 123, costPerConv: 32814 },
+    { name: "K/Kemicraft - Hama", cost: 640786, convRate: 15.22, conversions: 14, costPerConv: 45770 },
+    { name: "K/Kemicraft - Malaria", cost: 25456, convRate: 25, conversions: 1, costPerConv: 25456 },
+    { name: "K/Kemicraft - Tools", cost: 0, convRate: 0, conversions: 0, costPerConv: 0 },
+  ],
+  insight: "Pada bulan Maret menjadi bulan yang cukup baik untuk campaign pada platform Google, dikarenakan terjadi peningkatan pada setiap keymetrics, meskipun budget spending yang bisa dikatakan stabil dari bulan sebelumnya.\n\nHal ini dapat terjadi dikarenakan campaign bisa digolongkan sudah melewati fase learning setelah di beberapa bulan terakhir sempat berhenti dan mendapatkan pengurangan budget iklan yang cukup signifikan.\n\nHasil pada bulan Maret menjadi conversion paling tinggi (Highest record 138) dalam periode berjalannya campaign pada platform Google, dengan conversion rate yang juga sangat tinggi mendekati 22%.",
+};
+
+const metaAdsMar: PlatformAdsDetailData = {
+  cost: 1531058, previousCost: 1988000,
+  impressions: 132276, previousImpressions: 159400,
+  clicks: 2447, previousClicks: 3263,
+  conversions: 96, previousConversions: 113,
+  ctr: 2.04, previousCtr: 2.40,
+  convRate: 7.36, previousConvRate: 7.21,
+  avgCpm: 15558, previousAvgCpm: 15860,
+  avgCpc: 1046, previousAvgCpc: 1204,
+  costPerConv: 15949, previousCostPerConv: 17593,
+  revenue: 0, previousRevenue: 0,
+  landingPageView: 1305, previousLandingPageView: 1975,
+  lpvRate: 57.62, previousLpvRate: 60.53,
+  costPerLpv: 1746, previousCostPerLpv: 1840,
+  campaigns: [
+    { name: "K/Kemicraft - Pest Control (broad)", cost: 763428, convRate: 7.94, conversions: 55, costPerConv: 13881, impressions: 71023, landingPageViews: 693 },
+    { name: "K/Kemicraft - Car enthusiast", cost: 707952, convRate: 6.47, conversions: 38, costPerConv: 18630, impressions: 57677, landingPageViews: 587 },
+    { name: "K/Kemicraft - Farm", cost: 59678, convRate: 12.00, conversions: 3, costPerConv: 19893, impressions: 3576, landingPageViews: 25 },
+  ],
+  insight: "Pada Campaign Meta, terjadi penurunan pada tiap keymetrics, hal ini terjadi dikarenakan faktor utama (spending) berkurang cukup tinggi yaitu 23%.\n\nMeskipun demikian penurunan yang terjadi tidak terlalu tinggi (under 15% avg.).\n\nCVR yang sangat tinggi di angka lebih dari 7% tetap bertahan meskipun budget spend yang berkurang ini menandakan bahwa sebagian besar audience tetap melakukan action yang sangat tinggi terhadap campaign kemika.",
+};
+
 // ==================== APRIL 2026 — FROM PDF REPORT ====================
 const googleAdsApr: PlatformAdsDetailData = {
   cost: 4375019, previousCost: 4700000,
@@ -821,8 +864,8 @@ const metaAdsApr: PlatformAdsDetailData = {
   insight: "Meskipun budget meningkat (+16%), terjadi penurunan pada impressions dan klik akibat kenaikan biaya iklan (CPM & CPC) yang cukup signifikan, sehingga jangkauan menjadi lebih terbatas.\n\nNamun, kualitas traffic tetap terjaga dengan LPV Rate yang stabil dan peningkatan CVR (+98%), yang mendorong total konversi tetap tumbuh (+10%).\n\nHal ini menunjukkan bahwa campaign masih efektif di bagian bawah funnel, meskipun efisiensi di bagian atas funnel menurun.",
 };
 
-const googleAdsMap: MonthlyDataMap<PlatformAdsDetailData> = { January: googleAdsJan, February: googleAdsFeb, April: googleAdsApr };
-const metaAdsMap: MonthlyDataMap<PlatformAdsDetailData> = { January: metaAdsJan, February: metaAdsFeb, April: metaAdsApr };
+const googleAdsMap: MonthlyDataMap<PlatformAdsDetailData> = { January: googleAdsJan, February: googleAdsFeb, March: googleAdsMar, April: googleAdsApr };
+const metaAdsMap: MonthlyDataMap<PlatformAdsDetailData> = { January: metaAdsJan, February: metaAdsFeb, March: metaAdsMar, April: metaAdsApr };
 
 // ==================== DATA ACCESS ====================
 type MonthlyDataMap<T> = Partial<Record<Month, T>>;
