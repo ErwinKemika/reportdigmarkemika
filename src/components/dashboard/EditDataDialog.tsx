@@ -59,7 +59,7 @@ interface EditDataDialogProps {
 }
 
 export function EditDataDialog({ defaultChannel, relevantFields }: EditDataDialogProps) {
-  const { isAdmin } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { selectedMonth } = useMonth();
   const upsert = useUpsertDashboardData();
   const [open, setOpen] = useState(false);
@@ -72,7 +72,8 @@ export function EditDataDialog({ defaultChannel, relevantFields }: EditDataDialo
     if (defaultChannel) setChannel(defaultChannel);
   }, [defaultChannel]);
 
-  if (!isAdmin) return null;
+  const isSuperAdmin = user?.email === "marketplacekemika@gmail.com" || isAdmin;
+  if (!isSuperAdmin) return null;
 
   const fields = relevantFields
     ? FIELDS.filter(f => relevantFields.includes(f.key))
