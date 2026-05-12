@@ -28,10 +28,9 @@ export default function InsightsPage() {
 
   const [isGenerating, setIsGenerating] = useState(false);
   const upsertMutation = useUpsertPageData();
-  const generatingRef = useRef(false);
   const payloadRef = useRef<any>({});
 
-  // Keep payload reference updated without triggering re-renders of the timer
+  // Keep payload reference updated
   useEffect(() => {
     payloadRef.current = {
       website: webData,
@@ -42,60 +41,35 @@ export default function InsightsPage() {
     };
   }, [webData, mkpData, adsGoogleData, adsMetaData, adsShopeeData, salesData, roiLeads, roiInvestment]);
 
-  useEffect(() => {
-    let isMounted = true;
+  const handleGenerate = async () => {
+    if (isGenerating) return;
+    setIsGenerating(true);
     
-    // Jika data sudah ada, atau masih loading awal, jangan lakukan apa-apa
-    if (data || isLoading) {
-      generatingRef.current = false;
-      setIsGenerating(false);
-      return;
-    }
-    
-    const generateAutoInsight = async () => {
-      if (generatingRef.current) return;
+    try {
+      const { data: result, error } = await supabase.functions.invoke("generate-roi-insight", {
+        body: { type: "global", month: selectedMonth, payload: payloadRef.current }
+      });
       
-      generatingRef.current = true;
-      if (isMounted) setIsGenerating(true);
+      if (error) throw error;
       
-      try {
-        const { data: result, error } = await supabase.functions.invoke("generate-global-insight", {
-          body: { month: selectedMonth, payload: payloadRef.current }
-        });
-        
-        if (error) throw error;
-        
-        if (result && !result.error) {
-           await upsertMutation.mutateAsync({ period, pageKey: "insights", data: result });
-           refetch();
-        } else if (result?.error) {
-           throw new Error(result.error);
-        }
-      } catch (error: any) {
-         console.error("Auto generation failed", error);
-         toast.error(error.message || "Gagal menyusun laporan otomatis.");
-      } finally {
-        if (isMounted) {
-          setIsGenerating(false);
-          generatingRef.current = false;
-        }
+      if (result && !result.error) {
+         await upsertMutation.mutateAsync({ period, pageKey: "insights", data: result });
+         refetch();
+         toast.success("Laporan berhasil disusun!");
+      } else if (result?.error) {
+         throw new Error(result.error);
       }
-    };
-    
-    // Beri jeda 2.5 detik agar fetch data lain selesai
-    const timeout = setTimeout(() => {
-        generateAutoInsight();
-    }, 2500);
-
-    return () => { 
-       isMounted = false; 
-       clearTimeout(timeout);
-    };
-  }, [data, isLoading, selectedMonth, period, refetch]);
+    } catch (error: any) {
+       console.error("Auto generation failed", error);
+       toast.error(error.message || "Gagal menyusun laporan otomatis.");
+    } finally {
+       setIsGenerating(false);
+    }
+  };
 
   if (isLoading) return <div className="p-8 text-muted-foreground flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin"/> Loading data...</div>;
   
-  if (isGenerating || (!data && generatingRef.current)) {
+  if (isGenerating) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] text-center space-y-4 animate-fade-in">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -109,12 +83,26 @@ export default function InsightsPage() {
     );
   }
 
-  // Jika setelah dicoba generate tetap gagal/kosong, jangan tampilkan apa-apa (blank state)
-  if (!data) return (
-    <div className="p-8 text-center text-muted-foreground border border-dashed border-border/40 rounded-xl">
-      Belum ada data pemasaran yang cukup untuk menyusun Laporan Eksekutif bulan {selectedMonth}.
-    </div>
-  );
+  // Jika belum ada data, tampilkan tombol untuk men-generate
+  if (!data) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 px-4 text-center border border-dashed border-border/40 rounded-xl bg-card/30">
+        <Lightbulb className="w-12 h-12 text-muted-foreground mb-4 opacity-50" />
+        <h3 className="text-lg font-semibold text-foreground mb-2">Belum Ada Laporan</h3>
+        <p className="text-sm text-muted-foreground max-w-md mb-6">
+          Laporan Eksekutif untuk bulan {selectedMonth} belum disusun. Klik tombol di bawah ini untuk merangkum data dari seluruh halaman secara otomatis.
+        </p>
+        <button 
+          onClick={handleGenerate}
+          disabled={isGenerating}
+          className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-medium text-white transition-colors rounded-lg bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 disabled:pointer-events-none"
+        >
+          <Lightbulb className="w-4 h-4" />
+          ✨ Generate Laporan AI
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-10 animate-fade-in">

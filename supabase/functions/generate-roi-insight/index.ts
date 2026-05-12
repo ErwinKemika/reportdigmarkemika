@@ -12,39 +12,74 @@ serve(async (req) => {
   }
 
   try {
-    const { data } = await req.json();
+    const { data, type, month, payload } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    const {
-      b2bLeads,
-      b2gLeads,
-      totalLeads,
-      estimatedRevenue,
-      investment,
-      actualMarketplaceRevenue,
-      projectedROI,
-      roas,
-      leadPipeline,
-    } = data;
+    let prompt = "";
+    let systemPrompt = "";
+    let responseFormat = undefined;
 
-    const totalInvestment =
-      investment.ads +
-      investment.websiteSEO +
-      investment.maintenanceWebSosmed;
+    if (type === "global") {
+      systemPrompt = "Kamu adalah Tim Digital Marketing Internal yang menulis laporan ke manajemen. Hasil akhir selalu dalam format JSON murni.";
+      responseFormat = { type: "json_object" };
+      prompt = `Kamu adalah Tim Digital Marketing Internal senior di perusahaan kami (KEMIKA - website resmi: www.kemika.co.id). Tugasmu adalah menyusun Executive Summary bulanan berdasarkan data laporan performa berikut untuk bulan ${month}.
+JANGAN PERNAH menyebutkan bahwa kamu adalah AI, asisten, atau bot. Berbicaralah selayaknya manusia ahli marketing yang sedang melaporkan hasil ke manajemen.
+Gunakan bahasa Indonesia yang profesional, padat, dan mudah dipahami oleh orang awam.
 
-    const pipelineSummary = leadPipeline
-      .map(
-        (l: any) =>
-          `${l.projectName} (${l.leadSource}, ${l.stage}, Est. Revenue: Rp ${l.estimatedRevenue.toLocaleString("id-ID")})`
-      )
-      .join("; ");
+Berikut adalah raw data performa (dalam format JSON):
+${JSON.stringify(payload, null, 2)}
 
-    const wonCount = leadPipeline.filter((l: any) => l.stage === "Won").length;
-    const qualifiedCount = leadPipeline.filter((l: any) => l.stage === "Qualified").length;
-    const processingCount = leadPipeline.filter((l: any) => l.stage === "Processing").length;
+Tugasmu:
+1. Analisis performa keseluruhan.
+2. Identifikasi channel terbaik (Best Channel).
+3. Hitung/estimasi pencapaian target (Achievement Percent) dalam skala 0-100 secara logis berdasarkan data.
+4. Buat daftar Key Insights (2-4 poin singkat).
+5. Buat daftar Supporting Factors (Faktor Pendukung) (2-3 poin).
+6. Buat daftar Limiting Factors (Faktor Penghambat/Kebocoran) (2-3 poin).
+7. Buat satu paragraf Insight Summary yang menyimpulkan performa dan memberikan rekomendasi strategis untuk bulan depan.
 
-    const prompt = `Kamu adalah analis digital marketing senior. Berikan insight summary dalam bahasa Indonesia (2-4 kalimat) berdasarkan data ROI & Revenue Impact berikut:
+PENTING: Output HARUS berupa JSON murni dengan skema berikut tanpa tambahan teks markdown lain:
+{
+  "keyInsights": ["Poin 1", "Poin 2"],
+  "supportingFactors": ["Poin 1", "Poin 2"],
+  "limitingFactors": ["Poin 1", "Poin 2"],
+  "bestChannel": "Nama Channel Terbaik",
+  "achievementPercent": 85,
+  "insightSummary": "Paragraf kesimpulan..."
+}`;
+    } else {
+      // Backward compatibility for ROI insight
+      const {
+        b2bLeads,
+        b2gLeads,
+        totalLeads,
+        estimatedRevenue,
+        investment,
+        actualMarketplaceRevenue,
+        projectedROI,
+        roas,
+        leadPipeline,
+      } = data;
+
+      const totalInvestment =
+        investment.ads +
+        investment.websiteSEO +
+        investment.maintenanceWebSosmed;
+
+      const pipelineSummary = leadPipeline
+        .map(
+          (l: any) =>
+            `${l.projectName} (${l.leadSource}, ${l.stage}, Est. Revenue: Rp ${l.estimatedRevenue.toLocaleString("id-ID")})`
+        )
+        .join("; ");
+
+      const wonCount = leadPipeline.filter((l: any) => l.stage === "Won").length;
+      const qualifiedCount = leadPipeline.filter((l: any) => l.stage === "Qualified").length;
+      const processingCount = leadPipeline.filter((l: any) => l.stage === "Processing").length;
+
+      systemPrompt = "Kamu adalah analis digital marketing senior yang memberikan insight singkat, padat, dan actionable dalam bahasa Indonesia.";
+      prompt = `Kamu adalah analis digital marketing senior. Berikan insight summary dalam bahasa Indonesia (2-4 kalimat) berdasarkan data ROI & Revenue Impact berikut:
 
 - B2B Leads: ${b2bLeads.value} (bulan lalu: ${b2bLeads.previousValue})
 - B2G Leads: ${b2gLeads.value} (bulan lalu: ${b2gLeads.previousValue})
@@ -61,6 +96,19 @@ serve(async (req) => {
 - Status pipeline: Won=${wonCount}, Qualified=${qualifiedCount}, Processing=${processingCount}
 
 Berikan insight yang actionable, soroti pencapaian positif dan area yang perlu diperbaiki. Jangan gunakan bullet point, cukup paragraf singkat.`;
+    }
+
+    const fetchBody: any = {
+      model: "google/gemini-2.5-flash",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: prompt },
+      ],
+    };
+
+    if (responseFormat) {
+      fetchBody.responseFormat = responseFormat;
+    }
 
     const response = await fetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",
@@ -70,17 +118,7 @@ Berikan insight yang actionable, soroti pencapaian positif dan area yang perlu d
           Authorization: `Bearer ${LOVABLE_API_KEY}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
-          messages: [
-            {
-              role: "system",
-              content:
-                "Kamu adalah analis digital marketing senior yang memberikan insight singkat, padat, dan actionable dalam bahasa Indonesia.",
-            },
-            { role: "user", content: prompt },
-          ],
-        }),
+        body: JSON.stringify(fetchBody),
       }
     );
 
@@ -103,11 +141,19 @@ Berikan insight yang actionable, soroti pencapaian positif dan area yang perlu d
     }
 
     const result = await response.json();
-    const insight = result.choices?.[0]?.message?.content || "";
+    let content = result.choices?.[0]?.message?.content || "";
 
-    return new Response(JSON.stringify({ insight }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    if (type === "global") {
+      content = content.replace(/^\`\`\`json/m, "").replace(/^\`\`\`/m, "").trim();
+      const insightData = JSON.parse(content);
+      return new Response(JSON.stringify(insightData), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    } else {
+      return new Response(JSON.stringify({ insight: content }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
   } catch (e) {
     console.error("generate-roi-insight error:", e);
     return new Response(
