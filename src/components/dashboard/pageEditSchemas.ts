@@ -517,8 +517,23 @@ export const insightsSchema: PageSchema = {
 export const recommendationsSchema: PageSchema = {
   pageKey: "recommendations",
   pageTitle: "Action Plan",
-  groups: [],
+  groups: [
+    {
+      title: "Informasi Quarter",
+      fields: [
+        { key: "quarter", label: "Quarter Berjalan (Contoh: Q1 2026)", type: "text" }
+      ],
+    }
+  ],
   arrayFields: [
+    {
+      key: "quarterChecklist",
+      label: "Task Selesai di Quarter Ini",
+      columns: [
+        { key: "task", label: "Nama Task", type: "text" },
+      ],
+      maxRows: 20,
+    },
     {
       key: "actionPlan30",
       label: "Immediate Actions (30 Days)",

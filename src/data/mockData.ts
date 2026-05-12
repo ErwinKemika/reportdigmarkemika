@@ -226,6 +226,8 @@ export interface InsightsData {
 
 // ==================== PAGE 8 — RECOMMENDATIONS ====================
 export interface RecommendationsData {
+  quarter?: string;
+  quarterChecklist?: { task: string }[];
   optimasiWebsite: string[];
   optimasiMarketplace: string[];
   actionPlan30: { action: string; tag: string }[];

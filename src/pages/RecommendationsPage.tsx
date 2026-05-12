@@ -359,9 +359,12 @@ export default function RecommendationsPage() {
 
   const isLoading = loadingDb;
 
+  const currentData = dbData || mockFallback;
+  const quarterName = currentData?.quarter;
+  const quarterChecklist = currentData?.quarterChecklist || [];
+
   const actions = useMemo(() => {
     // Primary: current month's data from DB
-    const currentData = dbData || mockFallback;
     const currentActions = convertToActions(currentData, selectedMonth);
 
     // Cross-month: get actions from previous months that extend into this month
@@ -382,7 +385,7 @@ export default function RecommendationsPage() {
     }
 
     return currentActions;
-  }, [dbData, mockFallback, prevData1, prevData2, prevData3, prevData4, selectedMonth, selectedYear]);
+  }, [currentData, prevData1, prevData2, prevData3, prevData4, selectedMonth, selectedYear]);
 
   if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
   if (actions.length === 0) return <NoData month={selectedMonth} />;
@@ -406,6 +409,32 @@ export default function RecommendationsPage() {
         subtitle=""
         icon={<ClipboardList className="w-4 h-4" />} />
 
+      {/* Quarter Banner */}
+      {(quarterName || quarterChecklist.length > 0) && (
+        <div className="bg-gradient-to-br from-[hsl(220,15%,96%)] to-card dark:from-white/[0.08] dark:to-white/[0.02] dark:backdrop-blur-xl rounded-xl border border-border/50 dark:border-white/[0.08] shadow-sm p-6 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-1.5 h-full bg-primary" />
+          <div className="flex flex-col md:flex-row gap-6 md:items-start">
+            <div className="md:w-1/3 space-y-2">
+              <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Quarter Berjalan</p>
+              <h3 className="text-3xl font-extrabold text-foreground tracking-tight">{quarterName || "-"}</h3>
+            </div>
+            
+            {quarterChecklist.length > 0 && (
+              <div className="md:w-2/3 border-t md:border-t-0 md:border-l border-border/40 pt-4 md:pt-0 md:pl-6">
+                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mb-3">Task Selesai Quarter Ini</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {quarterChecklist.map((item: any, i: number) => (
+                    <div key={i} className="flex items-start gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                      <span className="text-sm font-medium text-card-foreground leading-snug">{item.task}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Summary KPI Row */}
       <div className="bg-card dark:bg-white/[0.06] dark:backdrop-blur-xl rounded-xl border border-border/40 dark:border-white/[0.08] shadow-card p-5">
