@@ -527,6 +527,14 @@ export const recommendationsSchema: PageSchema = {
   ],
   arrayFields: [
     {
+      key: "quarterObjectives",
+      label: "Target/Fokus Quarter Ini",
+      columns: [
+        { key: "objective", label: "Target / Objektif", type: "text" },
+      ],
+      maxRows: 15,
+    },
+    {
       key: "quarterChecklist",
       label: "Task Selesai di Quarter Ini",
       columns: [

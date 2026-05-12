@@ -362,6 +362,7 @@ export default function RecommendationsPage() {
   const currentData = dbData || mockFallback;
   const quarterName = currentData?.quarter;
   const quarterChecklist = currentData?.quarterChecklist || [];
+  const quarterObjectives = currentData?.quarterObjectives || [];
 
   const actions = useMemo(() => {
     // Primary: current month's data from DB
@@ -413,11 +414,28 @@ export default function RecommendationsPage() {
       <div className="bg-gradient-to-br from-[hsl(220,15%,96%)] to-card dark:from-white/[0.08] dark:to-white/[0.02] dark:backdrop-blur-xl rounded-xl border border-border/50 dark:border-white/[0.08] shadow-sm p-6 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-1.5 h-full bg-primary" />
         <div className="flex flex-col md:flex-row gap-6 md:items-start">
-          <div className="md:w-1/3 space-y-2">
-            <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Quarter Berjalan</p>
-            <h3 className="text-3xl font-extrabold text-foreground tracking-tight">
-              {quarterName || <span className="text-muted-foreground/40 text-2xl">Belum Diatur</span>}
-            </h3>
+          <div className="md:w-1/3 space-y-4">
+            <div>
+              <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Quarter Berjalan</p>
+              <h3 className="text-3xl font-extrabold text-foreground tracking-tight">
+                {quarterName || <span className="text-muted-foreground/40 text-2xl">Belum Diatur</span>}
+              </h3>
+            </div>
+            
+            {/* Objectives List */}
+            {quarterObjectives.length > 0 && (
+              <div className="space-y-2 pt-2">
+                <p className="text-[11px] font-bold text-primary uppercase tracking-widest mb-2">Target / Fokus</p>
+                <ul className="space-y-1.5">
+                  {quarterObjectives.map((item: any, i: number) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
+                      <span className="text-sm font-medium text-muted-foreground leading-snug">{item.objective}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
           
           <div className="md:w-2/3 border-t md:border-t-0 md:border-l border-border/40 pt-4 md:pt-0 md:pl-6">
