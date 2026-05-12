@@ -449,13 +449,28 @@ export default function RecommendationsPage() {
   if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
   if (actions.length === 0) return <NoData month={selectedMonth} />;
 
-  const completed = actions.filter((a) => a.status === "Done").length;
-  const ongoing = actions.filter((a) => a.status === "Ongoing").length;
-  const pending = actions.filter((a) => a.status === "Pending").length;
-  const completionRate = actions.length > 0 ? Math.round(completed / actions.length * 100) : 0;
+  const uniquePics = useMemo(() => {
+    const pics = new Set<string>();
+    actions.forEach((a) => {
+      if (a.pic && a.pic.trim() !== "") pics.add(a.pic.trim());
+    });
+    return Array.from(pics).sort();
+  }, [actions]);
+
+  const [selectedPic, setSelectedPic] = useState<string>("All");
+
+  const filteredActions = useMemo(() => {
+    if (selectedPic === "All") return actions;
+    return actions.filter((a) => a.pic?.trim() === selectedPic);
+  }, [actions, selectedPic]);
+
+  const completed = filteredActions.filter((a) => a.status === "Done").length;
+  const ongoing = filteredActions.filter((a) => a.status === "Ongoing").length;
+  const pending = filteredActions.filter((a) => a.status === "Pending").length;
+  const completionRate = filteredActions.length > 0 ? Math.round(completed / filteredActions.length * 100) : 0;
 
   const kpis = [
-  { label: "Total Actions", value: actions.length, icon: <ClipboardList className="w-4 h-4" />, color: "text-foreground" },
+  { label: "Total Actions", value: filteredActions.length, icon: <ClipboardList className="w-4 h-4" />, color: "text-foreground" },
   { label: "Completed", value: completed, icon: <CheckCircle2 className="w-4 h-4" />, color: "text-[hsl(145,55%,35%)]" },
   { label: "Ongoing", value: ongoing, icon: <Loader2 className="w-4 h-4" />, color: "text-[hsl(210,60%,40%)]" },
   { label: "Pending", value: pending, icon: <Clock className="w-4 h-4" />, color: "text-[hsl(30,80%,42%)]" }];
@@ -540,8 +555,23 @@ export default function RecommendationsPage() {
         </div>
       </div>
 
-      {/* View Toggle */}
-      <div className="flex justify-end">
+      {/* View Toggle & PIC Filter */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        {/* PIC Filter Dropdown */}
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+            <User className="w-3.5 h-3.5" /> Filter PIC:
+          </span>
+          <select
+            value={selectedPic}
+            onChange={(e) => setSelectedPic(e.target.value)}
+            className="text-sm bg-background dark:bg-white/[0.04] border border-border/50 dark:border-white/[0.08] rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary/40 text-foreground cursor-pointer"
+          >
+            <option value="All">Semua PIC</option>
+            {uniquePics.map(p => <option key={p} value={p}>{p}</option>)}
+          </select>
+        </div>
+
         <div className="inline-flex bg-[hsl(220,15%,95%)] dark:bg-white/[0.06] rounded-lg p-1 gap-0.5 border border-border/30 dark:border-white/[0.08]">
           <button
             onClick={() => setView("table")}
@@ -563,7 +593,7 @@ export default function RecommendationsPage() {
       </div>
 
       {/* Content */}
-      {view === "table" ? <TableView items={actions} /> : <BoardView items={actions} />}
+      {view === "table" ? <TableView items={filteredActions} /> : <BoardView items={filteredActions} />}
     </div>);
 
 }
