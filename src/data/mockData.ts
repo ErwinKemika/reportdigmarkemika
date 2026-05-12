@@ -231,9 +231,9 @@ export interface RecommendationsData {
   quarterChecklist?: { task: string }[];
   optimasiWebsite: string[];
   optimasiMarketplace: string[];
-  actionPlan30: { action: string; tag: string }[];
-  actionPlan60: { action: string; tag: string }[];
-  actionPlan90: { action: string; tag: string }[];
+  actionPlan30: { action: string; tag: string; pic?: string; notes?: string }[];
+  actionPlan60: { action: string; tag: string; pic?: string; notes?: string }[];
+  actionPlan90: { action: string; tag: string; pic?: string; notes?: string }[];
 }
 
 // ==================== PAGE 10 — ROI & REVENUE IMPACT ====================

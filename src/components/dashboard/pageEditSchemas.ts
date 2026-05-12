@@ -547,6 +547,8 @@ export const recommendationsSchema: PageSchema = {
       label: "Immediate Actions (30 Days)",
       columns: [
         { key: "action", label: "Task", type: "text" },
+        { key: "pic", label: "PIC", type: "text" },
+        { key: "notes", label: "Keterangan / Link", type: "text" },
         { key: "tag", label: "Tag (Ads/SEO/UX/Campaign)", type: "text" },
         { key: "priority", label: "Priority (High/Medium/Low)", type: "text" },
         { key: "status", label: "Status (Done/Ongoing/Pending/Blocked)", type: "text" },
@@ -561,6 +563,8 @@ export const recommendationsSchema: PageSchema = {
       label: "Tactical Actions (60 Days)",
       columns: [
         { key: "action", label: "Task", type: "text" },
+        { key: "pic", label: "PIC", type: "text" },
+        { key: "notes", label: "Keterangan / Link", type: "text" },
         { key: "tag", label: "Tag", type: "text" },
         { key: "priority", label: "Priority (High/Medium/Low)", type: "text" },
         { key: "status", label: "Status (Done/Ongoing/Pending/Blocked)", type: "text" },
@@ -575,6 +579,8 @@ export const recommendationsSchema: PageSchema = {
       label: "Strategic Actions (90 Days)",
       columns: [
         { key: "action", label: "Task", type: "text" },
+        { key: "pic", label: "PIC", type: "text" },
+        { key: "notes", label: "Keterangan / Link", type: "text" },
         { key: "tag", label: "Tag", type: "text" },
         { key: "priority", label: "Priority (High/Medium/Low)", type: "text" },
         { key: "status", label: "Status (Done/Ongoing/Pending/Blocked)", type: "text" },

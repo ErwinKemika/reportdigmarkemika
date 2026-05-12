@@ -5,7 +5,7 @@ import { transformRecommendations } from "@/lib/dataTransformers";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
 import { format as fmtDate, parseISO, isValid } from "date-fns";
-import { ClipboardList, CheckCircle2, Loader2, Clock, AlertTriangle, LayoutList, LayoutGrid, TrendingUp, Plus } from "lucide-react";
+import { ClipboardList, CheckCircle2, Loader2, Clock, AlertTriangle, LayoutList, LayoutGrid, TrendingUp, Plus, User, Link as LinkIcon, FileText } from "lucide-react";
 import { useMonth, MONTHS, type MonthName } from "@/contexts/MonthContext";
 import { useState, useMemo } from "react";
 import { Progress } from "@/components/ui/progress";
@@ -17,6 +17,8 @@ type Category = "Immediate" | "Tactical" | "Strategic";
 interface ActionItem {
   category: Category;
   task: string;
+  pic: string;
+  notes: string;
   priority: Priority;
   status: Status;
   startDate: string;
@@ -92,6 +94,8 @@ function convertToActions(data: any, selectedMonth: string): ActionItem[] {
       items.push({
         category,
         task: item.action || item.task || "",
+        pic: item.pic || "",
+        notes: item.notes || "",
         priority: parsePriority(item.priority),
         status: parseStatus(item.status),
         startDate: item.startDate || "",
@@ -215,6 +219,34 @@ function BoardView({ items }: {items: ActionItem[];}) {
               {catItems.map((item, i) =>
               <div key={i} className={`rounded-lg border border-border/30 dark:border-white/[0.08] bg-background dark:bg-white/[0.04] p-4 space-y-3 border-l-4 ${c.border} hover:shadow-md transition-shadow duration-200`}>
                   <p className="text-sm font-medium text-card-foreground leading-relaxed">{item.task}</p>
+                  
+                  {/* PIC and Notes */}
+                  {(item.pic || item.notes) && (
+                    <div className="flex flex-col gap-1.5 mt-1 mb-2 bg-[hsl(220,15%,97%)] dark:bg-white/[0.04] p-2.5 rounded-md">
+                      {item.pic && (
+                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                          <User className="w-3.5 h-3.5 shrink-0" />
+                          <span className="font-medium truncate">{item.pic}</span>
+                        </div>
+                      )}
+                      {item.notes && (
+                        <div className="flex items-start gap-1.5 text-xs text-muted-foreground">
+                          {item.notes.startsWith("http") ? (
+                            <>
+                              <LinkIcon className="w-3.5 h-3.5 shrink-0 text-primary mt-0.5" />
+                              <a href={item.notes} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all line-clamp-2" title={item.notes}>{item.notes}</a>
+                            </>
+                          ) : (
+                            <>
+                              <FileText className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                              <span className="line-clamp-2" title={item.notes}>{item.notes}</span>
+                            </>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   <div className="flex items-center gap-2 flex-wrap">
                     <PriorityBadge priority={item.priority} />
                     <StatusBadge status={item.status} />
@@ -245,66 +277,92 @@ function TableView({ items }: {items: ActionItem[];}) {
     items: items.filter((i) => i.category === cat)
   }));
 
+  const gridCols = "grid-cols-[60px_2fr_1.2fr_1.8fr_100px_110px_140px_130px]";
+
   return (
-    <div className="bg-card dark:bg-white/[0.06] dark:backdrop-blur-xl rounded-xl border border-border/40 dark:border-white/[0.08] shadow-card overflow-hidden">
-      {/* Header */}
-      <div className="grid grid-cols-[1fr_2.5fr_100px_110px_160px_130px] gap-2 px-5 py-3.5 bg-[hsl(220,15%,96%)] dark:bg-white/[0.06] border-b border-border/30 dark:border-white/[0.08] text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-        <span>Category</span>
-        <span>Task</span>
-        <span>Priority</span>
-        <span>Status</span>
-        <span>Timeline</span>
-        <span className="text-right">Progress</span>
-      </div>
+    <div className="bg-card dark:bg-white/[0.06] dark:backdrop-blur-xl rounded-xl border border-border/40 dark:border-white/[0.08] shadow-card overflow-x-auto">
+      <div className="min-w-[1100px]">
+        {/* Header */}
+        <div className={`grid ${gridCols} gap-3 px-5 py-3.5 bg-[hsl(220,15%,96%)] dark:bg-white/[0.06] border-b border-border/30 dark:border-white/[0.08] text-xs font-semibold text-muted-foreground uppercase tracking-wider`}>
+          <span>#</span>
+          <span>Task</span>
+          <span>PIC</span>
+          <span>Keterangan</span>
+          <span>Priority</span>
+          <span>Status</span>
+          <span>Timeline</span>
+          <span className="text-right">Progress</span>
+        </div>
 
-      {/* Rows grouped by category */}
-      {grouped.map((group) => {
-        const c = CATEGORY_COLORS[group.category];
-        if (group.items.length === 0) return null;
-        return (
-          <div key={group.category}>
-            {/* Category header row */}
-            <div className={`grid grid-cols-[1fr_2.5fr_100px_110px_160px_130px] gap-2 px-5 py-3 bg-[hsl(220,15%,97%)] dark:bg-white/[0.04] border-b border-border/20 dark:border-white/[0.06] border-l-4 ${c.border}`}>
-              <div className="col-span-2 flex items-center gap-3">
-                <CategoryBadge category={group.category} />
-                <span className="text-xs text-muted-foreground">{group.items.length} actions</span>
-              </div>
-              <div />
-              <div />
-              <div />
-              <div className="flex items-center gap-2 justify-end">
-                <Progress
-                  value={Math.round(group.items.reduce((s, i) => s + i.progress, 0) / group.items.length)}
-                  className={`h-2 w-20 ${c.progressBar}`} />
-
-                <span className="text-xs font-semibold text-card-foreground w-8 text-right">
-                  {Math.round(group.items.reduce((s, i) => s + i.progress, 0) / group.items.length)}%
-                </span>
-              </div>
-            </div>
-
-            {/* Action rows */}
-            {group.items.map((item, i) =>
-            <div
-              key={i}
-              className="grid grid-cols-[1fr_2.5fr_100px_110px_160px_130px] gap-2 px-5 py-3 border-b border-border/15 dark:border-white/[0.06] hover:bg-[hsl(220,15%,97.5%)] dark:hover:bg-white/[0.04] transition-colors duration-150 items-center">
-
-                <div className="flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-lg bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground">{i + 1}</span>
+        {/* Rows grouped by category */}
+        {grouped.map((group) => {
+          const c = CATEGORY_COLORS[group.category];
+          if (group.items.length === 0) return null;
+          return (
+            <div key={group.category}>
+              {/* Category header row */}
+              <div className={`grid ${gridCols} gap-3 px-5 py-3 bg-[hsl(220,15%,97%)] dark:bg-white/[0.04] border-b border-border/20 dark:border-white/[0.06] border-l-4 ${c.border}`}>
+                <div className="col-span-4 flex items-center gap-3">
+                  <CategoryBadge category={group.category} />
+                  <span className="text-xs text-muted-foreground">{group.items.length} actions</span>
                 </div>
-                <p className="text-sm text-card-foreground pr-3">{item.task}</p>
-                <div><PriorityBadge priority={item.priority} /></div>
-                <div><StatusBadge status={item.status} /></div>
-                <TimelinePill startDate={item.startDate} endDate={item.endDate} />
+                <div />
+                <div />
+                <div />
                 <div className="flex items-center gap-2 justify-end">
-                  <Progress value={item.progress} className={`h-2 w-20 ${c.progressBar}`} />
-                  <span className="text-xs font-semibold text-card-foreground w-8 text-right">{item.progress}%</span>
+                  <Progress
+                    value={Math.round(group.items.reduce((s, i) => s + i.progress, 0) / group.items.length)}
+                    className={`h-2 w-20 ${c.progressBar}`} />
+
+                  <span className="text-xs font-semibold text-card-foreground w-8 text-right">
+                    {Math.round(group.items.reduce((s, i) => s + i.progress, 0) / group.items.length)}%
+                  </span>
                 </div>
               </div>
-            )}
-          </div>);
 
-      })}
+              {/* Action rows */}
+              {group.items.map((item, i) =>
+              <div
+                key={i}
+                className={`grid ${gridCols} gap-3 px-5 py-3 border-b border-border/15 dark:border-white/[0.06] hover:bg-[hsl(220,15%,97.5%)] dark:hover:bg-white/[0.04] transition-colors duration-150 items-center`}>
+
+                  <div className="flex items-center gap-2">
+                    <span className="w-6 h-6 rounded-lg bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground">{i + 1}</span>
+                  </div>
+                  <p className="text-sm text-card-foreground pr-2">{item.task}</p>
+                  
+                  {/* PIC */}
+                  <div className="text-xs font-medium text-muted-foreground flex items-center gap-1.5 truncate" title={item.pic}>
+                    {item.pic ? <><User className="w-3.5 h-3.5 shrink-0" /><span className="truncate">{item.pic}</span></> : <span className="text-muted-foreground/40">—</span>}
+                  </div>
+                  
+                  {/* Notes */}
+                  <div className="text-xs text-muted-foreground pr-2">
+                    {item.notes ? (
+                      item.notes.startsWith("http") ? (
+                        <a href={item.notes} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline flex items-start gap-1.5" title={item.notes}>
+                          <LinkIcon className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                          <span className="line-clamp-2 break-all">{item.notes}</span>
+                        </a>
+                      ) : (
+                        <span className="line-clamp-2" title={item.notes}>{item.notes}</span>
+                      )
+                    ) : <span className="text-muted-foreground/40">—</span>}
+                  </div>
+
+                  <div><PriorityBadge priority={item.priority} /></div>
+                  <div><StatusBadge status={item.status} /></div>
+                  <TimelinePill startDate={item.startDate} endDate={item.endDate} />
+                  <div className="flex items-center gap-2 justify-end">
+                    <Progress value={item.progress} className={`h-2 w-20 ${c.progressBar}`} />
+                    <span className="text-xs font-semibold text-card-foreground w-8 text-right">{item.progress}%</span>
+                  </div>
+                </div>
+              )}
+            </div>);
+
+        })}
+      </div>
     </div>);
 
 }
