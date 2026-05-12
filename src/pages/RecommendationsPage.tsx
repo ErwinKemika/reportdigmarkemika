@@ -94,8 +94,8 @@ function convertToActions(data: any, selectedMonth: string): ActionItem[] {
       items.push({
         category,
         task: item.action || item.task || "",
-        pic: item.pic || "",
-        notes: item.notes || "",
+        pic: item.pic ? String(item.pic) : "",
+        notes: item.notes ? String(item.notes) : "",
         priority: parsePriority(item.priority),
         status: parseStatus(item.status),
         startDate: item.startDate || "",
@@ -446,9 +446,6 @@ export default function RecommendationsPage() {
     return currentActions;
   }, [currentData, prevData1, prevData2, prevData3, prevData4, selectedMonth, selectedYear]);
 
-  if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
-  if (actions.length === 0) return <NoData month={selectedMonth} />;
-
   const uniquePics = useMemo(() => {
     const pics = new Set<string>();
     actions.forEach((a) => {
@@ -463,6 +460,9 @@ export default function RecommendationsPage() {
     if (selectedPic === "All") return actions;
     return actions.filter((a) => a.pic?.trim() === selectedPic);
   }, [actions, selectedPic]);
+
+  if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
+  if (actions.length === 0) return <NoData month={selectedMonth} />;
 
   const completed = filteredActions.filter((a) => a.status === "Done").length;
   const ongoing = filteredActions.filter((a) => a.status === "Ongoing").length;
