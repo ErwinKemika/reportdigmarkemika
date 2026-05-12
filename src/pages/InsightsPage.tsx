@@ -6,6 +6,7 @@ import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { Lightbulb, ThumbsUp, ThumbsDown, Award, Target, FileText, Loader2 } from "lucide-react";
 import { useMonth } from "@/contexts/MonthContext";
 import { usePageData, useUpsertPageData } from "@/hooks/usePageData";
+import { toast } from "sonner";
 import { useGoogleSheetSalesRecap } from "@/hooks/useGoogleSheetSalesRecap";
 import { useGoogleSheetROILeads } from "@/hooks/useGoogleSheetROILeads";
 import { useGoogleSheetInvestment } from "@/hooks/useGoogleSheetInvestment";
@@ -26,39 +27,53 @@ export default function InsightsPage() {
   const { investment: roiInvestment } = useGoogleSheetInvestment(selectedMonth);
 
   const [isGenerating, setIsGenerating] = useState(false);
-  const { upsertData } = useUpsertPageData("insights");
+  const upsertMutation = useUpsertPageData();
   const generatingRef = useRef(false);
+  const payloadRef = useRef<any>({});
+
+  // Keep payload reference updated without triggering re-renders of the timer
+  useEffect(() => {
+    payloadRef.current = {
+      website: webData,
+      marketplace: mkpData,
+      ads: { google: adsGoogleData, meta: adsMetaData, shopee: adsShopeeData },
+      salesRecap: salesData,
+      roi: { leads: roiLeads, investment: roiInvestment }
+    };
+  }, [webData, mkpData, adsGoogleData, adsMetaData, adsShopeeData, salesData, roiLeads, roiInvestment]);
 
   useEffect(() => {
     let isMounted = true;
     
+    // Jika data sudah ada, atau masih loading awal, jangan lakukan apa-apa
+    if (data || isLoading) {
+      generatingRef.current = false;
+      setIsGenerating(false);
+      return;
+    }
+    
     const generateAutoInsight = async () => {
-      if (data || isLoading || generatingRef.current) return;
+      if (generatingRef.current) return;
       
       generatingRef.current = true;
-      setIsGenerating(true);
+      if (isMounted) setIsGenerating(true);
       
       try {
-        const payload = {
-          website: webData,
-          marketplace: mkpData,
-          ads: { google: adsGoogleData, meta: adsMetaData, shopee: adsShopeeData },
-          salesRecap: salesData,
-          roi: { leads: roiLeads, investment: roiInvestment }
-        };
-
         const { data: result, error } = await supabase.functions.invoke("generate-global-insight", {
-          body: { month: selectedMonth, payload }
+          body: { month: selectedMonth, payload: payloadRef.current }
         });
         
         if (error) throw error;
         
         if (result && !result.error) {
-           await upsertData({ period, data: result });
+           await upsertMutation.mutateAsync({ period, pageKey: "insights", data: result });
            refetch();
+        } else if (result?.error) {
+           throw new Error(result.error);
         }
-      } catch (error) {
+      } catch (error: any) {
          console.error("Auto generation failed", error);
+         toast.error(error.message || "Gagal menyusun laporan otomatis.");
       } finally {
         if (isMounted) {
           setIsGenerating(false);
@@ -67,16 +82,16 @@ export default function InsightsPage() {
       }
     };
     
-    // Beri jeda 2 detik agar query lain selesai mengambil data sebelum di-pass ke AI
+    // Beri jeda 2.5 detik agar fetch data lain selesai
     const timeout = setTimeout(() => {
-        if (!data && !isLoading) generateAutoInsight();
-    }, 2000);
+        generateAutoInsight();
+    }, 2500);
 
     return () => { 
        isMounted = false; 
        clearTimeout(timeout);
     };
-  }, [data, isLoading, selectedMonth, period, webData, mkpData, adsGoogleData, adsMetaData, adsShopeeData, salesData, roiLeads, roiInvestment, refetch, upsertData]);
+  }, [data, isLoading, selectedMonth, period, refetch]);
 
   if (isLoading) return <div className="p-8 text-muted-foreground flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin"/> Loading data...</div>;
   
