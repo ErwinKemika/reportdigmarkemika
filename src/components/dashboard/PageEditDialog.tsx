@@ -83,8 +83,12 @@ export function PageEditDialog({ schema }: PageEditDialogProps) {
     }
   }, [values, schema.pageKey, period]);
 
-  // admin can edit everything; editor can only edit the action plan page
-  const canEdit = isAdmin || (isEditor && schema.pageKey === "recommendations");
+  // Action-plan-only editors: restricted emails can only edit the action plan page
+  const ACTION_PLAN_ONLY_EMAILS = ["ariefrzky@gmail.com", "hilmi@gmail.com"];
+  const isActionPlanOnly = !!user?.email && ACTION_PLAN_ONLY_EMAILS.includes(user.email.toLowerCase());
+  const canEdit = isActionPlanOnly
+    ? schema.pageKey === "recommendations"
+    : isAdmin || (isEditor && schema.pageKey === "recommendations");
   if (!canEdit) return null;
 
   const handleFieldChange = (key: string, raw: string, type: string) => {
