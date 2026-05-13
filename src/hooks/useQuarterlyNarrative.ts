@@ -39,7 +39,7 @@ export function useQuarterlyNarrative(quarter: string, year: number, fallback: Q
     const { error } = await supabase
       .from("page_data")
       .upsert(
-        { period, page_key: PAGE_KEY, data: updated as unknown as Record<string, unknown> },
+        { period, page_key: PAGE_KEY, data: updated as unknown as any },
         { onConflict: "period,page_key" }
       );
     setSaving(false);
