@@ -5,7 +5,7 @@ import { transformRecommendations } from "@/lib/dataTransformers";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { NoData } from "@/components/dashboard/NoData";
 import { format as fmtDate, parseISO, isValid } from "date-fns";
-import { ClipboardList, CheckCircle2, Loader2, Clock, AlertTriangle, LayoutList, LayoutGrid, TrendingUp, Plus, User, Link as LinkIcon, FileText } from "lucide-react";
+import { ClipboardList, CheckCircle2, Loader2, Clock, AlertTriangle, LayoutList, LayoutGrid, TrendingUp, Plus, User, Link as LinkIcon, FileText, Tag, Filter } from "lucide-react";
 import { useMonth, MONTHS, type MonthName } from "@/contexts/MonthContext";
 import { useState, useMemo } from "react";
 import { Progress } from "@/components/ui/progress";
@@ -218,8 +218,15 @@ function BoardView({ items }: {items: ActionItem[];}) {
             <div className="p-3 space-y-3">
               {catItems.map((item, i) =>
               <div key={i} className={`rounded-lg border border-border/30 dark:border-white/[0.08] bg-background dark:bg-white/[0.04] p-4 space-y-3 border-l-4 ${c.border} hover:shadow-md transition-shadow duration-200`}>
-                  <p className="text-sm font-medium text-card-foreground leading-relaxed">{item.task}</p>
-                  
+                  <div>
+                    <p className="text-sm font-medium text-card-foreground leading-relaxed">{item.task}</p>
+                    {item.tag && (
+                      <span className="inline-flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-violet-50 text-violet-700 border border-violet-200">
+                        <Tag className="w-2.5 h-2.5" /> {item.tag}
+                      </span>
+                    )}
+                  </div>
+
                   {/* PIC and Notes */}
                   {(item.pic || item.notes) && (
                     <div className="flex flex-col gap-1.5 mt-1 mb-2 bg-[hsl(220,15%,97%)] dark:bg-white/[0.04] p-2.5 rounded-md">
@@ -329,8 +336,15 @@ function TableView({ items }: {items: ActionItem[];}) {
                   <div className="flex items-center gap-2">
                     <span className="w-6 h-6 rounded-lg bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground">{i + 1}</span>
                   </div>
-                  <p className="text-sm text-card-foreground pr-2">{item.task}</p>
-                  
+                  <div className="pr-2">
+                    <p className="text-sm text-card-foreground">{item.task}</p>
+                    {item.tag && (
+                      <span className="inline-flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-violet-50 text-violet-700 border border-violet-200">
+                        <Tag className="w-2.5 h-2.5" /> {item.tag}
+                      </span>
+                    )}
+                  </div>
+
                   {/* PIC */}
                   <div className="text-xs font-medium text-muted-foreground flex items-center gap-1.5 truncate" title={item.pic}>
                     {item.pic ? <><User className="w-3.5 h-3.5 shrink-0" /><span className="truncate">{item.pic}</span></> : <span className="text-muted-foreground/40">—</span>}
@@ -455,11 +469,25 @@ export default function RecommendationsPage() {
   }, [actions]);
 
   const [selectedPic, setSelectedPic] = useState<string>("All");
+  const [selectedTag, setSelectedTag] = useState<string>("All");
+  const [selectedStatus, setSelectedStatus] = useState<string>("All");
+
+  const uniqueTags = useMemo(() => {
+    const tags = new Set<string>();
+    actions.forEach((a) => {
+      if (a.tag && a.tag.trim() !== "") tags.add(a.tag.trim());
+    });
+    return Array.from(tags).sort();
+  }, [actions]);
 
   const filteredActions = useMemo(() => {
-    if (selectedPic === "All") return actions;
-    return actions.filter((a) => a.pic?.trim() === selectedPic);
-  }, [actions, selectedPic]);
+    return actions.filter((a) => {
+      if (selectedPic !== "All" && a.pic?.trim() !== selectedPic) return false;
+      if (selectedTag !== "All" && a.tag?.trim() !== selectedTag) return false;
+      if (selectedStatus !== "All" && a.status !== selectedStatus) return false;
+      return true;
+    });
+  }, [actions, selectedPic, selectedTag, selectedStatus]);
 
   if (isLoading) return <div className="p-8 text-muted-foreground">Loading...</div>;
   if (actions.length === 0) return <NoData month={selectedMonth} />;
@@ -555,21 +583,54 @@ export default function RecommendationsPage() {
         </div>
       </div>
 
-      {/* View Toggle & PIC Filter */}
+      {/* View Toggle & Filters */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        {/* PIC Filter Dropdown */}
-        <div className="flex items-center gap-3">
+        {/* Filters */}
+        <div className="flex items-center gap-3 flex-wrap">
           <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-            <User className="w-3.5 h-3.5" /> Filter PIC:
+            <Filter className="w-3.5 h-3.5" /> Filter:
           </span>
-          <select
-            value={selectedPic}
-            onChange={(e) => setSelectedPic(e.target.value)}
-            className="text-sm bg-background dark:bg-white/[0.04] border border-border/50 dark:border-white/[0.08] rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary/40 text-foreground cursor-pointer"
-          >
-            <option value="All">Semua PIC</option>
-            {uniquePics.map(p => <option key={p} value={p}>{p}</option>)}
-          </select>
+
+          {/* PIC Filter */}
+          <div className="flex items-center gap-1.5">
+            <User className="w-3.5 h-3.5 text-muted-foreground" />
+            <select
+              value={selectedPic}
+              onChange={(e) => setSelectedPic(e.target.value)}
+              className="text-sm bg-background dark:bg-white/[0.04] border border-border/50 dark:border-white/[0.08] rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary/40 text-foreground cursor-pointer"
+            >
+              <option value="All">Semua PIC</option>
+              {uniquePics.map(p => <option key={p} value={p}>{p}</option>)}
+            </select>
+          </div>
+
+          {/* Tag Filter */}
+          {uniqueTags.length > 0 && (
+            <div className="flex items-center gap-1.5">
+              <Tag className="w-3.5 h-3.5 text-muted-foreground" />
+              <select
+                value={selectedTag}
+                onChange={(e) => setSelectedTag(e.target.value)}
+                className="text-sm bg-background dark:bg-white/[0.04] border border-border/50 dark:border-white/[0.08] rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary/40 text-foreground cursor-pointer"
+              >
+                <option value="All">Semua Tag</option>
+                {uniqueTags.map(t => <option key={t} value={t}>{t}</option>)}
+              </select>
+            </div>
+          )}
+
+          {/* Status Filter */}
+          <div className="flex items-center gap-1.5">
+            <Loader2 className="w-3.5 h-3.5 text-muted-foreground" />
+            <select
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              className="text-sm bg-background dark:bg-white/[0.04] border border-border/50 dark:border-white/[0.08] rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary/40 text-foreground cursor-pointer"
+            >
+              <option value="All">Semua Status</option>
+              {VALID_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
         </div>
 
         <div className="inline-flex bg-[hsl(220,15%,95%)] dark:bg-white/[0.06] rounded-lg p-1 gap-0.5 border border-border/30 dark:border-white/[0.08]">
