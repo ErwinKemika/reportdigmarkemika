@@ -42,7 +42,7 @@ function progressColor(pct: number) {
 }
 
 export default function QuarterlyInsightPage({ quarter }: Props) {
-  const data = getQuarterlyInsightData(quarter.toLowerCase());
+  const { data } = useQuarterlyAggregation(quarter);
 
   if (!data) {
     return (
