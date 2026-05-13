@@ -480,7 +480,7 @@ export const benchmarkSchema: PageSchema = {
 // ===== INSIGHTS =====
 export const insightsSchema: PageSchema = {
   pageKey: "insights",
-  pageTitle: "Insights",
+  pageTitle: "Reporting",
   groups: [
     {
       title: "Best Channel",

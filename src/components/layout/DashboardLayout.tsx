@@ -43,7 +43,7 @@ const navItems: NavItem[] = [
   { label: "ROI & Revenue", path: "/roi-revenue", icon: TrendingUp },
   { label: "Sales Recap", path: "/sales-recap", icon: FileSpreadsheet },
   {
-    label: "Insights", path: "/insights", icon: Lightbulb,
+    label: "Reporting", path: "/insights", icon: Lightbulb,
     children: [
       { label: "Q1 Report", path: "/insights/q1", icon: BarChart2 },
       { label: "Q2 Report", path: "/insights/q2", icon: BarChart2 },

@@ -15,7 +15,7 @@ export default function InsightsPage() {
 
   return (
     <div className="space-y-10 animate-fade-in">
-      <SectionHeader title="Insight & Analysis" subtitle={selectedMonth} icon={<Lightbulb className="w-4 h-4" />} />
+      <SectionHeader title="Reporting & Analysis" subtitle={selectedMonth} icon={<Lightbulb className="w-4 h-4" />} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-tint-blue rounded-xl border border-channel-google/15 p-6 shadow-card">
