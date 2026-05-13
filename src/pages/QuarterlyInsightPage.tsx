@@ -1,4 +1,5 @@
-import { getQuarterlyInsightData, formatCurrency, formatCurrencyFull, formatNumber } from "@/data/mockData";
+import { formatCurrency, formatCurrencyFull, formatNumber } from "@/data/mockData";
+import { useQuarterlyAggregation } from "@/hooks/useQuarterlyAggregation";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import {
   BarChart2, TrendingUp, TrendingDown, Award, AlertTriangle,
@@ -41,7 +42,7 @@ function progressColor(pct: number) {
 }
 
 export default function QuarterlyInsightPage({ quarter }: Props) {
-  const data = getQuarterlyInsightData(quarter.toLowerCase());
+  const { data } = useQuarterlyAggregation(quarter);
 
   if (!data) {
     return (
