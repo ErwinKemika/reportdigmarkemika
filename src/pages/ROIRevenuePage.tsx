@@ -73,7 +73,7 @@ export default function ROIRevenuePage() {
   };
 
   // Override investment if sheet data is available
-  const currentInvestment = hasInvestmentData ? sheetInvestment : safeData.investment;
+  const currentInvestment: any = hasInvestmentData ? sheetInvestment : safeData.investment;
 
   // Override pipeline and totals if sheet data is available
   const leadPipeline = hasSheetData ? sheetLeads : safeData.leadPipeline;
