@@ -357,26 +357,26 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
 
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="bg-card/80 backdrop-blur-sm border-b border-border/60 px-4 md:px-8 py-4 flex items-center justify-between shrink-0 sticky top-0 z-10">
-          <div className="flex items-center gap-3">
+        <header className="bg-card/80 backdrop-blur-sm border-b border-border/60 px-3 md:px-8 py-3 md:py-4 flex items-center justify-between shrink-0 sticky top-0 z-10 gap-2">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
             {isMobile && (
               <button
                 onClick={() => setDrawerOpen(true)}
-                className="p-1.5 rounded-lg transition-colors hover:bg-muted"
+                className="p-1.5 rounded-lg transition-colors hover:bg-muted shrink-0"
               >
                 <Menu className="w-5 h-5 text-foreground" />
               </button>
             )}
-            <h1 className="text-page-title text-foreground tracking-tight">
+            <h1 className="text-base md:text-page-title text-foreground tracking-tight truncate">
               {getPageTitle(location.pathname)}
             </h1>
           </div>
-          <div className="flex items-center gap-2 md:gap-3">
+          <div className="flex items-center gap-1 md:gap-3 shrink-0">
             {currentSchema && <PageEditDialog schema={currentSchema} />}
             <ThemeToggle />
             <Calendar className="w-4 h-4 text-muted-foreground hidden md:block" />
             <Select value={selectedMonth} onValueChange={(v) => setSelectedMonth(v as any)}>
-              <SelectTrigger className="w-24 md:w-32 h-9 text-sm rounded-lg border-border/60 bg-background">
+              <SelectTrigger className="w-[72px] sm:w-24 md:w-32 h-8 md:h-9 text-xs md:text-sm rounded-lg border-border/60 bg-background">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -386,7 +386,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
               </SelectContent>
             </Select>
             <Select value={String(selectedYear)} onValueChange={(v) => setSelectedYear(Number(v))}>
-              <SelectTrigger className="w-20 h-9 text-sm rounded-lg border-border/60 bg-background">
+              <SelectTrigger className="w-[60px] sm:w-16 md:w-20 h-8 md:h-9 text-xs md:text-sm rounded-lg border-border/60 bg-background">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -398,7 +398,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
           </div>
         </header>
 
-        <main className="flex-1 px-4 md:px-8 py-4 md:py-8 overflow-y-auto">
+        <main className="flex-1 px-3 md:px-8 py-4 md:py-8 overflow-y-auto">
           {children}
         </main>
       </div>

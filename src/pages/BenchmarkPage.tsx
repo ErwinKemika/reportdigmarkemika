@@ -76,44 +76,48 @@ export default function BenchmarkPage() {
       <section>
         <SectionHeader title="Channel Benchmark" subtitle="Comparative performance across all e-commerce channels" icon={<BarChart3 className="w-4 h-4" />} />
         <div className="bg-card rounded-xl border border-border/40 shadow-hero overflow-hidden">
-          <div className="grid grid-cols-[1.5fr_1fr_1fr_1.2fr] gap-4 px-6 py-4 bg-muted/50 border-b border-border/40">
-            <span className="text-label text-muted-foreground uppercase tracking-wider">Channel</span>
-            <span className="text-label text-muted-foreground uppercase tracking-wider">Traffic</span>
-            <span className="text-label text-muted-foreground uppercase tracking-wider">Conversion Rate</span>
-            <span className="text-label text-muted-foreground uppercase tracking-wider">Achievement</span>
-          </div>
-          {data.channels.map((ch) => {
-            const config = channelConfig[ch.channel as keyof typeof channelConfig];
-            const badge = achievementBadge(ch.achievement);
-            const IconComp = config.icon;
-            return (
-              <div key={ch.channel} className="grid grid-cols-[1.5fr_1fr_1fr_1.2fr] gap-4 px-6 py-5 border-b border-border/20 last:border-0 hover:bg-muted/30 transition-colors">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-card" style={{ backgroundColor: config.color }}>
-                    <IconComp className="w-4 h-4 text-primary-foreground" />
-                  </div>
-                  <span className="text-sm font-semibold text-card-foreground">{ch.channel}</span>
-                </div>
-                <div>
-                  <p className="text-base font-bold text-card-foreground">{formatNumber(ch.traffic)}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Target: {formatNumber(ch.targetTraffic)}</p>
-                </div>
-                <div>
-                  <p className="text-base font-bold text-card-foreground">{ch.conversionRate.toFixed(1)}%</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Target: {ch.targetCR.toFixed(1)}%</p>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-card-foreground">{ch.achievement.toFixed(1)}%</span>
-                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${badge.className}`}>{badge.label}</span>
-                  </div>
-                  <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                    <div className={`h-full rounded-full transition-all duration-500 ${progressColor(ch.achievement)}`} style={{ width: `${Math.min(ch.achievement, 100)}%` }} />
-                  </div>
-                </div>
+          <div className="overflow-x-auto">
+            <div className="min-w-[480px]">
+              <div className="grid grid-cols-[1.5fr_1fr_1fr_1.2fr] gap-4 px-6 py-4 bg-muted/50 border-b border-border/40">
+                <span className="text-label text-muted-foreground uppercase tracking-wider">Channel</span>
+                <span className="text-label text-muted-foreground uppercase tracking-wider">Traffic</span>
+                <span className="text-label text-muted-foreground uppercase tracking-wider">Conversion Rate</span>
+                <span className="text-label text-muted-foreground uppercase tracking-wider">Achievement</span>
               </div>
-            );
-          })}
+              {data.channels.map((ch) => {
+                const config = channelConfig[ch.channel as keyof typeof channelConfig];
+                const badge = achievementBadge(ch.achievement);
+                const IconComp = config.icon;
+                return (
+                  <div key={ch.channel} className="grid grid-cols-[1.5fr_1fr_1fr_1.2fr] gap-4 px-6 py-5 border-b border-border/20 last:border-0 hover:bg-muted/30 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-card" style={{ backgroundColor: config.color }}>
+                        <IconComp className="w-4 h-4 text-primary-foreground" />
+                      </div>
+                      <span className="text-sm font-semibold text-card-foreground">{ch.channel}</span>
+                    </div>
+                    <div>
+                      <p className="text-base font-bold text-card-foreground">{formatNumber(ch.traffic)}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">Target: {formatNumber(ch.targetTraffic)}</p>
+                    </div>
+                    <div>
+                      <p className="text-base font-bold text-card-foreground">{ch.conversionRate.toFixed(1)}%</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">Target: {ch.targetCR.toFixed(1)}%</p>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-bold text-card-foreground">{ch.achievement.toFixed(1)}%</span>
+                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${badge.className}`}>{badge.label}</span>
+                      </div>
+                      <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                        <div className={`h-full rounded-full transition-all duration-500 ${progressColor(ch.achievement)}`} style={{ width: `${Math.min(ch.achievement, 100)}%` }} />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </section>
 

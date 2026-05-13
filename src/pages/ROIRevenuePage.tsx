@@ -148,13 +148,14 @@ export default function ROIRevenuePage() {
 
   return (
     <div className="space-y-10 animate-fade-in">
-      <section className="bg-tint-purple/50 rounded-2xl p-8">
-        <div className="flex items-center justify-between mb-4">
+      <section className="bg-tint-purple/50 rounded-2xl p-4 md:p-8">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
           <SectionHeader title="Lead Performance" subtitle="B2B & B2G lead tracking" icon={<Users className="w-4 h-4" />} />
           {(hasSheetData || hasInvestmentData) && (
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-success/10 text-success border border-success/20 text-[10px] font-bold uppercase tracking-wider animate-pulse">
-              <div className="w-1.5 h-1.5 rounded-full bg-success" />
-              Synced from Google Sheets
+            <div className="flex items-center gap-1.5 px-2 md:px-3 py-1 rounded-full bg-success/10 text-success border border-success/20 text-[10px] font-bold uppercase tracking-wider animate-pulse whitespace-nowrap">
+              <div className="w-1.5 h-1.5 rounded-full bg-success shrink-0" />
+              <span className="hidden sm:inline">Synced from Google Sheets</span>
+              <span className="sm:hidden">Synced</span>
             </div>
           )}
         </div>
@@ -264,7 +265,7 @@ export default function ROIRevenuePage() {
 
       <section>
         <div className="bg-tint-blue rounded-xl p-6 shadow-card border-l-4 border-l-channel-google border border-channel-google/15">
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
             <div className="flex items-center gap-2.5">
               <Lightbulb className="w-4 h-4 text-channel-google" />
               <h3 className="text-sm font-semibold text-card-foreground">Insight Summary</h3>
