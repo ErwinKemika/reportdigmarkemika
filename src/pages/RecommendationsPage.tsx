@@ -429,12 +429,21 @@ export default function RecommendationsPage() {
   const { data: prevData3 } = usePageData(prevPeriods[2], "recommendations");
   const { data: prevData4 } = usePageData(prevPeriods[3], "recommendations");
 
+  // Quarter banner always reads from the first month of the current quarter
+  // so switching months within a quarter doesn't change the banner content
+  const quarterFirstPeriod = useMemo(() => {
+    const quarterStartIdx = Math.floor(currentMonthIdx / 3) * 3;
+    return `${MONTHS[quarterStartIdx]} ${selectedYear}`;
+  }, [currentMonthIdx, selectedYear]);
+  const { data: quarterBaseData } = usePageData(quarterFirstPeriod, "recommendations");
+
   const isLoading = loadingDb;
 
   const currentData = dbData || mockFallback;
-  const quarterName = currentData?.quarter;
-  const quarterChecklist = currentData?.quarterChecklist || [];
-  const quarterObjectives = currentData?.quarterObjectives || [];
+  const quarterBanner = quarterBaseData || currentData;
+  const quarterName = quarterBanner?.quarter;
+  const quarterChecklist = quarterBanner?.quarterChecklist || [];
+  const quarterObjectives = quarterBanner?.quarterObjectives || [];
 
   const actions = useMemo(() => {
     // Primary: current month's data from DB
