@@ -906,75 +906,164 @@ export interface QuarterlyInsightData {
   summary: string;
 }
 
-const quarterlyInsightQ1: QuarterlyInsightData = {
-  quarter: "Q1", year: 2026, months: ["January", "February", "March"],
-  totalAdSpend: 14500000, totalRevenue: 278000000, blendedROAS: 19.2,
-  totalTraffic: 38400, avgConversionRate: 2.4, achievementPercent: 85,
-  prevQuarterRevenue: 315000000, prevQuarterAdSpend: 17000000, prevQuarterROAS: 18.5,
-  monthTrend: [
-    { month: "Jan", revenue: 85000000, adSpend: 4800000, traffic: 12000 },
-    { month: "Feb", revenue: 98000000, adSpend: 5100000, traffic: 13500 },
-    { month: "Mar", revenue: 95000000, adSpend: 4600000, traffic: 12900 },
-  ],
-  channels: [
-    { name: "Webstore", revenue: 120000000, traffic: 18000, conversionRate: 3.2, contribution: 43 },
-    { name: "Tokopedia", revenue: 95000000, traffic: 12500, conversionRate: 2.1, contribution: 34 },
-    { name: "Shopee", revenue: 63000000, traffic: 7900, conversionRate: 1.8, contribution: 23 },
-  ],
-  wins: [
-    "Webstore conversion rate meningkat ke 3.2% — tertinggi sepanjang sejarah channel ini.",
-    "Google Ads berhasil menurunkan CPC sebesar 18% dibanding Q4 2025 melalui optimasi audience targeting.",
-    "Kampanye Harbolnas Februari menghasilkan spike traffic +42% di Shopee dan Tokopedia.",
-  ],
-  challenges: [
-    "Revenue Q1 turun 11.7% dibanding Q4 2025 akibat pola musiman pasca-akhir tahun yang lebih sepi.",
-    "Meta Ads mengalami penurunan CTR di bulan Maret — konten iklan perlu direfresh.",
-    "Closing rate dari lead B2B masih rendah di 14% — funnel perlu diperkuat di stage Qualified.",
-  ],
-  nextQuarterFocus: [
-    "Tingkatkan budget Google Ads 20% untuk kuartal Ramadan & Lebaran (Q2) yang biasanya peak season.",
-    "Refresh creative Meta Ads dengan pendekatan video-first untuk memperbaiki CTR.",
-    "Implementasi live chat di Webstore untuk mengurangi cart abandonment dan mendorong CR ke 3.5%.",
-  ],
-  summary: "Q1 2026 menunjukkan performa yang solid meskipun berada di periode post-holiday. Webstore memimpin sebagai channel terkuat dengan CR tertinggi, sementara channel marketplace stabil. Fokus Q2 harus diarahkan pada momentum Ramadan untuk menutup gap pencapaian dan melampaui performa Q4 2025.",
+// Months belonging to each quarter
+const QUARTER_MONTHS: Record<"Q1" | "Q2" | "Q3" | "Q4", [Month, Month, Month]> = {
+  Q1: ["January", "February", "March"],
+  Q2: ["April", "May", "June"],
+  Q3: ["July", "August", "September"],
+  Q4: ["October", "November", "December"],
 };
 
-const quarterlyInsightQ2: QuarterlyInsightData = {
-  quarter: "Q2", year: 2026, months: ["April", "May", "June"],
-  totalAdSpend: 18200000, totalRevenue: 342000000, blendedROAS: 18.8,
-  totalTraffic: 47800, avgConversionRate: 2.6, achievementPercent: 94,
-  prevQuarterRevenue: 278000000, prevQuarterAdSpend: 14500000, prevQuarterROAS: 19.2,
-  monthTrend: [
-    { month: "Apr", revenue: 108000000, adSpend: 5800000, traffic: 14800 },
-    { month: "May", revenue: 118000000, adSpend: 6300000, traffic: 16500 },
-    { month: "Jun", revenue: 116000000, adSpend: 6100000, traffic: 16500 },
-  ],
-  channels: [
-    { name: "Webstore", revenue: 148000000, traffic: 21000, conversionRate: 3.5, contribution: 43 },
-    { name: "Tokopedia", revenue: 118000000, traffic: 15800, conversionRate: 2.3, contribution: 35 },
-    { name: "Shopee", revenue: 76000000, traffic: 11000, conversionRate: 2.0, contribution: 22 },
-  ],
-  wins: [
-    "Revenue tumbuh 23% QoQ — periode Ramadan & Lebaran (Mei) menjadi bulan terkuat sepanjang tahun.",
-    "Kampanye Super Sale Tokopedia berhasil menghasilkan 1,200+ orders dalam 3 hari — rekor tertinggi.",
-    "Webstore mencapai CR 3.5% di bulan Mei, melampaui target 3% untuk pertama kalinya.",
-  ],
-  challenges: [
-    "ROAS turun dari 19.2 di Q1 ke 18.8 — peningkatan spend Ramadan belum sepenuhnya efisien.",
-    "Shopee CR masih di bawah target 2.5% meski traffic meningkat — perlu optimasi halaman produk.",
-    "Biaya iklan peak season (Lebaran) naik 30% sehingga menekan margin campaign.",
-  ],
-  nextQuarterFocus: [
-    "Manfaatkan momentum post-Lebaran untuk program loyalty dan retargeting pelanggan baru Q2.",
-    "Optimalkan halaman produk Shopee (gambar, deskripsi, review) untuk mendorong CR ke 2.5%.",
-    "Diversifikasi konten organik (SEO & media sosial) untuk mengurangi ketergantungan pada paid ads.",
-  ],
-  summary: "Q2 2026 adalah kuartal terkuat dengan revenue Rp 342 juta — naik 23% dari Q1. Momentum Ramadan berhasil dimanfaatkan dengan baik melalui kampanye yang tepat sasaran. Tantangan utama adalah menjaga efisiensi spend saat biaya iklan naik di peak season. Q3 perlu fokus pada retensi pelanggan baru yang acquired di Q2.",
+// Manual narratives — things that cannot be computed from numbers
+interface QuarterNarrative {
+  prevQuarterRevenue: number;
+  prevQuarterAdSpend: number;
+  prevQuarterROAS: number;
+  wins: string[];
+  challenges: string[];
+  nextQuarterFocus: string[];
+  summary: string;
+}
+
+const quarterlyNarratives: Partial<Record<"Q1" | "Q2" | "Q3" | "Q4", QuarterNarrative>> = {
+  Q1: {
+    prevQuarterRevenue: 0,
+    prevQuarterAdSpend: 0,
+    prevQuarterROAS: 0,
+    wins: [
+      "Webstore conversion rate terbaik di bulan Februari mencapai 3.5% — peningkatan signifikan dari Januari (3.2%).",
+      "Google Ads bulan Maret mencetak rekor conversion tertinggi: 138 conversions dengan CVR 21.84%.",
+      "Kampanye Valentine Februari berhasil mendorong lonjakan revenue di webstore dan marketplace.",
+    ],
+    challenges: [
+      "Data marketplace dan webstore bulan Maret belum tersedia — angka Q1 belum mencerminkan 3 bulan penuh.",
+      "Meta Ads bulan Maret mengalami penurunan spend -23% sehingga impression dan click ikut turun.",
+      "Shopee cancelled orders perlu ditekan agar tidak mempengaruhi rating dan conversion rate.",
+    ],
+    nextQuarterFocus: [
+      "Tingkatkan budget Google Ads untuk momentum Ramadan & Lebaran (Q2) yang biasanya peak season.",
+      "Refresh creative Meta Ads dengan pendekatan video-first untuk memperbaiki CTR yang menurun.",
+      "Lengkapi input data marketplace dan webstore bulan Maret agar laporan Q1 dapat tersaji secara penuh.",
+    ],
+    summary: "Q1 2026 menunjukkan tren positif dari Januari ke Februari dengan revenue dan traffic yang terus naik. Google Ads mencetak rekor CVR tertinggi di Maret (21.84%). Data bulan Maret untuk marketplace dan webstore belum tersedia sehingga total Q1 masih berdasarkan Januari dan Februari. Fokus Q2 adalah momentum Ramadan dan kelengkapan data.",
+  },
 };
 
-const quarterlyInsightMap: Record<string, QuarterlyInsightData> = {
-  q1: quarterlyInsightQ1,
-  q2: quarterlyInsightQ2,
+// Aggregates all available monthly data for a quarter into a single QuarterlyInsightData object.
+// Only includes months that have data — months with no data contribute zero.
+function buildQuarterlyData(quarter: "Q1" | "Q2" | "Q3" | "Q4"): QuarterlyInsightData | undefined {
+  const months = QUARTER_MONTHS[quarter];
+  const narrative = quarterlyNarratives[quarter];
+
+  let totalAdSpend = 0;
+  let totalRevenue = 0;
+  let totalTraffic = 0;
+  const monthTrend: { month: string; revenue: number; adSpend: number; traffic: number }[] = [];
+
+  // Per-channel accumulators
+  type ChannelKey = "Tokopedia" | "Shopee" | "Webstore";
+  const channelRevenue: Record<ChannelKey, number> = { Tokopedia: 0, Shopee: 0, Webstore: 0 };
+  const channelVisits: Record<ChannelKey, number> = { Tokopedia: 0, Shopee: 0, Webstore: 0 };
+  const channelConversions: Record<ChannelKey, number> = { Tokopedia: 0, Shopee: 0, Webstore: 0 };
+
+  let totalAchievement = 0;
+  let achievementCount = 0;
+  let hasRevenueData = false;
+
+  for (const month of months) {
+    const googleAds = googleAdsMap[month];
+    const metaAds = metaAdsMap[month];
+    const shopeeAds = shopeeAdsMap[month];
+    const marketplace = marketplaceMap[month];
+    const webstore = webstoreMap[month];
+    const benchmark = benchmarkMap[month];
+
+    const monthAdSpend = (googleAds?.cost ?? 0) + (metaAds?.cost ?? 0) + (shopeeAds?.adSpend.value ?? 0);
+
+    const tokRevenue = marketplace?.tokopedia.revenue ?? 0;
+    const shopRevenue = marketplace?.shopee.revenue ?? 0;
+    const webRevenue = webstore?.totalRevenue ?? 0;
+    const monthRevenue = tokRevenue + shopRevenue + webRevenue;
+
+    const tokTraffic = benchmark?.channels.find(c => c.channel === "Tokopedia")?.traffic ?? 0;
+    const shopTraffic = benchmark?.channels.find(c => c.channel === "Shopee")?.traffic ?? 0;
+    const webTraffic = benchmark?.channels.find(c => c.channel === "Webstore")?.traffic ?? 0;
+    const monthTraffic = tokTraffic + shopTraffic + webTraffic;
+
+    if (monthRevenue > 0) hasRevenueData = true;
+
+    totalAdSpend += monthAdSpend;
+    totalRevenue += monthRevenue;
+    totalTraffic += monthTraffic;
+
+    channelRevenue.Tokopedia += tokRevenue;
+    channelRevenue.Shopee += shopRevenue;
+    channelRevenue.Webstore += webRevenue;
+
+    if (benchmark) {
+      for (const ch of benchmark.channels) {
+        const key = ch.channel as ChannelKey;
+        if (key in channelVisits) {
+          channelVisits[key] += ch.traffic;
+          channelConversions[key] += Math.round(ch.traffic * ch.conversionRate / 100);
+        }
+      }
+      const avgAch = benchmark.channels.reduce((s, c) => s + c.achievement, 0) / benchmark.channels.length;
+      totalAchievement += avgAch;
+      achievementCount++;
+    }
+
+    monthTrend.push({ month: month.slice(0, 3), revenue: monthRevenue, adSpend: monthAdSpend, traffic: monthTraffic });
+  }
+
+  // Need at least ad spend data AND a narrative to render this quarter
+  if (totalAdSpend === 0 || !narrative) return undefined;
+
+  const blendedROAS = totalAdSpend > 0 ? totalRevenue / totalAdSpend : 0;
+  const achievementPercent = achievementCount > 0 ? totalAchievement / achievementCount : 0;
+
+  const channelKeys: ChannelKey[] = ["Tokopedia", "Shopee", "Webstore"];
+  const channels = channelKeys
+    .map(name => {
+      const revenue = channelRevenue[name];
+      const traffic = channelVisits[name];
+      const conversionRate = traffic > 0 ? (channelConversions[name] / traffic) * 100 : 0;
+      const contribution = totalRevenue > 0 ? Math.round((revenue / totalRevenue) * 100) : 0;
+      return { name, revenue, traffic, conversionRate, contribution };
+    })
+    .filter(c => c.revenue > 0 || c.traffic > 0);
+
+  const avgConversionRate = totalTraffic > 0
+    ? channels.reduce((sum, c) => sum + c.conversionRate * c.traffic, 0) / totalTraffic
+    : 0;
+
+  return {
+    quarter,
+    year: 2026,
+    months,
+    totalAdSpend,
+    totalRevenue,
+    blendedROAS,
+    totalTraffic,
+    avgConversionRate,
+    achievementPercent,
+    prevQuarterRevenue: narrative.prevQuarterRevenue,
+    prevQuarterAdSpend: narrative.prevQuarterAdSpend,
+    prevQuarterROAS: narrative.prevQuarterROAS,
+    monthTrend,
+    channels,
+    wins: narrative.wins,
+    challenges: narrative.challenges,
+    nextQuarterFocus: narrative.nextQuarterFocus,
+    summary: narrative.summary,
+  };
+}
+
+const quarterlyInsightMap: Record<string, QuarterlyInsightData | undefined> = {
+  q1: buildQuarterlyData("Q1"),
+  q2: buildQuarterlyData("Q2"),
+  q3: buildQuarterlyData("Q3"),
+  q4: buildQuarterlyData("Q4"),
 };
 
 export function getQuarterlyInsightData(quarter: string): QuarterlyInsightData | undefined {
