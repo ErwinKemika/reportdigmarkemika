@@ -26,7 +26,7 @@ interface PageEditDialogProps {
 }
 
 export function PageEditDialog({ schema }: PageEditDialogProps) {
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, isEditor } = useAuth();
   const { period } = useMonth();
   const { data: existingData } = usePageData(period, schema.pageKey);
   const upsert = useUpsertPageData();
@@ -83,9 +83,9 @@ export function PageEditDialog({ schema }: PageEditDialogProps) {
     }
   }, [values, schema.pageKey, period]);
 
-  const isSuperAdmin = user?.email === "marketplacekemika@gmail.com" || isAdmin;
-  const isActionPlanPage = schema.pageKey === "recommendations";
-  if (!isSuperAdmin && !isActionPlanPage) return null;
+  // admin can edit everything; editor can only edit the action plan page
+  const canEdit = isAdmin || (isEditor && schema.pageKey === "recommendations");
+  if (!canEdit) return null;
 
   const handleFieldChange = (key: string, raw: string, type: string) => {
     if (type === "text" || type === "textarea") {
