@@ -1,4 +1,4 @@
-import { getQuarterlyInsightData, formatCurrency, formatNumber } from "@/data/mockData";
+import { getQuarterlyInsightData, formatCurrencyFullFull, formatNumber } from "@/data/mockData";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import {
   BarChart2, TrendingUp, TrendingDown, Award, AlertTriangle,
@@ -102,14 +102,14 @@ export default function QuarterlyInsightPage({ quarter }: Props) {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div className="bg-card rounded-xl border border-border/40 shadow-card p-5">
             <p className="text-label text-muted-foreground uppercase tracking-wider mb-1">Total Revenue</p>
-            <p className="text-2xl font-extrabold text-card-foreground">{formatCurrency(data.totalRevenue)}</p>
+            <p className="text-2xl font-extrabold text-card-foreground">{formatCurrencyFull(data.totalRevenue)}</p>
             <div className="mt-2">
               <DeltaBadge current={data.totalRevenue} prev={data.prevQuarterRevenue} />
             </div>
           </div>
           <div className="bg-card rounded-xl border border-border/40 shadow-card p-5">
             <p className="text-label text-muted-foreground uppercase tracking-wider mb-1">Total Ad Spend</p>
-            <p className="text-2xl font-extrabold text-card-foreground">{formatCurrency(data.totalAdSpend)}</p>
+            <p className="text-2xl font-extrabold text-card-foreground">{formatCurrencyFull(data.totalAdSpend)}</p>
             <div className="mt-2">
               <DeltaBadge current={data.totalAdSpend} prev={data.prevQuarterAdSpend} invert />
             </div>
@@ -156,7 +156,7 @@ export default function QuarterlyInsightPage({ quarter }: Props) {
                 yAxisId="revenue"
                 axisLine={false} tickLine={false}
                 tick={{ fontSize: 11, fill: "hsl(220, 9%, 46%)" }}
-                tickFormatter={(v) => formatCurrency(v)}
+                tickFormatter={(v) => formatCurrencyFull(v)}
                 width={80}
               />
               <YAxis
@@ -170,7 +170,7 @@ export default function QuarterlyInsightPage({ quarter }: Props) {
               <Tooltip
                 contentStyle={{ borderRadius: "12px", border: "1px solid hsl(220, 13%, 91%)", fontSize: "12px" }}
                 formatter={(value: number, name: string) =>
-                  name === "Traffic" ? formatNumber(value) : formatCurrency(value)
+                  name === "Traffic" ? formatNumber(value) : formatCurrencyFull(value)
                 }
               />
               <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "12px", paddingTop: "12px" }} />
@@ -203,7 +203,7 @@ export default function QuarterlyInsightPage({ quarter }: Props) {
                     />
                     <span className="text-sm font-semibold text-card-foreground">{ch.name}</span>
                   </div>
-                  <p className="text-sm font-bold text-card-foreground">{formatCurrency(ch.revenue)}</p>
+                  <p className="text-sm font-bold text-card-foreground">{formatCurrencyFull(ch.revenue)}</p>
                   <p className="text-sm text-card-foreground">{formatNumber(ch.traffic)}</p>
                   <p className="text-sm text-card-foreground">{ch.conversionRate.toFixed(1)}%</p>
                   <div className="flex items-center gap-2">
@@ -227,8 +227,8 @@ export default function QuarterlyInsightPage({ quarter }: Props) {
         <SectionHeader title="Quarter-over-Quarter" subtitle="Dibandingkan kuartal sebelumnya" icon={<BarChart2 className="w-4 h-4" />} />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
-            { label: "Revenue", current: data.totalRevenue, prev: data.prevQuarterRevenue, format: formatCurrency },
-            { label: "Ad Spend", current: data.totalAdSpend, prev: data.prevQuarterAdSpend, format: formatCurrency, invert: true },
+            { label: "Revenue", current: data.totalRevenue, prev: data.prevQuarterRevenue, format: formatCurrencyFull },
+            { label: "Ad Spend", current: data.totalAdSpend, prev: data.prevQuarterAdSpend, format: formatCurrencyFull, invert: true },
             { label: "Blended ROAS", current: data.blendedROAS, prev: data.prevQuarterROAS, format: (v: number) => `${v.toFixed(1)}x` },
           ].map(({ label, current, prev, format, invert }) => {
             const pct = prev > 0 ? ((current - prev) / prev) * 100 : 0;
