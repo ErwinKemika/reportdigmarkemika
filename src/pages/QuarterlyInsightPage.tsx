@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { formatCurrency, formatCurrencyFull, formatNumber } from "@/data/mockData";
 import { useQuarterlyAggregation } from "@/hooks/useQuarterlyAggregation";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
@@ -168,6 +169,9 @@ function EditNarrativeModal({
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 export default function QuarterlyInsightPage({ quarter }: Props) {
+  const { isAdmin } = useAuth();
+  const [editOpen, setEditOpen] = useState(false);
+
   const { data } = useQuarterlyAggregation(quarter);
 
   const defaultNarrative: QuarterNarrative = data
