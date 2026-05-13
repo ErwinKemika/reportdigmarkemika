@@ -1,13 +1,21 @@
+import { useState } from "react";
 import { getQuarterlyInsightData, formatCurrency, formatCurrencyFull, formatNumber } from "@/data/mockData";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
+import { useAuth } from "@/contexts/AuthContext";
+import { useQuarterlyNarrative, type QuarterNarrative } from "@/hooks/useQuarterlyNarrative";
 import {
   BarChart2, TrendingUp, TrendingDown, Award, AlertTriangle,
-  Target, FileText, CheckCircle2, ArrowRight,
+  Target, FileText, CheckCircle2, ArrowRight, Pencil, Plus, Trash2, Loader2,
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   Legend, ResponsiveContainer,
 } from "recharts";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 
 interface Props {
   quarter: "Q1" | "Q2" | "Q3" | "Q4";
@@ -40,8 +48,141 @@ function progressColor(pct: number) {
   return "bg-destructive";
 }
 
+// ── Editable list field inside the modal ──────────────────────────────────────
+function EditableList({
+  label,
+  items,
+  onChange,
+}: {
+  label: string;
+  items: string[];
+  onChange: (items: string[]) => void;
+}) {
+  const update = (i: number, val: string) => {
+    const next = [...items];
+    next[i] = val;
+    onChange(next);
+  };
+  const remove = (i: number) => onChange(items.filter((_, idx) => idx !== i));
+  const add = () => onChange([...items, ""]);
+
+  return (
+    <div className="space-y-2">
+      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{label}</p>
+      {items.map((item, i) => (
+        <div key={i} className="flex gap-2">
+          <Textarea
+            value={item}
+            onChange={(e) => update(i, e.target.value)}
+            rows={2}
+            className="text-sm resize-none flex-1"
+          />
+          <button
+            type="button"
+            onClick={() => remove(i)}
+            className="shrink-0 text-muted-foreground hover:text-destructive transition-colors mt-1"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+      ))}
+      <button
+        type="button"
+        onClick={add}
+        className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+      >
+        <Plus className="w-3.5 h-3.5" /> Tambah item
+      </button>
+    </div>
+  );
+}
+
+// ── Edit modal ────────────────────────────────────────────────────────────────
+function EditNarrativeModal({
+  open,
+  onClose,
+  quarter,
+  initial,
+  onSave,
+  saving,
+}: {
+  open: boolean;
+  onClose: () => void;
+  quarter: string;
+  initial: QuarterNarrative;
+  onSave: (n: QuarterNarrative) => void;
+  saving: boolean;
+}) {
+  const [draft, setDraft] = useState<QuarterNarrative>(initial);
+
+  // Reset draft when modal opens with new data
+  const handleOpen = (isOpen: boolean) => {
+    if (isOpen) setDraft(initial);
+    else onClose();
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={handleOpen}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Edit Narasi {quarter}</DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-6 py-2">
+          <EditableList
+            label="Wins"
+            items={draft.wins}
+            onChange={(wins) => setDraft((d) => ({ ...d, wins }))}
+          />
+          <EditableList
+            label="Challenges"
+            items={draft.challenges}
+            onChange={(challenges) => setDraft((d) => ({ ...d, challenges }))}
+          />
+          <EditableList
+            label="Focus & Rekomendasi Kuartal Berikutnya"
+            items={draft.nextQuarterFocus}
+            onChange={(nextQuarterFocus) => setDraft((d) => ({ ...d, nextQuarterFocus }))}
+          />
+          <div className="space-y-2">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Ringkasan</p>
+            <Textarea
+              value={draft.summary}
+              onChange={(e) => setDraft((d) => ({ ...d, summary: e.target.value }))}
+              rows={5}
+              className="text-sm resize-none"
+            />
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose} disabled={saving}>Batal</Button>
+          <Button onClick={() => onSave(draft)} disabled={saving}>
+            {saving ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Menyimpan…</> : "Simpan"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// ── Main page ─────────────────────────────────────────────────────────────────
 export default function QuarterlyInsightPage({ quarter }: Props) {
+  const { isAdmin } = useAuth();
+  const [editOpen, setEditOpen] = useState(false);
+
   const data = getQuarterlyInsightData(quarter.toLowerCase());
+
+  const defaultNarrative: QuarterNarrative = data
+    ? { wins: data.wins, challenges: data.challenges, nextQuarterFocus: data.nextQuarterFocus, summary: data.summary }
+    : { wins: [], challenges: [], nextQuarterFocus: [], summary: "" };
+
+  const { narrative, saving, save } = useQuarterlyNarrative(quarter, 2026, defaultNarrative);
+
+  const handleSave = async (updated: QuarterNarrative) => {
+    const ok = await save(updated);
+    if (ok) setEditOpen(false);
+  };
 
   if (!data) {
     return (
@@ -80,15 +221,22 @@ export default function QuarterlyInsightPage({ quarter }: Props) {
             {data.months[0]} – {data.months[2]} {data.year}
           </p>
         </div>
-        <span className={`text-xs font-semibold px-3 py-1.5 rounded-full border ${
-          data.achievementPercent >= 100
-            ? "bg-success/10 text-success border-success/20"
-            : data.achievementPercent >= 85
-            ? "bg-warning/10 text-warning border-warning/20"
-            : "bg-destructive/10 text-destructive border-destructive/20"
-        }`}>
-          {data.achievementPercent}% Achievement
-        </span>
+        <div className="flex items-center gap-3">
+          <span className={`text-xs font-semibold px-3 py-1.5 rounded-full border ${
+            data.achievementPercent >= 100
+              ? "bg-success/10 text-success border-success/20"
+              : data.achievementPercent >= 85
+              ? "bg-warning/10 text-warning border-warning/20"
+              : "bg-destructive/10 text-destructive border-destructive/20"
+          }`}>
+            {data.achievementPercent.toFixed(0)}% Achievement
+          </span>
+          {isAdmin && (
+            <Button variant="outline" size="sm" onClick={() => setEditOpen(true)} className="gap-2">
+              <Pencil className="w-3.5 h-3.5" /> Edit Narasi
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* KPI Summary */}
@@ -128,7 +276,7 @@ export default function QuarterlyInsightPage({ quarter }: Props) {
             <p className="text-label text-muted-foreground uppercase tracking-wider mb-2">Achievement vs Target</p>
             <p className={`text-xl font-extrabold ${
               data.achievementPercent >= 100 ? "text-success" : data.achievementPercent >= 85 ? "text-warning" : "text-destructive"
-            }`}>{data.achievementPercent}%</p>
+            }`}>{data.achievementPercent.toFixed(0)}%</p>
             <div className="w-full h-2 bg-muted rounded-full overflow-hidden mt-2">
               <div
                 className={`h-full rounded-full transition-all duration-500 ${progressColor(data.achievementPercent)}`}
@@ -232,10 +380,12 @@ export default function QuarterlyInsightPage({ quarter }: Props) {
                     <p className="text-base font-extrabold text-card-foreground">{fmt(current)}</p>
                   </div>
                 </div>
-                <div className={`flex items-center gap-1.5 mt-3 text-xs font-semibold ${isGood ? "text-success" : "text-destructive"}`}>
-                  {isUp ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
-                  {Math.abs(pct).toFixed(1)}% {isUp ? "naik" : "turun"} dari kuartal sebelumnya
-                </div>
+                {prev > 0 && (
+                  <div className={`flex items-center gap-1.5 mt-3 text-xs font-semibold ${isGood ? "text-success" : "text-destructive"}`}>
+                    {isUp ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
+                    {Math.abs(pct).toFixed(1)}% {isUp ? "naik" : "turun"} dari kuartal sebelumnya
+                  </div>
+                )}
               </div>
             );
           })}
@@ -252,7 +402,7 @@ export default function QuarterlyInsightPage({ quarter }: Props) {
               <h3 className="font-semibold text-sm text-card-foreground">Wins {quarter}</h3>
             </div>
             <ul className="space-y-3">
-              {data.wins.map((win, i) => (
+              {narrative.wins.map((win, i) => (
                 <li key={i} className="flex items-start gap-2.5 text-sm text-card-foreground leading-relaxed">
                   <span className="w-1.5 h-1.5 rounded-full bg-success mt-2 shrink-0" />
                   {win}
@@ -266,7 +416,7 @@ export default function QuarterlyInsightPage({ quarter }: Props) {
               <h3 className="font-semibold text-sm text-card-foreground">Challenges {quarter}</h3>
             </div>
             <ul className="space-y-3">
-              {data.challenges.map((ch, i) => (
+              {narrative.challenges.map((ch, i) => (
                 <li key={i} className="flex items-start gap-2.5 text-sm text-card-foreground leading-relaxed">
                   <span className="w-1.5 h-1.5 rounded-full bg-destructive mt-2 shrink-0" />
                   {ch}
@@ -286,7 +436,7 @@ export default function QuarterlyInsightPage({ quarter }: Props) {
         />
         <div className="bg-tint-blue rounded-xl border border-channel-google/15 p-6 shadow-card">
           <ul className="space-y-3">
-            {data.nextQuarterFocus.map((item, i) => (
+            {narrative.nextQuarterFocus.map((item, i) => (
               <li key={i} className="flex items-start gap-3 text-sm text-card-foreground leading-relaxed">
                 <span className="w-5 h-5 rounded-full bg-channel-google/15 text-channel-google flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
                   {i + 1}
@@ -304,8 +454,20 @@ export default function QuarterlyInsightPage({ quarter }: Props) {
           <FileText className="w-4 h-4 text-channel-google" />
           <h3 className="font-semibold text-sm text-card-foreground">Ringkasan {quarter} {data.year}</h3>
         </div>
-        <p className="text-sm text-card-foreground leading-relaxed">{data.summary}</p>
+        <p className="text-sm text-card-foreground leading-relaxed">{narrative.summary}</p>
       </div>
+
+      {/* Edit modal — admin only */}
+      {isAdmin && (
+        <EditNarrativeModal
+          open={editOpen}
+          onClose={() => setEditOpen(false)}
+          quarter={quarter}
+          initial={narrative}
+          onSave={handleSave}
+          saving={saving}
+        />
+      )}
     </div>
   );
 }
