@@ -884,6 +884,103 @@ const recommendationsMap: MonthlyDataMap<RecommendationsData> = { January: recom
 const closingMap: MonthlyDataMap<ClosingData> = { January: closingJan, February: closingFeb };
 const roiRevenueMap: MonthlyDataMap<ROIRevenueData> = { January: roiRevenueJan, February: roiRevenueFeb };
 
+// ==================== QUARTERLY INSIGHT ====================
+export interface QuarterlyInsightData {
+  quarter: "Q1" | "Q2" | "Q3" | "Q4";
+  year: number;
+  months: [string, string, string];
+  totalAdSpend: number;
+  totalRevenue: number;
+  blendedROAS: number;
+  totalTraffic: number;
+  avgConversionRate: number;
+  achievementPercent: number;
+  prevQuarterRevenue: number;
+  prevQuarterAdSpend: number;
+  prevQuarterROAS: number;
+  monthTrend: { month: string; revenue: number; adSpend: number; traffic: number }[];
+  channels: { name: string; revenue: number; traffic: number; conversionRate: number; contribution: number }[];
+  wins: string[];
+  challenges: string[];
+  nextQuarterFocus: string[];
+  summary: string;
+}
+
+const quarterlyInsightQ1: QuarterlyInsightData = {
+  quarter: "Q1", year: 2026, months: ["January", "February", "March"],
+  totalAdSpend: 14500000, totalRevenue: 278000000, blendedROAS: 19.2,
+  totalTraffic: 38400, avgConversionRate: 2.4, achievementPercent: 85,
+  prevQuarterRevenue: 315000000, prevQuarterAdSpend: 17000000, prevQuarterROAS: 18.5,
+  monthTrend: [
+    { month: "Jan", revenue: 85000000, adSpend: 4800000, traffic: 12000 },
+    { month: "Feb", revenue: 98000000, adSpend: 5100000, traffic: 13500 },
+    { month: "Mar", revenue: 95000000, adSpend: 4600000, traffic: 12900 },
+  ],
+  channels: [
+    { name: "Webstore", revenue: 120000000, traffic: 18000, conversionRate: 3.2, contribution: 43 },
+    { name: "Tokopedia", revenue: 95000000, traffic: 12500, conversionRate: 2.1, contribution: 34 },
+    { name: "Shopee", revenue: 63000000, traffic: 7900, conversionRate: 1.8, contribution: 23 },
+  ],
+  wins: [
+    "Webstore conversion rate meningkat ke 3.2% — tertinggi sepanjang sejarah channel ini.",
+    "Google Ads berhasil menurunkan CPC sebesar 18% dibanding Q4 2025 melalui optimasi audience targeting.",
+    "Kampanye Harbolnas Februari menghasilkan spike traffic +42% di Shopee dan Tokopedia.",
+  ],
+  challenges: [
+    "Revenue Q1 turun 11.7% dibanding Q4 2025 akibat pola musiman pasca-akhir tahun yang lebih sepi.",
+    "Meta Ads mengalami penurunan CTR di bulan Maret — konten iklan perlu direfresh.",
+    "Closing rate dari lead B2B masih rendah di 14% — funnel perlu diperkuat di stage Qualified.",
+  ],
+  nextQuarterFocus: [
+    "Tingkatkan budget Google Ads 20% untuk kuartal Ramadan & Lebaran (Q2) yang biasanya peak season.",
+    "Refresh creative Meta Ads dengan pendekatan video-first untuk memperbaiki CTR.",
+    "Implementasi live chat di Webstore untuk mengurangi cart abandonment dan mendorong CR ke 3.5%.",
+  ],
+  summary: "Q1 2026 menunjukkan performa yang solid meskipun berada di periode post-holiday. Webstore memimpin sebagai channel terkuat dengan CR tertinggi, sementara channel marketplace stabil. Fokus Q2 harus diarahkan pada momentum Ramadan untuk menutup gap pencapaian dan melampaui performa Q4 2025.",
+};
+
+const quarterlyInsightQ2: QuarterlyInsightData = {
+  quarter: "Q2", year: 2026, months: ["April", "May", "June"],
+  totalAdSpend: 18200000, totalRevenue: 342000000, blendedROAS: 18.8,
+  totalTraffic: 47800, avgConversionRate: 2.6, achievementPercent: 94,
+  prevQuarterRevenue: 278000000, prevQuarterAdSpend: 14500000, prevQuarterROAS: 19.2,
+  monthTrend: [
+    { month: "Apr", revenue: 108000000, adSpend: 5800000, traffic: 14800 },
+    { month: "May", revenue: 118000000, adSpend: 6300000, traffic: 16500 },
+    { month: "Jun", revenue: 116000000, adSpend: 6100000, traffic: 16500 },
+  ],
+  channels: [
+    { name: "Webstore", revenue: 148000000, traffic: 21000, conversionRate: 3.5, contribution: 43 },
+    { name: "Tokopedia", revenue: 118000000, traffic: 15800, conversionRate: 2.3, contribution: 35 },
+    { name: "Shopee", revenue: 76000000, traffic: 11000, conversionRate: 2.0, contribution: 22 },
+  ],
+  wins: [
+    "Revenue tumbuh 23% QoQ — periode Ramadan & Lebaran (Mei) menjadi bulan terkuat sepanjang tahun.",
+    "Kampanye Super Sale Tokopedia berhasil menghasilkan 1,200+ orders dalam 3 hari — rekor tertinggi.",
+    "Webstore mencapai CR 3.5% di bulan Mei, melampaui target 3% untuk pertama kalinya.",
+  ],
+  challenges: [
+    "ROAS turun dari 19.2 di Q1 ke 18.8 — peningkatan spend Ramadan belum sepenuhnya efisien.",
+    "Shopee CR masih di bawah target 2.5% meski traffic meningkat — perlu optimasi halaman produk.",
+    "Biaya iklan peak season (Lebaran) naik 30% sehingga menekan margin campaign.",
+  ],
+  nextQuarterFocus: [
+    "Manfaatkan momentum post-Lebaran untuk program loyalty dan retargeting pelanggan baru Q2.",
+    "Optimalkan halaman produk Shopee (gambar, deskripsi, review) untuk mendorong CR ke 2.5%.",
+    "Diversifikasi konten organik (SEO & media sosial) untuk mengurangi ketergantungan pada paid ads.",
+  ],
+  summary: "Q2 2026 adalah kuartal terkuat dengan revenue Rp 342 juta — naik 23% dari Q1. Momentum Ramadan berhasil dimanfaatkan dengan baik melalui kampanye yang tepat sasaran. Tantangan utama adalah menjaga efisiensi spend saat biaya iklan naik di peak season. Q3 perlu fokus pada retensi pelanggan baru yang acquired di Q2.",
+};
+
+const quarterlyInsightMap: Record<string, QuarterlyInsightData> = {
+  q1: quarterlyInsightQ1,
+  q2: quarterlyInsightQ2,
+};
+
+export function getQuarterlyInsightData(quarter: string): QuarterlyInsightData | undefined {
+  return quarterlyInsightMap[quarter.toLowerCase()];
+}
+
 export function getOverviewData(month: Month): OverviewData | undefined { return overviewMap[month]; }
 export function getWebsitePerformanceData(month: Month): WebsitePerformanceData | undefined { return websitePerfMap[month]; }
 export function getWebstoreSalesData(month: Month): WebstoreSalesData | undefined { return webstoreMap[month]; }

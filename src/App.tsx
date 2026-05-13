@@ -16,6 +16,7 @@ import AdsBudgetPage from "./pages/AdsBudgetPage";
 import GoogleAdsPage from "./pages/GoogleAdsPage";
 import MetaAdsPage from "./pages/MetaAdsPage";
 import InsightsPage from "./pages/InsightsPage";
+import QuarterlyInsightPage from "./pages/QuarterlyInsightPage";
 import RecommendationsPage from "./pages/RecommendationsPage";
 import ROIRevenuePage from "./pages/ROIRevenuePage";
 import BenchmarkPage from "./pages/BenchmarkPage";
@@ -42,6 +43,10 @@ function AppRoutes() {
         <Route path="/ads-budget/shopee" element={<ShopeeAdsPage />} />
         <Route path="/roi-revenue" element={<ROIRevenuePage />} />
         <Route path="/insights" element={<InsightsPage />} />
+        <Route path="/insights/q1" element={<QuarterlyInsightPage quarter="Q1" />} />
+        <Route path="/insights/q2" element={<QuarterlyInsightPage quarter="Q2" />} />
+        <Route path="/insights/q3" element={<QuarterlyInsightPage quarter="Q3" />} />
+        <Route path="/insights/q4" element={<QuarterlyInsightPage quarter="Q4" />} />
         <Route path="/recommendations" element={<RecommendationsPage />} />
         <Route path="/sales-recap" element={<SalesRecapPage />} />
         <Route path="/admin-login" element={<AuthPage />} />

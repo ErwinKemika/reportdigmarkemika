@@ -10,7 +10,7 @@ import { PAGE_SCHEMA_MAP } from "@/components/dashboard/pageEditSchemas";
 import {
   LayoutDashboard, Globe, ShoppingCart, Store, ShoppingBag,
   Megaphone, DollarSign, Lightbulb, ClipboardList,
-  ChevronLeft, ChevronRight, ChevronDown, Calendar, TrendingUp, BarChart3,
+  ChevronLeft, ChevronRight, ChevronDown, Calendar, TrendingUp, BarChart3, BarChart2,
   LogOut, Shield, FileSpreadsheet, Search, Target,
 } from "lucide-react";
 import {
@@ -42,7 +42,15 @@ const navItems: NavItem[] = [
   },
   { label: "ROI & Revenue", path: "/roi-revenue", icon: TrendingUp },
   { label: "Sales Recap", path: "/sales-recap", icon: FileSpreadsheet },
-  { label: "Insights", path: "/insights", icon: Lightbulb },
+  {
+    label: "Insights", path: "/insights", icon: Lightbulb,
+    children: [
+      { label: "Q1 Report", path: "/insights/q1", icon: BarChart2 },
+      { label: "Q2 Report", path: "/insights/q2", icon: BarChart2 },
+      { label: "Q3 Report", path: "/insights/q3", icon: BarChart2 },
+      { label: "Q4 Report", path: "/insights/q4", icon: BarChart2 },
+    ],
+  },
   { label: "Action Plan", path: "/recommendations", icon: ClipboardList },
 ];
 
@@ -51,7 +59,7 @@ function getPageTitle(pathname: string): string {
     if (item.path === pathname) return item.label;
     if (item.children) {
       const child = item.children.find(c => c.path === pathname);
-      if (child) return child.label;
+      if (child) return `${item.label} — ${child.label}`;
     }
   }
   return "Dashboard";
@@ -71,15 +79,18 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
     if (isMobile) setDrawerOpen(false);
   }, [isMobile]);
 
-  // Ads Budget group expanded state — auto-expand when on child route
   const isOnAdsBudgetChild = location.pathname.startsWith("/ads-budget/");
-  const [adsBudgetExpanded, setAdsBudgetExpanded] = useState(isOnAdsBudgetChild);
-  // Keep expanded when navigating to child
+  const isOnInsightsChild = location.pathname.startsWith("/insights/");
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
+    "/ads-budget": isOnAdsBudgetChild,
+    "/insights": isOnInsightsChild,
+  });
   useEffect(() => {
-    if (isOnAdsBudgetChild) {
-      setAdsBudgetExpanded(true);
-    }
+    if (isOnAdsBudgetChild) setExpandedGroups(prev => ({ ...prev, "/ads-budget": true }));
   }, [isOnAdsBudgetChild]);
+  useEffect(() => {
+    if (isOnInsightsChild) setExpandedGroups(prev => ({ ...prev, "/insights": true }));
+  }, [isOnInsightsChild]);
 
   const currentSchema = PAGE_SCHEMA_MAP[location.pathname];
 
@@ -88,7 +99,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
     const isActive = location.pathname === item.path;
     const isChildActive = hasChildren && item.children!.some(c => location.pathname === c.path);
     const isGroupActive = isActive || isChildActive;
-    const isExpanded = hasChildren && (adsBudgetExpanded || isChildActive);
+    const isExpanded = hasChildren && (expandedGroups[item.path] || isChildActive);
 
     if (hasChildren) {
       return (
@@ -134,7 +145,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  setAdsBudgetExpanded(!isExpanded);
+                  setExpandedGroups(prev => ({ ...prev, [item.path]: !isExpanded }));
                 }}
                 className="absolute right-1 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg flex items-center justify-center transition-colors hover:bg-white/40 dark:hover:bg-white/10"
                 style={{ color: isDark ? "hsl(220, 12%, 55%)" : "hsl(220, 12%, 50%)" }}
