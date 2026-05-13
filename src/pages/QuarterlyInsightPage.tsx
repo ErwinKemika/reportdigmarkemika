@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { getQuarterlyInsightData, formatCurrency, formatCurrencyFull, formatNumber } from "@/data/mockData";
+import { formatCurrency, formatCurrencyFull, formatNumber } from "@/data/mockData";
+import { useQuarterlyAggregation } from "@/hooks/useQuarterlyAggregation";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuarterlyNarrative, type QuarterNarrative } from "@/hooks/useQuarterlyNarrative";
@@ -168,10 +168,7 @@ function EditNarrativeModal({
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 export default function QuarterlyInsightPage({ quarter }: Props) {
-  const { isAdmin } = useAuth();
-  const [editOpen, setEditOpen] = useState(false);
-
-  const data = getQuarterlyInsightData(quarter.toLowerCase());
+  const { data } = useQuarterlyAggregation(quarter);
 
   const defaultNarrative: QuarterNarrative = data
     ? { wins: data.wins, challenges: data.challenges, nextQuarterFocus: data.nextQuarterFocus, summary: data.summary }
