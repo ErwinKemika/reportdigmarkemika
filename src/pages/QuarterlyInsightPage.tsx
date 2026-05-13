@@ -1,8 +1,8 @@
-import { getQuarterlyInsightData, formatCurrencyFullFull, formatNumber } from "@/data/mockData";
+import { getQuarterlyInsightData, formatCurrency, formatCurrencyFull, formatNumber } from "@/data/mockData";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import {
   BarChart2, TrendingUp, TrendingDown, Award, AlertTriangle,
-  Target, FileText, CheckCircle2, ArrowRight, Minus,
+  Target, FileText, CheckCircle2, ArrowRight,
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -61,15 +61,10 @@ export default function QuarterlyInsightPage({ quarter }: Props) {
     );
   }
 
-  const revenueGrowth = ((data.totalRevenue - data.prevQuarterRevenue) / data.prevQuarterRevenue) * 100;
-  const roasGrowth = ((data.blendedROAS - data.prevQuarterROAS) / data.prevQuarterROAS) * 100;
-  const spendGrowth = ((data.totalAdSpend - data.prevQuarterAdSpend) / data.prevQuarterAdSpend) * 100;
-
   const chartData = data.monthTrend.map((m) => ({
     month: m.month,
     Revenue: m.revenue,
     "Ad Spend": m.adSpend,
-    Traffic: m.traffic,
   }));
 
   return (
@@ -102,36 +97,36 @@ export default function QuarterlyInsightPage({ quarter }: Props) {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div className="bg-card rounded-xl border border-border/40 shadow-card p-5">
             <p className="text-label text-muted-foreground uppercase tracking-wider mb-1">Total Revenue</p>
-            <p className="text-2xl font-extrabold text-card-foreground">{formatCurrencyFull(data.totalRevenue)}</p>
+            <p className="text-xl font-extrabold text-card-foreground">{formatCurrencyFull(data.totalRevenue)}</p>
             <div className="mt-2">
               <DeltaBadge current={data.totalRevenue} prev={data.prevQuarterRevenue} />
             </div>
           </div>
           <div className="bg-card rounded-xl border border-border/40 shadow-card p-5">
             <p className="text-label text-muted-foreground uppercase tracking-wider mb-1">Total Ad Spend</p>
-            <p className="text-2xl font-extrabold text-card-foreground">{formatCurrencyFull(data.totalAdSpend)}</p>
+            <p className="text-xl font-extrabold text-card-foreground">{formatCurrencyFull(data.totalAdSpend)}</p>
             <div className="mt-2">
               <DeltaBadge current={data.totalAdSpend} prev={data.prevQuarterAdSpend} invert />
             </div>
           </div>
           <div className="bg-card rounded-xl border border-border/40 shadow-card p-5">
             <p className="text-label text-muted-foreground uppercase tracking-wider mb-1">Blended ROAS</p>
-            <p className="text-2xl font-extrabold text-card-foreground">{data.blendedROAS.toFixed(1)}x</p>
+            <p className="text-xl font-extrabold text-card-foreground">{data.blendedROAS.toFixed(1)}x</p>
             <div className="mt-2">
               <DeltaBadge current={data.blendedROAS} prev={data.prevQuarterROAS} />
             </div>
           </div>
           <div className="bg-card rounded-xl border border-border/40 shadow-card p-5">
             <p className="text-label text-muted-foreground uppercase tracking-wider mb-1">Total Traffic</p>
-            <p className="text-2xl font-extrabold text-card-foreground">{formatNumber(data.totalTraffic)}</p>
+            <p className="text-xl font-extrabold text-card-foreground">{formatNumber(data.totalTraffic)}</p>
           </div>
           <div className="bg-card rounded-xl border border-border/40 shadow-card p-5">
             <p className="text-label text-muted-foreground uppercase tracking-wider mb-1">Avg. Conversion Rate</p>
-            <p className="text-2xl font-extrabold text-card-foreground">{data.avgConversionRate.toFixed(1)}%</p>
+            <p className="text-xl font-extrabold text-card-foreground">{data.avgConversionRate.toFixed(1)}%</p>
           </div>
           <div className="bg-card rounded-xl border border-border/40 shadow-card p-5">
             <p className="text-label text-muted-foreground uppercase tracking-wider mb-2">Achievement vs Target</p>
-            <p className={`text-2xl font-extrabold ${
+            <p className={`text-xl font-extrabold ${
               data.achievementPercent >= 100 ? "text-success" : data.achievementPercent >= 85 ? "text-warning" : "text-destructive"
             }`}>{data.achievementPercent}%</p>
             <div className="w-full h-2 bg-muted rounded-full overflow-hidden mt-2">
@@ -153,29 +148,18 @@ export default function QuarterlyInsightPage({ quarter }: Props) {
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 13%, 91%)" vertical={false} />
               <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "hsl(220, 9%, 46%)" }} />
               <YAxis
-                yAxisId="revenue"
                 axisLine={false} tickLine={false}
                 tick={{ fontSize: 11, fill: "hsl(220, 9%, 46%)" }}
-                tickFormatter={(v) => formatCurrencyFull(v)}
-                width={80}
-              />
-              <YAxis
-                yAxisId="traffic"
-                orientation="right"
-                axisLine={false} tickLine={false}
-                tick={{ fontSize: 11, fill: "hsl(220, 9%, 46%)" }}
-                tickFormatter={(v) => formatNumber(v)}
-                width={60}
+                tickFormatter={(v) => formatCurrency(v)}
+                width={72}
               />
               <Tooltip
                 contentStyle={{ borderRadius: "12px", border: "1px solid hsl(220, 13%, 91%)", fontSize: "12px" }}
-                formatter={(value: number, name: string) =>
-                  name === "Traffic" ? formatNumber(value) : formatCurrencyFull(value)
-                }
+                formatter={(value: number) => formatCurrencyFull(value)}
               />
               <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "12px", paddingTop: "12px" }} />
-              <Bar yAxisId="revenue" dataKey="Revenue" fill="hsl(222, 47%, 35%)" radius={[5, 5, 0, 0]} />
-              <Bar yAxisId="revenue" dataKey="Ad Spend" fill="hsl(25, 90%, 55%)" radius={[5, 5, 0, 0]} />
+              <Bar dataKey="Revenue" fill="hsl(222, 47%, 35%)" radius={[5, 5, 0, 0]} />
+              <Bar dataKey="Ad Spend" fill="hsl(25, 90%, 55%)" radius={[5, 5, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -187,7 +171,7 @@ export default function QuarterlyInsightPage({ quarter }: Props) {
         <div className="bg-card rounded-xl border border-border/40 shadow-hero overflow-hidden">
           <div className="overflow-x-auto">
             <div className="min-w-[480px]">
-              <div className="grid grid-cols-[1.5fr_1.2fr_1fr_1fr_1fr] gap-4 px-6 py-4 bg-muted/50 border-b border-border/40">
+              <div className="grid grid-cols-[1.5fr_1.5fr_1fr_1fr_1fr] gap-4 px-6 py-4 bg-muted/50 border-b border-border/40">
                 <span className="text-label text-muted-foreground uppercase tracking-wider">Channel</span>
                 <span className="text-label text-muted-foreground uppercase tracking-wider">Revenue</span>
                 <span className="text-label text-muted-foreground uppercase tracking-wider">Traffic</span>
@@ -195,7 +179,7 @@ export default function QuarterlyInsightPage({ quarter }: Props) {
                 <span className="text-label text-muted-foreground uppercase tracking-wider">Kontribusi</span>
               </div>
               {data.channels.map((ch) => (
-                <div key={ch.name} className="grid grid-cols-[1.5fr_1.2fr_1fr_1fr_1fr] gap-4 px-6 py-5 border-b border-border/20 last:border-0 hover:bg-muted/30 transition-colors">
+                <div key={ch.name} className="grid grid-cols-[1.5fr_1.5fr_1fr_1fr_1fr] gap-4 px-6 py-5 border-b border-border/20 last:border-0 hover:bg-muted/30 transition-colors">
                   <div className="flex items-center gap-2.5">
                     <div
                       className="w-2.5 h-2.5 rounded-full shrink-0"
@@ -227,10 +211,10 @@ export default function QuarterlyInsightPage({ quarter }: Props) {
         <SectionHeader title="Quarter-over-Quarter" subtitle="Dibandingkan kuartal sebelumnya" icon={<BarChart2 className="w-4 h-4" />} />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
-            { label: "Revenue", current: data.totalRevenue, prev: data.prevQuarterRevenue, format: formatCurrencyFull },
-            { label: "Ad Spend", current: data.totalAdSpend, prev: data.prevQuarterAdSpend, format: formatCurrencyFull, invert: true },
-            { label: "Blended ROAS", current: data.blendedROAS, prev: data.prevQuarterROAS, format: (v: number) => `${v.toFixed(1)}x` },
-          ].map(({ label, current, prev, format, invert }) => {
+            { label: "Revenue", current: data.totalRevenue, prev: data.prevQuarterRevenue, fmt: formatCurrencyFull, invert: false },
+            { label: "Ad Spend", current: data.totalAdSpend, prev: data.prevQuarterAdSpend, fmt: formatCurrencyFull, invert: true },
+            { label: "Blended ROAS", current: data.blendedROAS, prev: data.prevQuarterROAS, fmt: (v: number) => `${v.toFixed(1)}x`, invert: false },
+          ].map(({ label, current, prev, fmt, invert }) => {
             const pct = prev > 0 ? ((current - prev) / prev) * 100 : 0;
             const isUp = pct >= 0;
             const isGood = invert ? !isUp : isUp;
@@ -240,12 +224,12 @@ export default function QuarterlyInsightPage({ quarter }: Props) {
                 <div className="flex items-end justify-between gap-2">
                   <div>
                     <p className="text-xs text-muted-foreground mb-0.5">Sebelumnya</p>
-                    <p className="text-sm text-muted-foreground">{format(prev)}</p>
+                    <p className="text-sm text-muted-foreground">{fmt(prev)}</p>
                   </div>
                   <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 mb-1" />
                   <div className="text-right">
                     <p className="text-xs text-muted-foreground mb-0.5">Sekarang</p>
-                    <p className="text-base font-extrabold text-card-foreground">{format(current)}</p>
+                    <p className="text-base font-extrabold text-card-foreground">{fmt(current)}</p>
                   </div>
                 </div>
                 <div className={`flex items-center gap-1.5 mt-3 text-xs font-semibold ${isGood ? "text-success" : "text-destructive"}`}>
