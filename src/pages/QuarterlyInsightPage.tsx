@@ -1,4 +1,5 @@
-import { getQuarterlyInsightData, formatCurrency, formatCurrencyFull, formatNumber } from "@/data/mockData";
+import { formatCurrency, formatCurrencyFull, formatNumber } from "@/data/mockData";
+import { useQuarterlyAggregation } from "@/hooks/useQuarterlyAggregation";
 import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import {
   BarChart2, TrendingUp, TrendingDown, Award, AlertTriangle,
